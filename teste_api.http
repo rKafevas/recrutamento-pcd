@@ -1,0 +1,8 @@
+### Realizar Inscrição da Maria na Vaga
+POST http://localhost:3000/inscricoes
+Content-Type: application/json
+
+{
+  "candidato_id": 1,
+  "vaga_id": 3
+}

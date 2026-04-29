@@ -1,0 +1,64 @@
+# 📑 Relatório Técnico: Sistema de Recrutamento PcD
+**Data:** 21 e 22 de Abril de 2026
+**Tecnologias:** Node.js, Express, PostgreSQL, JWT (JSON Web Token)
+
+---
+
+## 1. Visão Geral
+Nesta etapa do projeto, o foco foi a transição de um sistema aberto para uma arquitetura profissional e segura. Implementámos o fluxo completo de autenticação, desde o login até a proteção de rotas sensíveis, garantindo a integridade dos dados dos candidatos PcD.
+
+---
+
+## 2. Arquitetura de Segurança (JWT)
+
+### 🛡️ Middleware de Autenticação (`authMiddleware.js`)
+Implementámos um "filtro" de segurança que intercepta todas as requisições para rotas protegidas.
+- **Validação de Token:** O sistema verifica se o cabeçalho `Authorization: Bearer <TOKEN>` está presente e se o token é válido.
+- **Extração de Identidade:** O middleware descodifica o token e injeta o `usuarioId` diretamente na requisição (`req.usuarioId`). Isso elimina a necessidade de o utilizador enviar o seu próprio ID manualmente, prevenindo fraudes.
+
+
+
+---
+
+## 3. Padrão de Projeto e Refatoração (MSC)
+
+Seguimos o padrão **MSC (Model-Service-Controller)** para garantir que o código seja escalável e fácil de manter:
+
+* **Controllers:** Gerem as rotas e as respostas (Status 200, 201, 400, 401, 500).
+* **Services:** Contêm a "inteligência" do negócio. 
+    * *Exemplo:* O `InscricaoService` agora faz a ponte entre a tabela `usuarios` (login) e a tabela `candidatos` (perfil) de forma automática.
+* **Repositories:** Responsáveis pelas consultas SQL otimizadas.
+    * *Destaque:* Uso de `INNER JOIN` para retornar dados legíveis (Nome da Empresa, Título da Vaga) em vez de apenas IDs numéricos.
+
+---
+
+## 4. Funcionalidades Implementadas
+
+### RF01: Autenticação de Usuário
+- **Login:** Gera um token assinado com chave secreta após validar e-mail e senha.
+- **Persistência:** O token permite que o utilizador navegue pelo sistema sem precisar de se reautenticar a cada clique.
+
+### RF02: Gestão de Inscrições "Blindada"
+- **Inscrição (POST):** O sistema recupera o ID do candidato através do Token.
+- **Prevenção de Duplicidade:** O código verifica se o candidato já está inscrito na vaga antes de permitir um novo registo.
+- **Integridade Referencial:** Tratamento de erros de Chave Estrangeira (FK) para evitar inscrições em vagas inexistentes.
+
+### RF03: Consulta de Candidaturas
+- **Rota `/inscricoes/minhas`:** Listagem personalizada que utiliza o ID interno do Token para filtrar apenas os dados do utilizador logado, garantindo total privacidade.
+
+---
+
+## 5. Histórico de Testes (Thunder Client)
+
+| Funcionalidade | Endpoint | Método | Resultado Esperado | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **Login** | `/login` | POST | Receber Token JWT | ✅ Sucesso |
+| **Proteção** | `/inscricoes` | POST | 401 se não houver Token | ✅ Sucesso |
+| **Inscrição** | `/inscricoes` | POST | 201 Created | ✅ Sucesso |
+| **Listagem** | `/inscricoes/minhas` | GET | Array com Nomes e Datas | ✅ Sucesso |
+| **Duplicidade** | `/inscricoes` | POST | Erro: "Já está inscrito" | ✅ Sucesso |
+
+---
+
+## 6. Conclusão para Apresentação
+Este projeto demonstra a aplicação prática de conceitos avançados de backend, como **segurança da informação**, **normalização de base de dados** e **arquitetura limpa**. O sistema está preparado para escalar, protegendo os dados sensíveis dos utilizadores e oferecendo uma experiência de candidatura fluida e segura.
