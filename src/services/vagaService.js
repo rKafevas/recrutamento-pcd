@@ -2,15 +2,24 @@ const VagaRepository = require('../repositories/vagaRepository');
 const db = require('../database');
 
 class VagaService {
-  async anunciarVaga(dados) {
-    // Por enquanto, vamos usar um empresa_id fixo (1) até criarmos o cadastro de empresas
-    const empresaId = 1; 
-    return await VagaRepository.criarVaga(
-      empresaId, 
-      dados.titulo, 
-      dados.descricao, 
-      dados.tipo_deficiencia_foco
-    );
+  // Agora recebemos o rh_id real que o controller extraiu do token JWT
+  async anunciarVaga(rh_id, dados) {
+    try {
+      // No futuro, você pode buscar a qual empresa esse rh_id pertence.
+      // Por hora, passamos o rh_id para o repository registrar quem criou a vaga.
+      return await VagaRepository.criarVaga(
+        rh_id, 
+        dados.titulo, 
+        dados.descricao, 
+        dados.requisitos,
+        dados.localizacao,
+        dados.salario,
+        dados.tipo_deficiencia_foco
+      );
+    } catch (err) {
+      console.error("Erro no Service ao criar vaga:", err);
+      throw new Error("Não foi possível publicar a vaga. Tente novamente mais tarde.");
+    }
   }
 
   async listarVagas() {
@@ -18,21 +27,18 @@ class VagaService {
   }
 
   async recomendarVagasParaCandidato(usuarioId) {
-    // 1. Busca a deficiência no perfil do candidato logado
-    const queryPerfil = 'SELECT tipo_deficiencia FROM candidatos WHERE usuario_id = $1';
-    const resPerfil = await db.query(queryPerfil, [usuarioId]);
+    // 1. Usa o repositório especializado para buscar o perfil
+    const perfil = await CandidatoRepository.buscarPorUsuarioId(usuarioId);
 
-    if (resPerfil.rows.length === 0) {
-      throw new Error('Perfil de candidato não encontrado.');
+    if (!perfil) {
+      const error = new Error('Perfil de candidato não encontrado.');
+      error.status = 404;
+      throw error;
     }
 
-    const deficiencia = resPerfil.rows[0].tipo_deficiencia;
-
-    // 2. Chama o repository passando a deficiência encontrada
-    // Usamos o VagaRepository para manter a organização
-    return await VagaRepository.listarPorTipoDeficiencia(deficiencia);
+    // 2. Filtro inteligente usando a deficiência do perfil
+    return await VagaRepository.listarPorTipoDeficiencia(perfil.tipo_deficiencia);
   }
-
 }
 
 module.exports = new VagaService();

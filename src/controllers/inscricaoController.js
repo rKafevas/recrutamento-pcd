@@ -1,18 +1,12 @@
 const InscricaoService = require('../services/inscricaoService');
-// 1. IMPORTAÇÃO FALTANTE: Precisamos do Repository para as rotas de listagem e patch
-const InscricaoRepository = require('../repositories/inscricaoRepository');
 
 class InscricaoController {
   
-  // Realiza a inscrição usando o ID vindo do Token
-  async inscrever(req, res) {
+  async inscrever(req, res, next) {
     try {
+      // O Joi já validou a existência do vaga_id no middleware
       const { vaga_id } = req.body;
       const usuario_id = req.usuarioId; 
-
-      if (!vaga_id) {
-        return res.status(400).json({ error: 'O ID da vaga é obrigatório.' });
-      }
 
       const inscricao = await InscricaoService.seCandidatar(usuario_id, vaga_id);
       
@@ -21,64 +15,50 @@ class InscricaoController {
         dados: inscricao
       });
     } catch (err) {
-      console.error("ERRO NA INSCRIÇÃO:", err);
-      return res.status(400).json({ error: err.message });
+      // Manda para o Error Handler Global do server.js
+      next(err);
     }
   }
 
-  // Lista as inscrições do usuário logado
-  async listarMinhasInscricoes(req, res) {
+  async listarMinhasInscricoes(req, res, next) {
     try {
       const usuario_id = req.usuarioId; 
       const lista = await InscricaoService.verMinhasInscricoes(usuario_id);
       return res.json(lista);
     } catch (err) {
-      return res.status(500).json({ error: 'Erro ao buscar suas inscrições' });
+      next(err);
     }
   }
 
   // Rota de gestão (RH) - Listar todos os candidatos de uma vaga
-  async listarPorVaga(req, res) {
+  async listarPorVaga(req, res, next) {
     try {
       const { vaga_id } = req.params;
 
-      // Agora o InscricaoRepository está definido!
-      const inscritos = await InscricaoRepository.listarPorVaga(vaga_id);
-
-      if (inscritos.length === 0) {
-        return res.status(200).json({ mensagem: "Ainda não há inscritos para esta vaga." });
-      }
+      // Movido para o Service para manter a arquitetura limpa
+      const inscritos = await InscricaoService.listarInscritosPorVaga(vaga_id);
 
       return res.json(inscritos);
     } catch (err) {
-      console.error("Erro ao listar inscritos:", err);
-      return res.status(500).json({ error: "Erro ao buscar lista de inscritos." });
+      next(err);
     }
-  } // <-- Chave de fechamento da função estava aqui
+  }
 
   // Atualizar o status (Aprovado, Reprovado, etc)
-  async atualizarStatus(req, res) {
+  async atualizarStatus(req, res, next) {
     try {
       const { id } = req.params; 
       const { status } = req.body; 
 
-      if (!status) {
-        return res.status(400).json({ error: "O campo status é obrigatório." });
-      }
-
-      const inscricaoAtualizada = await InscricaoRepository.atualizarStatus(id, status);
-
-      if (!inscricaoAtualizada) {
-        return res.status(404).json({ error: "Inscrição não encontrada." });
-      }
+      // Chamamos o Service em vez do Repository diretamente
+      const inscricaoAtualizada = await InscricaoService.alterarStatus(id, status);
 
       return res.json({
         mensagem: "Status atualizado com sucesso!",
         inscricao: inscricaoAtualizada
       });
     } catch (err) {
-      console.error("Erro ao atualizar status:", err);
-      return res.status(500).json({ error: "Erro interno ao atualizar status." });
+      next(err);
     }
   }
 }

@@ -4,16 +4,20 @@ const routes = express.Router();
 // 1. Importação dos Middlewares
 const authMiddleware = require('./middlewares/authMiddleware');
 const authorize = require('./middlewares/roleMiddleware');
-const validate = require('./middlewares/validateMiddleware'); // <--- NOVO
+const validate = require('./middlewares/validateMiddleware');
+const upload = require('./middlewares/uploadMiddleware');
 
 // 2. Importação dos Validators (Joi)
-const { usuarioSchema, loginSchema } = require('./validators/usuarioValidator'); // <--- NOVO
+const { usuarioSchema, loginSchema } = require('./validators/usuarioValidator');
+const { vagaSchema } = require('./validators/vagaValidator');
+const { inscricaoSchema } = require('./validators/inscricaoValidator');
 
 // 3. Importação dos Controllers
 const UsuarioController = require('./controllers/usuarioController');
 const VagaController = require('./controllers/vagaController');
 const InscricaoController = require('./controllers/inscricaoController');
 const AuthController = require('./controllers/authController');
+const CandidatoController = require('./controllers/CandidatoController');
 
 // --- ROTA DE BOAS-VINDAS ---
 routes.get('/', (req, res) => {
@@ -23,26 +27,47 @@ routes.get('/', (req, res) => {
   });
 });
 
-// --- ROTAS PÚBLICAS (Com Validação de Dados) ---
-// Note que o 'validate' vem ANTES do Controller
+// --- ROTAS PÚBLICAS ---
 routes.post('/usuarios', validate(usuarioSchema), UsuarioController.registrar);
 routes.post('/login', validate(loginSchema), AuthController.login);
-
 routes.get('/vagas', VagaController.listar); 
 
 // --- ROTAS PROTEGIDAS (Necessário Token) ---
 
-// 3. Rotas acessíveis por QUALQUER usuário logado (Candidato ou RH)
-routes.get('/vagas/recomendadas', authMiddleware, VagaController.listarRecomendadas);
-routes.post('/inscricoes', authMiddleware, InscricaoController.inscrever);
-routes.get('/inscricoes/minhas', authMiddleware, InscricaoController.listarMinhasInscricoes);
+// 1. Perfil do Candidato (Upload de Laudo)
+routes.patch(
+  '/perfil/laudo', 
+  authMiddleware, 
+  authorize(['Candidato']), 
+  upload.single('laudo'), 
+  CandidatoController.atualizarLaudo
+);
 
-// 4. Rotas EXCLUSIVAS para RH
+// 2. Ações do Candidato
+routes.get('/vagas/recomendadas', authMiddleware, authorize(['Candidato']), VagaController.listarRecomendadas);
+
+routes.post(
+  '/inscricoes', 
+  authMiddleware, 
+  authorize(['Candidato']), 
+  validate(inscricaoSchema), 
+  InscricaoController.inscrever
+);
+
+routes.get(
+  '/inscricoes/minhas', 
+  authMiddleware, 
+  authorize(['Candidato']), 
+  InscricaoController.listarMinhasInscricoes
+);
+
+// 3. Ações do RH
 routes.post(
   '/vagas', 
   authMiddleware, 
   authorize(['RH']), 
-  VagaController.cadastrar
+  validate(vagaSchema), 
+  VagaController.criar
 );
 
 routes.get(

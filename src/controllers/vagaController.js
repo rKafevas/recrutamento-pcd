@@ -1,38 +1,47 @@
 const VagaService = require('../services/vagaService');
 
 class VagaController {
-  async cadastrar(req, res) {
+  // Alterado de 'cadastrar' para 'criar' para bater com o padrão das suas rotas
+  async criar(req, res, next) {
     try {
-      const vaga = await VagaService.anunciarVaga(req.body);
-      return res.status(201).json(vaga);
+      // 1. O Joi já validou o req.body antes de chegar aqui.
+      // 2. O authMiddleware já colocou o ID do usuário logado (RH) no req.usuarioId.
+      const rh_id = req.usuarioId;
+      const dadosVaga = req.body;
+
+      const vaga = await VagaService.anunciarVaga(rh_id, dadosVaga);
+      
+      return res.status(201).json({
+        mensagem: "Vaga cadastrada com sucesso!",
+        vaga
+      });
     } catch (err) {
-      return res.status(500).json({ error: 'Erro ao cadastrar vaga' });
+      // Manda para o Error Handler Global do server.js
+      next(err);
     }
   }
 
-  async listar(req, res) {
+  async listar(req, res, next) {
     try {
       const vagas = await VagaService.listarVagas();
       return res.json(vagas);
     } catch (err) {
-      return res.status(500).json({ error: 'Erro ao listar vagas' });
+      next(err);
     }
   }
   
-  async listarRecomendadas(req, res) {
+  async listarRecomendadas(req, res, next) {
     try {
-      // Em vez de req.query, usamos o ID que o authMiddleware extraiu do Token
+      // Usamos o ID que o authMiddleware extraiu do Token JWT
       const usuarioId = req.usuarioId; 
     
-      // O Service agora recebe o ID do usuário e faz o trabalho pesado
       const vagas = await VagaService.recomendarVagasParaCandidato(usuarioId);
     
       return res.json(vagas);
     } catch (err) {
-      console.error("ERRO RECOMENDAÇÕES:", err);
-      return res.status(500).json({ error: 'Erro ao filtrar vagas recomendadas' });
+      next(err);
+    }
   }
-}
 }
 
 module.exports = new VagaController();

@@ -1,50 +1,61 @@
 const InscricaoRepository = require('../repositories/inscricaoRepository');
-const db = require('../database'); // Para fazer a busca rápida do candidato_id
 
 class InscricaoService {
   async seCandidatar(usuarioId, vagaId) {
-    // 1. TRADUÇÃO: O Token nos dá o usuarioId, mas a inscrição precisa do candidatoId
-    const queryCandidato = 'SELECT id FROM candidatos WHERE usuario_id = $1';
-    const resultCandidato = await db.query(queryCandidato, [usuarioId]);
-
-    if (resultCandidato.rows.length === 0) {
-      throw new Error('Perfil de candidato não encontrado para este usuário.');
-    }
-    const candidatoId = resultCandidato.rows[0].id;
-
-    // 2. REGRA DE NEGÓCIO: Não permitir duas inscrições na mesma vaga
-    const jaInscrito = await InscricaoRepository.buscarInscricaoEspecifica(candidatoId, vagaId);
+    // 1. REGRA DE NEGÓCIO: Verificar se o candidato já está inscrito
+    // Delegamos a verificação de duplicidade para o repository de forma limpa
+    const jaInscrito = await InscricaoRepository.verificarDuplicidade(usuarioId, vagaId);
+    
     if (jaInscrito) {
-      throw new Error('Você já está inscrito nesta vaga.');
+      const error = new Error('Você já está inscrito nesta vaga.');
+      error.status = 409; // Conflict
+      throw error;
     }
 
-    // 3. EXECUÇÃO: Cria a inscrição via Repository
-    return await InscricaoRepository.criar(candidatoId, vagaId);
+    // 2. EXECUÇÃO: O Repository agora cuida de descobrir o candidato_id internamente
+    return await InscricaoRepository.criar(usuario_id, vaga_id);
   }
 
   async verMinhasInscricoes(usuarioId) {
-    // Primeiro descobrimos quem é o candidato
-    const queryCandidato = 'SELECT id FROM candidatos WHERE usuario_id = $1';
-    const resultCandidato = await db.query(queryCandidato, [usuarioId]);
-
-    if (resultCandidato.rows.length === 0) return [];
+    const lista = await InscricaoRepository.listarPorCandidato(usuarioId);
     
-    const candidatoId = resultCandidato.rows[0].id;
-    return await InscricaoRepository.listarPorCandidato(candidatoId);
+    if (!lista || lista.length === 0) {
+      return [];
+    }
+    
+    return lista;
   }
 
-  async verInscritosNaVaga(vagaId) {
-    return await InscricaoRepository.listarPorVaga(vagaId);
+  async listarInscritosPorVaga(vagaId) {
+    const inscritos = await InscricaoRepository.listarPorVaga(vagaId);
+    
+    if (!inscritos) {
+      const error = new Error('Vaga não encontrada ou sem inscritos.');
+      error.status = 404;
+      throw error;
+    }
+    
+    return inscritos;
   }
 
-  async alterarStatusInscricao(id, novoStatus) {
+  async alterarStatus(id, novoStatus) {
     const statusPermitidos = ['Pendente', 'Aprovado', 'Reprovado', 'Entrevista'];
   
     if (!statusPermitidos.includes(novoStatus)) {
-      throw new Error('Status inválido. Escolha entre: ' + statusPermitidos.join(', '));
+      const error = new Error(`Status inválido. Escolha entre: ${statusPermitidos.join(', ')}`);
+      error.status = 400; // Bad Request
+      throw error;
     }
     
-    return await InscricaoRepository.atualizarStatus(id, novoStatus);
+    const atualizada = await InscricaoRepository.atualizarStatus(id, novoStatus);
+    
+    if (!atualizada) {
+      const error = new Error('Inscrição não encontrada para atualização.');
+      error.status = 404;
+      throw error;
+    }
+
+    return atualizada;
   }
 }
 

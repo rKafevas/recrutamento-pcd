@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inclusão & Oportunidade - Recrutamento PcD</title>
+    <!-- Importando o Tailwind CSS para estilização rápida e profissional -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ajuste de rolagem suave para a página */
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="bg-blue-50 font-sans text-gray-800">
+
+    <!-- CABEÇALHO (HEADER) -->
+    <header class="bg-blue-900 text-white shadow-md fixed w-full z-50 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold tracking-tight">
+                Inclui<span class="text-orange-300">+</span>
+            </div>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#direitos" class="hover:text-blue-300 transition">Seus Direitos</a>
+                <a href="#como-funciona" class="hover:text-blue-300 transition">Como Funciona</a>
+            </nav>
+            <div>
+                <a href="/login" class="text-white hover:text-blue-200 mr-4 font-semibold">Entrar</a>
+                <a href="/cadastro" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-bold shadow transition">Cadastrar Currículo</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION (ESTILO PÁGINA DE VENDAS) -->
+    <section class="pt-32 pb-20 bg-gradient-to-b from-blue-900 to-blue-800 text-white">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-6">
+                    O mercado de trabalho precisa do seu talento.
+                </h1>
+                <p class="text-lg md:text-xl mb-8 text-blue-100">
+                    Conectamos profissionais com deficiência a empresas inclusivas. Nossa plataforma faz o "match" inteligente respeitando seu perfil e suas necessidades de acessibilidade.
+                </p>
+                <a href="/cadastro" class="bg-blue-500 hover:bg-blue-400 text-white text-lg font-bold py-4 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1 inline-block">
+                    Ver Vagas Disponíveis
+                </a>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <!-- IMAGEM IA 1 -->
+                <img src="/frontend/src/assets/hero-pcd.png" alt="Profissional com deficiência sorrindo em um ambiente corporativo moderno" class="rounded-xl shadow-2xl border-4 border-blue-400">
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DE DIREITOS E LEIS (FOCO EM EMPREGABILIDADE) -->
+    <section id="direitos" class="py-20 bg-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold text-blue-900 mb-4">Conheça Seus Direitos no Mercado de Trabalho</h2>
+            <p class="text-gray-600 mb-12 max-w-2xl mx-auto">A legislação brasileira garante a sua inclusão. Entenda as principais leis que protegem e impulsionam a sua carreira profissional.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-blue-50 p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition">
+                    <div class="text-blue-600 text-4xl mb-4">⚖️</div>
+                    <h3 class="text-xl font-bold text-blue-900 mb-3">Lei de Cotas (Art. 93, Lei 8.213/91)</h3>
+                    <p class="text-gray-700 text-sm">
+                        Empresas com 100 ou mais funcionários são obrigadas a preencher de 2% a 5% de seus cargos com beneficiários reabilitados ou pessoas com deficiência.
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-blue-50 p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition">
+                    <div class="text-blue-600 text-4xl mb-4">📘</div>
+                    <h3 class="text-xl font-bold text-blue-900 mb-3">LBI (Estatuto da Pessoa com Deficiência)</h3>
+                    <p class="text-gray-700 text-sm">
+                        A Lei 13.146/2015 garante o direito ao trabalho de sua livre escolha, em ambiente acessível e inclusivo, em igualdade de oportunidades.
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-blue-50 p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition">
+                    <div class="text-blue-600 text-4xl mb-4">🏢</div>
+                    <h3 class="text-xl font-bold text-blue-900 mb-3">Adaptação Razoável</h3>
+                    <p class="text-gray-700 text-sm">
+                        É direito do trabalhador exigir modificações e ajustes no ambiente de trabalho que garantam o exercício de suas funções com autonomia e segurança.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO: CALL TO ACTION E IMAGEM 2 -->
+    <section class="py-20 bg-blue-100">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row-reverse items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0 md:pl-12">
+                <h2 class="text-3xl font-bold text-blue-900 mb-6">Cadastre seu laudo com segurança e facilidade.</h2>
+                <p class="text-gray-700 mb-6">
+                    Nossa plataforma permite que você anexe seu laudo médico de forma 100% segura. Apenas o RH da vaga em que você se inscrever terá acesso, respeitando a LGPD.
+                </p>
+                <ul class="mb-8 space-y-3">
+                    <li class="flex items-center text-blue-800"><span class="font-bold mr-2">✓</span> Match inteligente com vagas do seu perfil</li>
+                    <li class="flex items-center text-blue-800"><span class="font-bold mr-2">✓</span> Proteção de dados sensíveis de saúde</li>
+                    <li class="flex items-center text-blue-800"><span class="font-bold mr-2">✓</span> Acompanhamento de status de inscrição</li>
+                </ul>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <!-- IMAGEM IA 2 -->
+                <img src="/frontend/src/assets/reuniao-inclusiva.png" alt="Pessoa com deficiência auditiva em uma reunião de trabalho inclusiva" class="rounded-full shadow-xl border-8 border-white object-cover w-96 h-96">
+            </div>
+        </div>
+    </section>
+
+    <!-- RODAPÉ (FOOTER) -->
+    <footer class="bg-gray-900 text-gray-400 py-10">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h4 class="text-white text-lg font-bold mb-4">Inclui+</h4>
+                <p class="text-sm">Conectando talentos a oportunidades reais. Promovendo acessibilidade e respeito no mercado de trabalho brasileiro.</p>
+            </div>
+            <div>
+                <h4 class="text-white text-lg font-bold mb-4">Links Úteis</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-white transition">Vagas Disponíveis</a></li>
+                    <li><a href="#" class="hover:text-white transition">Portal do Trabalhador</a></li>
+                    <li><a href="#" class="hover:text-white transition">Cartilha de Direitos PcD</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white text-lg font-bold mb-4">Contato</h4>
+                <p class="text-sm mb-2">Suporte: ajuda@inclusaoempregos.com.br</p>
+                <p class="text-sm">Desenvolvido com foco em acessibilidade e performance.</p>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+            <p>&copy; 2026 Inclui+. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
