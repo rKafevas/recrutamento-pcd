@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Meu Currículo</title>
+
+  <style>
+
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      min-height: 100vh;
+
+      background: linear-gradient(135deg, #114ea8, #1e74df);
+
+      color: white;
+
+      transition: 0.3s;
+
+      padding-bottom: 40px;
+    }
+
+    /* ALTO CONTRASTE */
+
+    body.high-contrast{
+      background: black;
+      color: yellow;
+    }
+
+    body.high-contrast .card,
+    body.high-contrast .topbar{
+      background: #111;
+      border: 2px solid yellow;
+    }
+
+    body.high-contrast input,
+    body.high-contrast textarea{
+      background: white;
+      color: black;
+    }
+
+    body.high-contrast .save-btn{
+      background: yellow;
+      color: black;
+    }
+
+    body.high-contrast .contrast-btn{
+      color: yellow;
+      border-color: yellow;
+    }
+
+    /* TOPO */
+
+    .topbar{
+
+      width: 100%;
+      height: 70px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 0 25px;
+
+      background: rgba(255,255,255,0.08);
+
+      backdrop-filter: blur(5px);
+
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .logo{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo img{
+      width: 45px;
+      height: 45px;
+
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .logo h2{
+      font-size: 22px;
+    }
+
+    .contrast-btn{
+
+      padding: 10px 18px;
+
+      border-radius: 30px;
+
+      border: 2px solid rgba(255,255,255,0.7);
+
+      background: transparent;
+
+      color: white;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: 0.3s;
+    }
+
+    /* CONTAINER */
+
+    .container{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+
+      padding: 40px 20px;
+    }
+
+    /* CARD */
+
+    .card{
+
+      width: 100%;
+      max-width: 650px;
+
+      background: rgba(255,255,255,0.12);
+
+      border-radius: 20px;
+
+      padding: 30px;
+
+      backdrop-filter: blur(5px);
+
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .card h1{
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    .card p{
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    /* INPUTS */
+
+    .input-group{
+      margin-bottom: 22px;
+    }
+
+    .input-group label{
+
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .input-group input,
+    .input-group textarea{
+
+      width: 100%;
+
+      border: none;
+      border-radius: 12px;
+
+      padding: 14px;
+
+      font-size: 15px;
+
+      background: #e9edf2;
+    }
+
+    .input-group textarea{
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus{
+      outline: none;
+    }
+
+    /* PDF */
+
+    .file-box{
+
+      width: 100%;
+
+      background: rgba(255,255,255,0.1);
+
+      border: 2px dashed rgba(255,255,255,0.5);
+
+      border-radius: 15px;
+
+      padding: 25px;
+
+      text-align: center;
+    }
+
+    .file-box input{
+      margin-top: 15px;
+      background: transparent;
+      color: white;
+    }
+
+    /* BOTÃO */
+
+    .save-btn{
+
+      width: 100%;
+      height: 50px;
+
+      border: none;
+      border-radius: 12px;
+
+      background: #ff8400;
+
+      color: white;
+
+      font-size: 17px;
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: 0.3s;
+    }
+
+    .save-btn:hover{
+      background: #ff9500;
+    }
+
+    /* VOLTAR */
+
+    .back{
+
+      display: inline-block;
+
+      margin-top: 25px;
+
+      color: white;
+
+      font-size: 17px;
+      font-weight: bold;
+
+      text-decoration: none;
+    }
+
+    .back:hover{
+      text-decoration: underline;
+    }
+
+    /* VLIBRAS */
+
+    .vw-access-button{
+      right: 15px !important;
+      top: 50% !important;
+      transform: translateY(-50%);
+    }
+
+    /* RESPONSIVO */
+
+    @media(max-width: 700px){
+
+      .topbar{
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 15px;
+      }
+
+      .card h1{
+        font-size: 26px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- TOPO -->
+
+  <div class="topbar">
+
+    <div class="logo">
+
+      <img src="logo.png.jpeg" alt="Logo Inclui+">
+
+      <h2>Inclui+</h2>
+
+    </div>
+
+    <button class="contrast-btn" onclick="toggleContrast()">
+      🌙 Alto Contraste
+    </button>
+
+  </div>
+
+  <!-- CONTAINER -->
+
+  <div class="container">
+
+    <div class="card">
+
+      <h1>📄 Meu Currículo</h1>
+
+      <p>
+        Atualize suas informações profissionais e envie seu currículo em PDF.
+      </p>
+
+      <!-- FORM -->
+
+      <form>
+
+        <div class="input-group">
+
+          <label>Nome completo</label>
+
+          <input 
+            type="text"
+            placeholder="Digite seu nome"
+          >
+
+        </div>
+
+        <div class="input-group">
+
+          <label>Email</label>
+
+          <input 
+            type="email"
+            placeholder="Digite seu email"
+          >
+
+        </div>
+
+        <div class="input-group">
+
+          <label>Telefone</label>
+
+          <input 
+            type="text"
+            placeholder="Digite seu telefone"
+          >
+
+        </div>
+
+        <div class="input-group">
+
+          <label>Sobre você</label>
+
+          <textarea placeholder="Fale sobre suas experiências e habilidades"></textarea>
+
+        </div>
+
+        <!-- PDF -->
+
+        <div class="input-group">
+
+          <label>Anexar currículo (PDF)</label>
+
+          <div class="file-box">
+
+            <p>
+              📎 Selecione um arquivo PDF
+            </p>
+
+            <!-- AQUI ENVIA O PDF -->
+
+            <input 
+              type="file"
+              accept=".pdf"
+            >
+
+          </div>
+
+        </div>
+
+        <!-- BOTÃO -->
+
+        <button 
+          type="button"
+          class="save-btn"
+          onclick="salvarCurriculo()"
+        >
+          Salvar currículo
+        </button>
+
+      </form>
+
+      <!-- VOLTAR -->
+
+      <a href="home.html" class="back">
+        ← Voltar para Home
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- VLIBRAS -->
+
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+  <script>
+
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+    function toggleContrast(){
+      document.body.classList.toggle("high-contrast");
+    }
+
+    async function salvarCurriculo() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Você precisa estar logado.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const arquivo = document.querySelector('input[type="file"]').files[0];
+      if (!arquivo) {
+        alert('Selecione um arquivo PDF do currículo.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('curriculo', arquivo);
+
+      // Campos de texto opcionais, caso o backend aceite
+      const nome = document.querySelector('input[type="text"]')?.value;
+      const sobre = document.querySelector('textarea')?.value;
+      if (nome) formData.append('nome', nome);
+      if (sobre) formData.append('sobre', sobre);
+
+      try {
+        // Ajuste o endpoint conforme sua rota real de currículo
+        const resposta = await fetch('http://localhost:3000/perfil/curriculo', {
+          method: 'PATCH',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
+        });
+
+        const resultado = await resposta.json();
+
+        if (resposta.ok) {
+          alert('Currículo salvo com sucesso!');
+        } else {
+          alert('Erro: ' + (resultado.mensagem || 'Verifique os dados e tente novamente.'));
+        }
+      } catch (e) {
+        alert('Não foi possível conectar ao servidor.');
+      }
+    }
+
+  </script>
+
+</body>
+</html>

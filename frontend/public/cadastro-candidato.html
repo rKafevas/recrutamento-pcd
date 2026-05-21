@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Cadastro Candidato</title>
+
+  <style>
+    /* TODOS OS SEUS ESTILOS MANTIDOS INTACTOS */
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #114ea8, #1e74df);
+      overflow-x: hidden;
+      position: relative;
+      transition: 0.3s;
+      padding: 40px 0;
+    }
+
+    /* ALTO CONTRASTE */
+    body.high-contrast{ background: black; }
+    body.high-contrast .register-card{ background: #111; border: 2px solid yellow; }
+    body.high-contrast input, body.high-contrast select{ background: white; color: black; }
+    body.high-contrast label, body.high-contrast .subtitle, body.high-contrast .login-link, body.high-contrast .contrast-btn{ color: yellow; }
+    body.high-contrast .register-btn{ background: yellow; color: black; }
+
+    /* BOTÃO CONTRASTE */
+    .contrast-btn{ position: absolute; top: 18px; right: 18px; padding: 10px 22px; border-radius: 30px; border: 2px solid rgba(255,255,255,0.8); background: transparent; color: white; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .contrast-btn:hover{ background: rgba(255,255,255,0.1); }
+
+    /* CARD */
+    .register-card{ width: 380px; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 35px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); backdrop-filter: blur(5px); color: white; transition: 0.3s; }
+
+    /* LOGO */
+    .logo-box{ width: 135px; height: 135px; margin: 0 auto 18px; background: #f5f5f5; border-radius: 18px; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .logo-box img{ width: 100%; height: 100%; object-fit: cover; }
+    .subtitle{ text-align: center; font-size: 15px; margin-bottom: 25px; }
+
+    /* INPUTS */
+    .input-group{ margin-bottom: 18px; }
+    .input-group label{ display: block; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
+    .input-group input, .input-group select{ width: 100%; height: 45px; border: none; border-radius: 10px; background: #e9edf2; padding: 0 14px; font-size: 15px; }
+    .input-group input:focus, .input-group select:focus{ outline: none; }
+
+    /* BOTÃO */
+    .register-btn{ width: 100%; height: 50px; border: none; border-radius: 12px; background: #ff8400; color: white; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+    .register-btn:hover{ background: #ff9500; transform: scale(1.01); }
+
+    /* LOGIN LINK */
+    .login-link{ margin-top: 22px; text-align: center; font-size: 15px; font-weight: bold; }
+    .login-link a{ color: #ffb347; }
+
+    /* VLIBRAS */
+    .vw-access-button{ right: 15px !important; top: 50% !important; transform: translateY(-50%); }
+
+    /* RESPONSIVO */
+    @media(max-width: 500px){ .register-card{ width: 90%; padding: 30px 25px; } .logo-box{ width: 120px; height: 120px; } }
+  </style>
+</head>
+
+<body>
+
+  <button class="contrast-btn" onclick="toggleContrast()">
+    🌙 Alto Contraste
+  </button>
+
+  <div class="register-card">
+
+    <div class="logo-box">
+      <img src="logo.png.jpeg" alt="Logo Inclui+">
+    </div>
+
+    <p class="subtitle">Crie sua conta como <strong>Candidato PcD</strong></p>
+
+    <form id="cadastroForm">
+
+      <div class="input-group">
+        <label>Nome completo</label>
+        <input type="text" id="nome" placeholder="Digite seu nome">
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="Digite seu email">
+      </div>
+
+      <div class="input-group">
+        <label>Senha</label>
+        <input type="password" id="senha" placeholder="Crie sua senha">
+      </div>
+
+      <div class="input-group">
+        <label>Confirmar senha</label>
+        <input type="password" id="confirmarSenha" placeholder="Confirme sua senha">
+      </div>
+
+      <!-- Campo tipo removido: o backend cadastra apenas Candidatos via este endpoint -->
+
+      <div class="input-group">
+        <label>Tipo de deficiência (Se for candidato)</label>
+        <input type="text" id="tipoDeficiencia" placeholder="Ex: Visual, Auditiva, Motora...">
+      </div>
+
+      <button 
+        class="register-btn" 
+        type="button"
+        onclick="executarCadastro()"
+      >
+        Criar conta
+      </button>
+
+      <p class="login-link">
+        Já possui conta?
+        <a href="login.html">
+          Entrar
+        </a>
+      </p>
+
+    </form>
+
+  </div>
+
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+  <script>
+    // Inicializa o VLibras
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+    // Função de alto contraste
+    function toggleContrast(){
+      document.body.classList.toggle("high-contrast");
+    }
+
+    // NOVA FUNÇÃO DE INTEGRAÇÃO COM O BACKEND
+    async function executarCadastro() {
+      const nome = document.getElementById('nome').value;
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+      const confirmarSenha = document.getElementById('confirmarSenha').value;
+      const tipoDeficiencia = document.getElementById('tipoDeficiencia').value;
+
+      // Validação básica no front-end
+      if (!nome || !email || !senha) {
+        alert("Preencha todos os campos obrigatórios (Nome, Email, Senha).");
+        return;
+      }
+
+      if (senha !== confirmarSenha) {
+        alert("As senhas não coincidem!");
+        return;
+      }
+
+      // Montando o objeto para o backend
+      // Montando o objeto para o backend
+      // Montando o objeto para o backend
+      const dadosCadastro = {
+        nome_completo: nome,
+        email: email,
+        senha: senha,
+        tipo_deficiencia: tipoDeficiencia || null
+      };
+
+      try {
+        // Altere a porta caso seu backend não esteja rodando na 3000
+        const resposta = await fetch('http://localhost:3000/usuarios', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dadosCadastro)
+        });
+
+        const resultado = await resposta.json();
+
+        if (resposta.ok) {
+          alert('Conta criada com sucesso! Redirecionando para o login...');
+          window.location.href = 'login.html';
+        } else {
+          // Exibe a mensagem de erro vinda do Joi/Controller
+          alert('Erro ao cadastrar: ' + (resultado.mensagem || 'Verifique os dados enviados.'));
+        }
+      } catch (erro) {
+        console.error('Erro na requisição:', erro);
+        alert('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,137 +1,599 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inclusão & Oportunidade - Recrutamento PcD</title>
-    <!-- Importando o Tailwind CSS para estilização rápida e profissional -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Ajuste de rolagem suave para a página */
-        html { scroll-behavior: smooth; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Plataforma Inclusiva</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --blue-deep: #0d3b8e;
+      --blue-mid: #1558c0;
+      --blue-light: #1e74df;
+      --orange: #f47c20;
+      --orange-hover: #e06b10;
+      --white: #ffffff;
+      --white-soft: rgba(255,255,255,0.08);
+      --white-border: rgba(255,255,255,0.15);
+      --text-muted: rgba(255,255,255,0.7);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(160deg, var(--blue-deep) 0%, var(--blue-light) 100%);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    /* ALTO CONTRASTE */
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .navbar, body.high-contrast .card, body.high-contrast .info-box,
+    body.high-contrast .perfil-card, body.high-contrast .stat-card { background: #111 !important; border: 2px solid #ff0 !important; }
+    body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
+    body.high-contrast .btn-outline { border-color: #ff0 !important; color: #ff0 !important; }
+    body.high-contrast .text-muted { color: #ff0 !important; opacity: 0.8; }
+
+    /* NAVBAR */
+    .navbar {
+      position: sticky; top: 0; z-index: 999;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 48px;
+      background: rgba(13,59,142,0.7);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--white-border);
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--white-border);
+      color: var(--white);
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-ghost:hover { background: var(--white-soft); }
+
+    .btn-primary {
+      background: var(--orange);
+      border: none;
+      color: var(--white);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-primary:hover { background: var(--orange-hover); }
+
+    /* HERO */
+    .hero {
+      max-width: 1200px;
+      margin: 80px auto 60px;
+      padding: 0 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: rgba(244,124,32,0.12);
+      border: 1px solid rgba(244,124,32,0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--orange);
+    }
+
+    .hero p {
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--white-border);
+      color: var(--white);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-outline:hover { background: var(--white-soft); }
+
+    .hero-image img {
+      width: 100%;
+      border-radius: 20px;
+      object-fit: cover;
+      height: 420px;
+      display: block;
+      filter: brightness(0.9);
+    }
+
+    /* DIVISOR */
+    .divider {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+      border-top: 1px solid var(--white-border);
+    }
+
+    /* SEÇÕES */
+    .section {
+      max-width: 1200px;
+      margin: 70px auto;
+      padding: 0 48px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .section-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    /* PERFIL CARDS */
+    .perfil-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .perfil-card {
+      background: var(--white-soft);
+      border: 1px solid var(--white-border);
+      border-radius: 16px;
+      padding: 36px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .perfil-card:hover {
+      background: rgba(255,255,255,0.13);
+      border-color: rgba(255,255,255,0.3);
+      transform: translateY(-3px);
+    }
+
+    .perfil-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .perfil-tag.candidato { background: rgba(244,124,32,0.15); color: #f47c20; border: 1px solid rgba(244,124,32,0.3); }
+    .perfil-tag.rh { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+
+    .perfil-card h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .perfil-card p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    .perfil-card .btn-primary { font-size: 14px; padding: 10px 20px; pointer-events: none; }
+    .perfil-card.rh-card .btn-primary { background: white; color: var(--blue-deep); }
+    .perfil-card.rh-card .btn-primary:hover { background: #e8eef8; }
+
+    /* FEATURES GRID */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--white-soft);
+      border: 1px solid var(--white-border);
+      border-radius: 14px;
+      padding: 28px 24px;
+      transition: 0.2s;
+    }
+
+    .feature-card:hover { background: rgba(255,255,255,0.12); }
+
+    .feature-icon {
+      width: 40px; height: 40px;
+      background: rgba(244,124,32,0.15);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .feature-icon svg { width: 20px; height: 20px; stroke: var(--orange); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .feature-card h4 {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p { font-size: 14px; line-height: 1.6; color: var(--text-muted); }
+
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: var(--white-soft);
+      border: 1px solid var(--white-border);
+      border-radius: 14px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Sora', sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 8px;
+    }
+
+    .stat-label { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+
+    /* INFO CARDS (direitos, curiosidades) */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .info-box {
+      background: var(--white-soft);
+      border: 1px solid var(--white-border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: 0.2s;
+    }
+
+    .info-box:hover { background: rgba(255,255,255,0.12); }
+
+    .info-box h4 {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .info-box p { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+
+    /* CARDS COM IMAGEM */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--white-soft);
+      border: 1px solid var(--white-border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: 0.2s;
+    }
+
+    .card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.12); }
+
+    .card img { width: 100%; height: 160px; object-fit: cover; display: block; filter: brightness(0.85); }
+
+    .card-body { padding: 22px; }
+
+    .card-body h4 { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+
+    .card-body p { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+
+    /* FOOTER */
+    .footer {
+      border-top: 1px solid var(--white-border);
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 80px;
+    }
+
+    .footer p { font-size: 14px; color: var(--text-muted); }
+
+    .text-muted { color: var(--text-muted); }
+
+    /* RESPONSIVO */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .info-grid { grid-template-columns: repeat(2, 1fr); }
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 14px 20px; }
+      .hero { grid-template-columns: 1fr; padding: 0 20px; margin: 40px auto; gap: 30px; }
+      .hero h1 { font-size: 36px; }
+      .hero-image img { height: 260px; }
+      .section { padding: 0 20px; margin: 50px auto; }
+      .perfil-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .footer { flex-direction: column; gap: 10px; text-align: center; padding: 24px 20px; }
+    }
+  </style>
 </head>
-<body class="bg-blue-50 font-sans text-gray-800">
+<body>
 
-    <!-- CABEÇALHO (HEADER) -->
-    <header class="bg-blue-900 text-white shadow-md fixed w-full z-50 top-0">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold tracking-tight">
-                Inclui<span class="text-orange-300">+</span>
-            </div>
-            <nav class="hidden md:flex space-x-6">
-                <a href="#direitos" class="hover:text-blue-300 transition">Seus Direitos</a>
-                <a href="#como-funciona" class="hover:text-blue-300 transition">Como Funciona</a>
-            </nav>
-            <div>
-                <a href="/login" class="text-white hover:text-blue-200 mr-4 font-semibold">Entrar</a>
-                <a href="/cadastro" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-bold shadow transition">Cadastrar Currículo</a>
-            </div>
-        </div>
-    </header>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo.png.jpeg" alt="Logo Inclui+">
+      <span>Inclui+</span>
+    </div>
+    <div class="nav-right">
+      <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
+      <button class="btn-primary" onclick="window.location.href='login.html'">Entrar</button>
+    </div>
+  </nav>
 
-    <!-- HERO SECTION (ESTILO PÁGINA DE VENDAS) -->
-    <section class="pt-32 pb-20 bg-gradient-to-b from-blue-900 to-blue-800 text-white">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 mb-10 md:mb-0">
-                <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-6">
-                    O mercado de trabalho precisa do seu talento.
-                </h1>
-                <p class="text-lg md:text-xl mb-8 text-blue-100">
-                    Conectamos profissionais com deficiência a empresas inclusivas. Nossa plataforma faz o "match" inteligente respeitando seu perfil e suas necessidades de acessibilidade.
-                </p>
-                <a href="/cadastro" class="bg-blue-500 hover:bg-blue-400 text-white text-lg font-bold py-4 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1 inline-block">
-                    Ver Vagas Disponíveis
-                </a>
-            </div>
-            <div class="md:w-1/2 flex justify-center">
-                <!-- IMAGEM IA 1 -->
-                <img src="/frontend/src/assets/hero-pcd.png" alt="Profissional com deficiência sorrindo em um ambiente corporativo moderno" class="rounded-xl shadow-2xl border-4 border-blue-400">
-            </div>
-        </div>
-    </section>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <div class="hero-label">Plataforma inclusiva PcD</div>
+      <h1>Conectando talentos <em>PcD</em> ao mercado de trabalho</h1>
+      <p>O Inclui+ aproxima pessoas com deficiência de oportunidades profissionais reais, com acessibilidade digital e suporte completo.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('perfil-section').scrollIntoView({behavior:'smooth'})">Começar agora</button>
+        <button class="btn-outline" onclick="window.location.href='login.html'">Já tenho conta</button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200&auto=format&fit=crop" alt="Inclusão e diversidade no trabalho">
+    </div>
+  </section>
 
-    <!-- SEÇÃO DE DIREITOS E LEIS (FOCO EM EMPREGABILIDADE) -->
-    <section id="direitos" class="py-20 bg-white">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-3xl font-bold text-blue-900 mb-4">Conheça Seus Direitos no Mercado de Trabalho</h2>
-            <p class="text-gray-600 mb-12 max-w-2xl mx-auto">A legislação brasileira garante a sua inclusão. Entenda as principais leis que protegem e impulsionam a sua carreira profissional.</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Card 1 -->
-                <div class="bg-blue-50 p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition">
-                    <div class="text-blue-600 text-4xl mb-4">⚖️</div>
-                    <h3 class="text-xl font-bold text-blue-900 mb-3">Lei de Cotas (Art. 93, Lei 8.213/91)</h3>
-                    <p class="text-gray-700 text-sm">
-                        Empresas com 100 ou mais funcionários são obrigadas a preencher de 2% a 5% de seus cargos com beneficiários reabilitados ou pessoas com deficiência.
-                    </p>
-                </div>
-                <!-- Card 2 -->
-                <div class="bg-blue-50 p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition">
-                    <div class="text-blue-600 text-4xl mb-4">📘</div>
-                    <h3 class="text-xl font-bold text-blue-900 mb-3">LBI (Estatuto da Pessoa com Deficiência)</h3>
-                    <p class="text-gray-700 text-sm">
-                        A Lei 13.146/2015 garante o direito ao trabalho de sua livre escolha, em ambiente acessível e inclusivo, em igualdade de oportunidades.
-                    </p>
-                </div>
-                <!-- Card 3 -->
-                <div class="bg-blue-50 p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition">
-                    <div class="text-blue-600 text-4xl mb-4">🏢</div>
-                    <h3 class="text-xl font-bold text-blue-900 mb-3">Adaptação Razoável</h3>
-                    <p class="text-gray-700 text-sm">
-                        É direito do trabalhador exigir modificações e ajustes no ambiente de trabalho que garantam o exercício de suas funções com autonomia e segurança.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- ESCOLHA DE PERFIL -->
+  <section class="section" id="perfil-section">
+    <div class="section-label">Cadastro</div>
+    <h2 class="section-title">Como você quer usar o Inclui+?</h2>
+    <p class="section-sub">Escolha seu perfil para criar sua conta</p>
 
-    <!-- SEÇÃO: CALL TO ACTION E IMAGEM 2 -->
-    <section class="py-20 bg-blue-100">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row-reverse items-center">
-            <div class="md:w-1/2 mb-10 md:mb-0 md:pl-12">
-                <h2 class="text-3xl font-bold text-blue-900 mb-6">Cadastre seu laudo com segurança e facilidade.</h2>
-                <p class="text-gray-700 mb-6">
-                    Nossa plataforma permite que você anexe seu laudo médico de forma 100% segura. Apenas o RH da vaga em que você se inscrever terá acesso, respeitando a LGPD.
-                </p>
-                <ul class="mb-8 space-y-3">
-                    <li class="flex items-center text-blue-800"><span class="font-bold mr-2">✓</span> Match inteligente com vagas do seu perfil</li>
-                    <li class="flex items-center text-blue-800"><span class="font-bold mr-2">✓</span> Proteção de dados sensíveis de saúde</li>
-                    <li class="flex items-center text-blue-800"><span class="font-bold mr-2">✓</span> Acompanhamento de status de inscrição</li>
-                </ul>
-            </div>
-            <div class="md:w-1/2 flex justify-center">
-                <!-- IMAGEM IA 2 -->
-                <img src="/frontend/src/assets/reuniao-inclusiva.png" alt="Pessoa com deficiência auditiva em uma reunião de trabalho inclusiva" class="rounded-full shadow-xl border-8 border-white object-cover w-96 h-96">
-            </div>
-        </div>
-    </section>
+    <div class="perfil-grid">
+      <div class="perfil-card" onclick="window.location.href='cadastro-candidato.html'">
+        <div class="perfil-tag candidato">Candidato PcD</div>
+        <h3>Quero me candidatar</h3>
+        <p>Sou uma pessoa com deficiência em busca de oportunidades profissionais inclusivas e empresas que valorizam a diversidade.</p>
+        <button class="btn-primary">Criar conta como Candidato</button>
+      </div>
 
-    <!-- RODAPÉ (FOOTER) -->
-    <footer class="bg-gray-900 text-gray-400 py-10">
-        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-                <h4 class="text-white text-lg font-bold mb-4">Inclui+</h4>
-                <p class="text-sm">Conectando talentos a oportunidades reais. Promovendo acessibilidade e respeito no mercado de trabalho brasileiro.</p>
-            </div>
-            <div>
-                <h4 class="text-white text-lg font-bold mb-4">Links Úteis</h4>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-white transition">Vagas Disponíveis</a></li>
-                    <li><a href="#" class="hover:text-white transition">Portal do Trabalhador</a></li>
-                    <li><a href="#" class="hover:text-white transition">Cartilha de Direitos PcD</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white text-lg font-bold mb-4">Contato</h4>
-                <p class="text-sm mb-2">Suporte: ajuda@inclusaoempregos.com.br</p>
-                <p class="text-sm">Desenvolvido com foco em acessibilidade e performance.</p>
-            </div>
-        </div>
-        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
-            <p>&copy; 2026 Inclui+. Todos os direitos reservados.</p>
-        </div>
-    </footer>
+      <div class="perfil-card rh-card" onclick="window.location.href='cadastro-rh.html'">
+        <div class="perfil-tag rh">Recursos Humanos</div>
+        <h3>Quero contratar</h3>
+        <p>Represento uma empresa comprometida com a inclusão e quero publicar vagas e encontrar talentos PcD qualificados.</p>
+        <button class="btn-primary">Criar conta como RH</button>
+      </div>
+    </div>
+  </section>
 
+  <div class="divider"></div>
+
+  <!-- FUNCIONALIDADES -->
+  <section class="section">
+    <div class="section-label">Plataforma</div>
+    <h2 class="section-title">O que você encontra no Inclui+</h2>
+    <p class="section-sub">Recursos desenvolvidos para a experiência de usuários PcD</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        </div>
+        <h4>Vagas inclusivas</h4>
+        <p>Oportunidades adaptadas em empresas comprometidas com diversidade e inclusão.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h4>Currículo online</h4>
+        <p>Envie seu currículo em PDF e acompanhe o status de todas as suas candidaturas.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h4>Integração VLibras</h4>
+        <p>Navegação com tradução automática para Língua Brasileira de Sinais.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        </div>
+        <h4>Painel de acessibilidade</h4>
+        <p>Personalize contraste, tamanho de fonte e outras preferências visuais.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ESTATÍSTICAS -->
+  <section class="section">
+    <div class="section-label">Impacto</div>
+    <h2 class="section-title">Inclusão em números</h2>
+    <p class="section-sub">Dados sobre acessibilidade e inclusão social no Brasil</p>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">18M</div>
+        <div class="stat-label">Brasileiros com algum tipo de deficiência que necessitam de acessibilidade</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">Lei 8.213</div>
+        <div class="stat-label">Empresas com mais de 100 funcionários são obrigadas a reservar vagas para PcD</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">2002</div>
+        <div class="stat-label">Ano em que a Língua Brasileira de Sinais foi reconhecida como língua oficial</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- INCLUSÃO -->
+  <section class="section">
+    <div class="section-label">Contexto</div>
+    <h2 class="section-title">Inclusão transforma vidas</h2>
+    <p class="section-sub">Informações importantes sobre o universo PcD</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop" alt="Tecnologia acessível">
+        <div class="card-body">
+          <h4>Tecnologia acessível</h4>
+          <p>Leitores de tela, VLibras e alto contraste tornam a internet mais acessível para milhões de pessoas.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop" alt="Inclusão no trabalho">
+        <div class="card-body">
+          <h4>Inclusão no trabalho</h4>
+          <p>Empresas inclusivas aumentam a diversidade, inovação e qualidade no ambiente profissional.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1200&auto=format&fit=crop" alt="Comunidade PcD">
+        <div class="card-body">
+          <h4>Comunidade PcD</h4>
+          <p>Inclusão vai além da acessibilidade física — envolve respeito, oportunidades e participação social.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- DIREITOS -->
+  <section class="section">
+    <div class="section-label">Legislação</div>
+    <h2 class="section-title">Direitos da pessoa com deficiência</h2>
+    <p class="section-sub">Direitos garantidos por lei no Brasil</p>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <h4>Direito à educação</h4>
+        <p>Pessoas com deficiência têm direito à educação inclusiva em escolas e universidades com acessibilidade adequada.</p>
+      </div>
+      <div class="info-box">
+        <h4>Lei de Cotas</h4>
+        <p>Empresas com mais de 100 funcionários devem reservar vagas para profissionais PcD conforme a Lei 8.213/91.</p>
+      </div>
+      <div class="info-box">
+        <h4>Transporte acessível</h4>
+        <p>Ônibus, metrôs e espaços públicos devem possuir acessibilidade para garantir mobilidade e autonomia.</p>
+      </div>
+      <div class="info-box">
+        <h4>Audiodescrição</h4>
+        <p>A audiodescrição ajuda pessoas com deficiência visual a compreender imagens, vídeos e apresentações.</p>
+      </div>
+      <div class="info-box">
+        <h4>Sites acessíveis</h4>
+        <p>Um site acessível pode ser utilizado por muito mais pessoas, independentemente de limitações físicas ou cognitivas.</p>
+      </div>
+      <div class="info-box">
+        <h4>Inclusão digital</h4>
+        <p>Tecnologias assistivas ajudam usuários PcD a navegar, estudar, trabalhar e se comunicar com autonomia.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>© 2026 Inclui+ — Plataforma inclusiva desenvolvida para conectar oportunidades e acessibilidade.</p>
+    <p class="text-muted">UNINASSAU</p>
+  </footer>
+
+  <!-- VLIBRAS -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+  </script>
 </body>
 </html>

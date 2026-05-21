@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ Home</title>
+
+  <style>
+
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body{
+
+      min-height: 100vh;
+
+      background: linear-gradient(135deg, #114ea8, #1e74df);
+
+      color: white;
+
+      transition: 0.3s;
+    }
+
+    /* ALTO CONTRASTE */
+
+    body.high-contrast{
+      background: black;
+      color: yellow;
+    }
+
+    body.high-contrast .card{
+      background: #111;
+      border: 2px solid yellow;
+    }
+
+    body.high-contrast .topbar{
+      background: #000;
+      border-bottom: 2px solid yellow;
+    }
+
+    body.high-contrast .logout{
+      color: yellow;
+    }
+
+    /* TOPO */
+
+    .topbar{
+
+      width: 100%;
+      height: 70px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 0 25px;
+
+      background: rgba(255,255,255,0.08);
+
+      backdrop-filter: blur(5px);
+
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .logo{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo img{
+      width: 45px;
+      height: 45px;
+
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .logo h2{
+      font-size: 22px;
+    }
+
+    .contrast-btn{
+
+      padding: 10px 18px;
+
+      border-radius: 30px;
+
+      border: 2px solid rgba(255,255,255,0.7);
+
+      background: transparent;
+
+      color: white;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: 0.3s;
+    }
+
+    .contrast-btn:hover{
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* CONTAINER */
+
+    .container{
+      padding: 35px 25px;
+    }
+
+    .welcome{
+      margin-bottom: 30px;
+    }
+
+    .welcome h1{
+      font-size: 35px;
+      margin-bottom: 10px;
+    }
+
+    .welcome p{
+      font-size: 17px;
+      opacity: 0.9;
+    }
+
+    /* CARDS */
+
+    .cards{
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card{
+
+      width: 100%;
+
+      background: rgba(255,255,255,0.12);
+
+      padding: 22px;
+
+      border-radius: 18px;
+
+      backdrop-filter: blur(5px);
+
+      cursor: pointer;
+
+      transition: 0.3s;
+
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .card:hover{
+      transform: translateY(-3px);
+      background: rgba(255,255,255,0.18);
+    }
+
+    .card h3{
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .card p{
+      font-size: 15px;
+      opacity: 0.9;
+    }
+
+    /* RODAPÉ */
+
+    .footer{
+
+      width: 100%;
+
+      margin-top: 35px;
+
+      display: flex;
+      justify-content: flex-end;
+
+      padding: 20px 25px;
+
+      border-top: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .logout{
+
+      color: white;
+
+      text-decoration: none;
+
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .logout:hover{
+      text-decoration: underline;
+    }
+
+    /* VLIBRAS */
+
+    .vw-access-button{
+      right: 15px !important;
+      top: 50% !important;
+      transform: translateY(-50%);
+    }
+
+    /* RESPONSIVO */
+
+    @media(max-width: 700px){
+
+      .welcome h1{
+        font-size: 28px;
+      }
+
+      .card h3{
+        font-size: 18px;
+      }
+
+      .topbar{
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 15px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- TOPO -->
+
+  <div class="topbar">
+
+    <div class="logo">
+
+      <img src="logo.png.jpeg" alt="Logo Inclui+">
+
+      <h2>Inclui+</h2>
+
+    </div>
+
+    <button class="contrast-btn" onclick="toggleContrast()">
+      🌙 Alto Contraste
+    </button>
+
+  </div>
+
+  <!-- CONTEÚDO -->
+
+  <div class="container">
+
+    <div class="welcome">
+
+      <h1>Olá 👋</h1>
+
+      <p>
+        Encontre oportunidades inclusivas na UNINASSAU
+      </p>
+
+    </div>
+
+    <!-- CARDS -->
+
+    <div class="cards">
+
+      <div 
+  class="card"
+  onclick="window.location.href='vagas.html'"
+>
+
+  <h3>💼 Ver vagas</h3>
+
+  <p>
+    Explore oportunidades disponíveis
+  </p>
+
+</div>
+
+     <div 
+  class="card"
+  onclick="window.location.href='curriculo.html'"
+>
+
+  <h3>📄 Meu currículo</h3>
+
+  <p>
+    Atualize seus dados profissionais
+  </p>
+
+</div>
+
+      <div 
+  class="card"
+  onclick="window.location.href='candidaturas.html'"
+>
+
+  <h3>📌 Minhas candidaturas</h3>
+
+  <p>
+    Acompanhe suas inscrições
+  </p>
+
+</div>
+
+      <div 
+  class="card"
+  onclick="window.location.href='addlaudo.html'"
+>
+
+  <h3>🩺 Adicionar laudo</h3>
+
+  <p>
+    Envie seu laudo médico
+  </p>
+
+</div>
+
+ <div 
+  class="card"
+  onclick="window.location.href='acessibilidade.html'"
+>
+
+  <h3>♿ Acessibilidade</h3>
+
+  <p>
+    Configure suas necessidades
+  </p>
+
+</div>
+
+  </div>
+
+  <!-- RODAPÉ -->
+
+  <div class="footer">
+
+    <a href="login.html" class="logout">
+      Sair
+    </a>
+
+  </div>
+
+  <!-- VLIBRAS -->
+
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+  <script>
+
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+    function toggleContrast(){
+      document.body.classList.toggle("high-contrast");
+    }
+
+  </script>
+
+</body>
+</html>

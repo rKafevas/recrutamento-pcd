@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Ver Vagas</title>
+
+  <style>
+
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      min-height: 100vh;
+
+      background: linear-gradient(135deg, #114ea8, #1e74df);
+
+      color: white;
+
+      transition: 0.3s;
+    }
+
+    /* ALTO CONTRASTE */
+
+    body.high-contrast{
+      background: black;
+      color: yellow;
+    }
+
+    body.high-contrast .vaga-card,
+    body.high-contrast .topbar,
+    body.high-contrast .search-box{
+      background: #111;
+      border: 2px solid yellow;
+    }
+
+    body.high-contrast input{
+      background: white;
+      color: black;
+    }
+
+    body.high-contrast .contrast-btn{
+      color: yellow;
+      border-color: yellow;
+    }
+
+    body.high-contrast .apply-btn{
+      background: yellow;
+      color: black;
+    }
+
+    /* TOPO */
+
+    .topbar{
+
+      width: 100%;
+      height: 70px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 0 25px;
+
+      background: rgba(255,255,255,0.08);
+
+      backdrop-filter: blur(5px);
+
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .logo{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo img{
+      width: 45px;
+      height: 45px;
+
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .logo h2{
+      font-size: 22px;
+    }
+
+    .contrast-btn{
+
+      padding: 10px 18px;
+
+      border-radius: 30px;
+
+      border: 2px solid rgba(255,255,255,0.7);
+
+      background: transparent;
+
+      color: white;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: 0.3s;
+    }
+
+    /* CONTAINER */
+
+    .container{
+      padding: 35px 25px;
+    }
+
+    .title{
+      margin-bottom: 25px;
+    }
+
+    .title h1{
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .title p{
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    /* PESQUISA */
+
+    .search-box{
+
+      width: 100%;
+
+      background: rgba(255,255,255,0.12);
+
+      border-radius: 18px;
+
+      padding: 20px;
+
+      margin-bottom: 25px;
+
+      backdrop-filter: blur(5px);
+    }
+
+    .search-box input{
+
+      width: 100%;
+      height: 50px;
+
+      border: none;
+      border-radius: 12px;
+
+      padding: 0 15px;
+
+      font-size: 15px;
+    }
+
+    .search-box input:focus{
+      outline: none;
+    }
+
+    /* VAGAS */
+
+    .vagas{
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .vaga-card{
+
+      background: rgba(255,255,255,0.12);
+
+      border-radius: 18px;
+
+      padding: 22px;
+
+      backdrop-filter: blur(5px);
+
+      transition: 0.3s;
+    }
+
+    .vaga-card:hover{
+      transform: translateY(-3px);
+      background: rgba(255,255,255,0.18);
+    }
+
+    .vaga-card h2{
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .empresa{
+      font-size: 15px;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .descricao{
+      font-size: 15px;
+      line-height: 24px;
+
+      margin-bottom: 18px;
+    }
+
+    .tags{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      margin-bottom: 18px;
+    }
+
+    .tag{
+
+      background: rgba(255,255,255,0.18);
+
+      padding: 8px 14px;
+
+      border-radius: 30px;
+
+      font-size: 13px;
+    }
+
+    /* BOTÃO */
+
+    .apply-btn{
+
+      width: 180px;
+      height: 45px;
+
+      border: none;
+      border-radius: 12px;
+
+      background: #ff8400;
+
+      color: white;
+
+      font-size: 15px;
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: 0.3s;
+    }
+
+    .apply-btn:hover{
+      background: #ff9500;
+    }
+
+    /* VOLTAR */
+
+    .back{
+
+      margin-top: 35px;
+
+      display: inline-block;
+
+      color: white;
+
+      font-size: 18px;
+      font-weight: bold;
+
+      text-decoration: none;
+    }
+
+    .back:hover{
+      text-decoration: underline;
+    }
+
+    /* VLIBRAS */
+
+    .vw-access-button{
+      right: 15px !important;
+      top: 50% !important;
+      transform: translateY(-50%);
+    }
+
+    /* RESPONSIVO */
+
+    @media(max-width: 700px){
+
+      .title h1{
+        font-size: 28px;
+      }
+
+      .topbar{
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 15px;
+      }
+
+      .apply-btn{
+        width: 100%;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- TOPO -->
+
+  <div class="topbar">
+
+    <div class="logo">
+
+      <img src="logo.png.jpeg" alt="Logo Inclui+">
+
+      <h2>Inclui+</h2>
+
+    </div>
+
+    <button class="contrast-btn" onclick="toggleContrast()">
+      🌙 Alto Contraste
+    </button>
+
+  </div>
+
+  <!-- CONTAINER -->
+
+  <div class="container">
+
+    <!-- TITULO -->
+
+    <div class="title">
+
+      <h1>💼 Ver vagas</h1>
+
+      <p>
+        Explore oportunidades inclusivas disponíveis
+      </p>
+
+    </div>
+
+    <!-- PESQUISA -->
+
+    <div class="search-box">
+
+      <input 
+        type="text"
+        placeholder="Pesquisar vagas..."
+      >
+
+    </div>
+
+    <!-- VAGAS -->
+
+    <div class="vagas" id="lista-vagas">
+      <p style="opacity:0.8">Carregando vagas...</p>
+    </div>
+
+    <!-- VOLTAR -->
+
+    <a href="home.html" class="back">
+      ← Voltar para Home
+    </a>
+
+  </div>
+
+  <!-- VLIBRAS -->
+
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+  <script>
+
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+    function toggleContrast(){
+      document.body.classList.toggle("high-contrast");
+    }
+
+    let todasVagas = [];
+
+    function renderVagas(vagas) {
+      const lista = document.getElementById('lista-vagas');
+
+      if (!vagas.length) {
+        lista.innerHTML = '<p style="opacity:0.8">Nenhuma vaga encontrada.</p>';
+        return;
+      }
+
+      lista.innerHTML = vagas.map(vaga => {
+        const requisitos = vaga.requisitos
+          ? vaga.requisitos.split(',').map(r => `<div class="tag">${r.trim()}</div>`).join('')
+          : '';
+
+        return `
+          <div class="vaga-card">
+            <h2>${vaga.titulo}</h2>
+            <p class="empresa">📍 ${vaga.local || ''} | ${vaga.empresa || ''}</p>
+            <p class="descricao">${vaga.descricao || ''}</p>
+            ${requisitos ? `<div class="tags">${requisitos}</div>` : ''}
+            <button class="apply-btn" onclick="candidatar(${vaga.id})">Candidatar-se</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function carregarVagas() {
+      const lista = document.getElementById('lista-vagas');
+      try {
+        const resposta = await fetch('http://localhost:3000/vagas');
+        const resultado = await resposta.json();
+
+        if (!resposta.ok) {
+          lista.innerHTML = '<p>Erro ao carregar vagas.</p>';
+          return;
+        }
+
+        todasVagas = resultado;
+        renderVagas(todasVagas);
+      } catch (e) {
+        lista.innerHTML = '<p>Não foi possível conectar ao servidor.</p>';
+      }
+    }
+
+    async function candidatar(vagaId) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Você precisa estar logado para se candidatar.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const resposta = await fetch('http://localhost:3000/inscricoes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ vaga_id: vagaId })
+        });
+
+        const resultado = await resposta.json();
+
+        if (resposta.ok) {
+          alert('Candidatura realizada com sucesso!');
+        } else {
+          alert('Erro: ' + (resultado.mensagem || 'Não foi possível realizar a candidatura.'));
+        }
+      } catch (e) {
+        alert('Não foi possível conectar ao servidor.');
+      }
+    }
+
+    // Filtro de pesquisa
+    document.querySelector('.search-box input').addEventListener('input', function () {
+      const termo = this.value.toLowerCase();
+      const filtradas = todasVagas.filter(v =>
+        (v.titulo || '').toLowerCase().includes(termo) ||
+        (v.descricao || '').toLowerCase().includes(termo) ||
+        (v.empresa || '').toLowerCase().includes(termo)
+      );
+      renderVagas(filtradas);
+    });
+
+    carregarVagas();
+
+  </script>
+
+</body>
+</html>
