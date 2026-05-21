@@ -35,6 +35,15 @@ class UsuarioController {
       next(err); 
     }
   }
+  async registrarRH(req, res, next) {
+    try {
+      const { nome_completo, email, senha, nome_fantasia, cnpj } = req.body;
+      const resultado = await UsuarioService.registrarRH({ nome_completo, email, senha, nome_fantasia, cnpj });
+      return res.status(201).json(resultado);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new UsuarioController();

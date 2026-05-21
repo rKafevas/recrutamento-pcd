@@ -37,8 +37,18 @@ const loginSchema = Joi.object({
   })
 });
 
-// Exportando os dois schemas
-module.exports = { 
-  usuarioSchema, 
-  loginSchema 
-};
+// 3. Schema para Cadastro RH
+const rhSchema = Joi.object({
+  nome_completo: Joi.string().min(3).max(100).required(),
+  email: Joi.string().email().required(),
+  senha: Joi.string().min(6).required(),
+  nome_fantasia: Joi.string().min(2).max(255).required().messages({
+    'any.required': 'O nome da empresa é obrigatório.'
+  }),
+  cnpj: Joi.string().length(18).required().messages({
+    'string.length': 'O CNPJ deve ter 18 caracteres (com máscara).',
+    'any.required': 'O CNPJ é obrigatório.'
+  })
+});
+
+module.exports = { usuarioSchema, loginSchema, rhSchema };

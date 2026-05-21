@@ -44,6 +44,31 @@ class UsuarioService {
       throw new Error("Erro técnico ao salvar os dados. Tente novamente.");
     }
   }
+  async registrarRH(dados) {
+    const usuarioExistente = await UsuarioRepository.buscarPorEmail(dados.email);
+    if (usuarioExistente) {
+      const error = new Error('Este e-mail já está cadastrado no sistema.');
+      error.status = 409;
+      throw error;
+    }
+
+    const saltRounds = 10;
+    const senhaCriptografada = await bcrypt.hash(dados.senha, saltRounds);
+
+    try {
+      const usuario = await UsuarioRepository.criarUsuario(dados.email, senhaCriptografada, 'RH');
+      const empresa = await UsuarioRepository.criarEmpresa(usuario.id, dados.nome_fantasia, dados.cnpj);
+
+      return {
+        mensagem: "Conta RH criada com sucesso!",
+        usuario: { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
+        empresa
+      };
+    } catch (err) {
+      console.error("Erro ao salvar no banco:", err);
+      throw new Error("Erro técnico ao salvar os dados. Tente novamente.");
+    }
+  }
 }
 
 module.exports = new UsuarioService();

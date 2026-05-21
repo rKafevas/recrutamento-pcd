@@ -8,7 +8,7 @@ const validate = require('./middlewares/validateMiddleware');
 const upload = require('./middlewares/uploadMiddleware');
 
 // 2. Importação dos Validators (Joi)
-const { usuarioSchema, loginSchema } = require('./validators/usuarioValidator');
+const { usuarioSchema, loginSchema, rhSchema } = require('./validators/usuarioValidator');
 const { vagaSchema } = require('./validators/vagaValidator');
 const { inscricaoSchema } = require('./validators/inscricaoValidator');
 
@@ -29,6 +29,7 @@ routes.get('/', (req, res) => {
 
 // --- ROTAS PÚBLICAS ---
 routes.post('/usuarios', validate(usuarioSchema), UsuarioController.registrar);
+routes.post('/usuarios/rh', validate(rhSchema), UsuarioController.registrarRH);
 routes.post('/login', validate(loginSchema), AuthController.login);
 routes.get('/vagas', VagaController.listar); 
 

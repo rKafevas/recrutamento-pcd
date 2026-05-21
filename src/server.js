@@ -1,5 +1,5 @@
 // 1. Configurações iniciais
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const db = require('./database'); 

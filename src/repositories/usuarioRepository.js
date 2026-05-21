@@ -36,6 +36,15 @@ class UsuarioRepository {
     const { rows } = await db.query(query, [email]);
     return rows[0];
   }
+  async criarEmpresa(usuarioId, nomeFantasia, cnpj) {
+    const query = `
+      INSERT INTO empresas (usuario_id, nome_fantasia, cnpj)
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `;
+    const { rows } = await db.query(query, [usuarioId, nomeFantasia, cnpj]);
+    return rows[0];
+  }
 }
 
 module.exports = new UsuarioRepository();
