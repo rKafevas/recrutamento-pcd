@@ -45,6 +45,23 @@ class UsuarioRepository {
     const { rows } = await db.query(query, [usuarioId, nomeFantasia, cnpj]);
     return rows[0];
   }
+  async deletarConta(usuarioId) {
+    // Exclusão em cascata respeitando FKs
+    // 1. Busca o candidato
+    const { rows: candidatos } = await db.query('SELECT id FROM candidatos WHERE usuario_id = $1', [usuarioId]);
+    if (candidatos.length) {
+      const candidatoId = candidatos[0].id;
+      // 2. Remove inscrições
+      await db.query('DELETE FROM inscricoes WHERE candidato_id = $1', [candidatoId]);
+      // 3. Remove candidato (anonimiza dados sensíveis antes)
+      await db.query(`UPDATE candidatos SET nome_completo = 'Usuário removido', tipo_deficiencia = NULL, necessidades_acessibilidade = NULL, laudo_medico_url = NULL, curriculo_url = NULL WHERE id = $1`, [candidatoId]);
+      await db.query('DELETE FROM candidatos WHERE id = $1', [candidatoId]);
+    }
+    // 4. Remove logs vinculados
+    await db.query('DELETE FROM logs_sistema WHERE usuario_id = $1', [usuarioId]);
+    // 5. Remove usuário
+    await db.query('DELETE FROM usuarios WHERE id = $1', [usuarioId]);
+  }
 }
 
 module.exports = new UsuarioRepository();

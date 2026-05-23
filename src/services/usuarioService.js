@@ -69,6 +69,9 @@ class UsuarioService {
       throw new Error("Erro técnico ao salvar os dados. Tente novamente.");
     }
   }
+  async deletarConta(usuarioId) {
+    await UsuarioRepository.deletarConta(usuarioId);
+  }
 }
 
 module.exports = new UsuarioService();

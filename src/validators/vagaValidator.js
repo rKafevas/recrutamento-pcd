@@ -9,11 +9,25 @@ const vagaSchema = Joi.object({
     'string.empty': 'A descrição da vaga é obrigatória.',
     'string.min': 'A descrição deve ser detalhada (mínimo 20 caracteres).'
   }),
-  requisitos: Joi.string().required(),
-  localizacao: Joi.string().required(),
-  salario: Joi.number().precision(2).positive().allow(null),
-  // Este campo é essencial para cumprir o requisito de filtros por deficiência do TAP
-  tipo_deficiencia_foco: Joi.string().valid('Física', 'Auditiva', 'Visual', 'Intelectual', 'Múltipla', 'Qualquer').required()
+  requisitos: Joi.string().min(10).required().messages({
+    'string.empty': 'Os requisitos são obrigatórios.',
+    'string.min': 'Descreva os requisitos com mais detalhes.'
+  }),
+  beneficios: Joi.string().allow('', null).optional(),
+  modelo_trabalho: Joi.string().valid('Presencial', 'Híbrido', 'Remoto').required().messages({
+    'any.only': 'Modelo de trabalho deve ser Presencial, Híbrido ou Remoto.',
+    'any.required': 'O modelo de trabalho é obrigatório.'
+  }),
+  localizacao: Joi.string().required().messages({
+    'string.empty': 'A localização é obrigatória.'
+  }),
+  salario: Joi.string().allow('', null).optional(),
+  tipo_deficiencia_foco: Joi.string().valid('Física', 'Auditiva', 'Visual', 'Intelectual', 'Múltipla', 'Qualquer').required().messages({
+    'any.only': 'Selecione um tipo de deficiência válido.',
+    'any.required': 'O tipo de deficiência é obrigatório.'
+  }),
+  acessibilidade_local: Joi.string().allow('', null).optional(),
+  tecnologias_assistivas: Joi.string().allow('', null).optional()
 });
 
 module.exports = { vagaSchema };

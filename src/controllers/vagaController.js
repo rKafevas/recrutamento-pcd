@@ -42,6 +42,38 @@ class VagaController {
       next(err);
     }
   }
+  async listarComFiltro(req, res, next) {
+    try {
+      const { deficiencia, modelo, busca } = req.query;
+      const vagas = await VagaService.listarComFiltro({ deficiencia, modelo, busca });
+      return res.json(vagas);
+    } catch(err) { next(err); }
+  }
+
+  async listarMinhas(req, res, next) {
+    try {
+      const vagas = await VagaService.listarVagasDoRh(req.usuarioId);
+      return res.json(vagas);
+    } catch(err) { next(err); }
+  }
+
+  async editar(req, res, next) {
+    try {
+      const { id } = req.params;
+      const rh_id = req.usuarioId;
+      const vaga = await VagaService.editarVaga(id, rh_id, req.body);
+      return res.json({ mensagem: 'Vaga atualizada com sucesso!', vaga });
+    } catch(err) { next(err); }
+  }
+
+  async encerrar(req, res, next) {
+    try {
+      const { id } = req.params;
+      const rh_id = req.usuarioId;
+      const vaga = await VagaService.encerrarVaga(id, rh_id);
+      return res.json({ mensagem: 'Vaga encerrada com sucesso!', vaga });
+    } catch(err) { next(err); }
+  }
 }
 
 module.exports = new VagaController();

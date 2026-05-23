@@ -18,8 +18,8 @@ const VagaController = require('./controllers/vagaController');
 const InscricaoController = require('./controllers/inscricaoController');
 const AuthController = require('./controllers/authController');
 const CandidatoController = require('./controllers/CandidatoController');
-
-// --- ROTA DE BOAS-VINDAS ---
+const RelatorioController = require('./controllers/relatorioController');
+const MensagemController = require('./controllers/mensagemController');
 routes.get('/', (req, res) => {
   return res.json({ 
     mensagem: "Bem-vindo à API do Sistema de Recrutamento PcD!",
@@ -31,7 +31,10 @@ routes.get('/', (req, res) => {
 routes.post('/usuarios', validate(usuarioSchema), UsuarioController.registrar);
 routes.post('/usuarios/rh', validate(rhSchema), UsuarioController.registrarRH);
 routes.post('/login', validate(loginSchema), AuthController.login);
-routes.get('/vagas', VagaController.listar); 
+routes.delete('/minha-conta', authMiddleware, authorize(['Candidato']), UsuarioController.deletarConta); 
+routes.get('/vagas/minhas', authMiddleware, authorize(['RH']), VagaController.listarMinhas);
+routes.get('/vagas/filtro', VagaController.listarComFiltro);
+routes.get('/relatorio/cotas', authMiddleware, authorize(['RH']), RelatorioController.relatorioCotas);
 
 // --- ROTAS PROTEGIDAS (Necessário Token) ---
 
@@ -42,6 +45,14 @@ routes.patch(
   authorize(['Candidato']), 
   upload.single('laudo'), 
   CandidatoController.atualizarLaudo
+);
+
+routes.patch(
+  '/perfil/curriculo',
+  authMiddleware,
+  authorize(['Candidato']),
+  upload.single('curriculo'),
+  CandidatoController.atualizarCurriculo
 );
 
 // 2. Ações do Candidato
@@ -71,6 +82,20 @@ routes.post(
   VagaController.criar
 );
 
+routes.patch(
+  '/vagas/:id',
+  authMiddleware,
+  authorize(['RH']),
+  VagaController.editar
+);
+
+routes.patch(
+  '/vagas/:id/encerrar',
+  authMiddleware,
+  authorize(['RH']),
+  VagaController.encerrar
+);
+
 routes.get(
   '/inscricoes/vaga/:vaga_id', 
   authMiddleware, 
@@ -84,5 +109,9 @@ routes.patch(
   authorize(['RH']), 
   InscricaoController.atualizarStatus
 );
+
+routes.get('/mensagens/conversas', authMiddleware, MensagemController.listarConversas);
+routes.get('/mensagens/inscricao/:inscricao_id/dados', authMiddleware, MensagemController.buscarDadosInscricao);
+routes.get('/mensagens/:inscricao_id', authMiddleware, MensagemController.listarPorInscricao);
 
 module.exports = routes;

@@ -1,15 +1,19 @@
 const multer = require('multer');
 const path = require('path');
 
-// Configuração de onde o arquivo será salvo e com qual nome
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/laudos/'); // Certifique-se de criar esta pasta!
+    // Separa pasta por tipo de arquivo
+    if (file.fieldname === 'curriculo') {
+      cb(null, 'uploads/curriculos/');
+    } else {
+      cb(null, 'uploads/laudos/');
+    }
   },
   filename: (req, file, cb) => {
-    // Criamos um nome único: ID do Usuário + Timestamp + Extensão original
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `laudo-${req.usuarioId}-${uniqueSuffix}${path.extname(file.originalname)}`);
+    const prefix = file.fieldname === 'curriculo' ? 'curriculo' : 'laudo';
+    cb(null, `${prefix}-${req.usuarioId}-${uniqueSuffix}${path.extname(file.originalname)}`);
   }
 });
 

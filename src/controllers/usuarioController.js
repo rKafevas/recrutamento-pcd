@@ -44,6 +44,12 @@ class UsuarioController {
       next(err);
     }
   }
+  async deletarConta(req, res, next) {
+    try {
+      await UsuarioService.deletarConta(req.usuarioId);
+      return res.json({ mensagem: 'Conta excluída com sucesso. Seus dados foram removidos.' });
+    } catch(err) { next(err); }
+  }
 }
 
 module.exports = new UsuarioController();

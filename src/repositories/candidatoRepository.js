@@ -26,6 +26,18 @@ class CandidatoRepository {
     const { rows } = await db.query(query, [usuarioId]);
     return rows[0];
   }
+  async atualizarCurriculo(usuarioId, urlCurriculo, nomeCompleto, sobre) {
+    const query = `
+      UPDATE candidatos 
+      SET curriculo_url = $1,
+          nome_completo = COALESCE($2, nome_completo),
+          necessidades_acessibilidade = COALESCE($3, necessidades_acessibilidade)
+      WHERE usuario_id = $4
+      RETURNING *
+    `;
+    const { rows } = await db.query(query, [urlCurriculo, nomeCompleto || null, sobre || null, usuarioId]);
+    return rows[0];
+  }
 }
 
 module.exports = new CandidatoRepository();

@@ -48,6 +48,8 @@ class InscricaoRepository {
         c.nome_completo,
         c.tipo_deficiencia,
         c.necessidades_acessibilidade,
+        c.curriculo_url,
+        c.laudo_medico_url,
         u.email
       FROM inscricoes i
       JOIN candidatos c ON i.candidato_id = c.id

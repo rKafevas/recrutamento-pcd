@@ -28,7 +28,20 @@ class CandidatoController {
     }
   }
 
-  // Futuramente, você pode adicionar aqui o 'atualizarPerfil' ou 'verMeuPerfil'
+  async atualizarCurriculo(req, res, next) {
+    try {
+      if (!req.file) {
+        const error = new Error('Nenhum arquivo de currículo foi enviado.');
+        error.status = 400;
+        throw error;
+      }
+      const usuarioId = req.usuarioId;
+      const urlCurriculo = req.file.path;
+      const { nome, sobre } = req.body;
+      const perfil = await CandidatoService.salvarCurriculo(usuarioId, urlCurriculo, nome, sobre);
+      return res.status(200).json({ mensagem: 'Currículo salvo com sucesso!', dados: perfil });
+    } catch(err) { next(err); }
+  }
 }
 
 module.exports = new CandidatoController();
