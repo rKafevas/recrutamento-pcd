@@ -3,369 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inclui+ Home</title>
-
+  <title>Inclui+ | Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-
-    *{
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --orange: #f47c20; --orange-hover: #e06b10;
+      --white-soft: rgba(255,255,255,0.08); --white-med: rgba(255,255,255,0.12);
+      --white-hover: rgba(255,255,255,0.17); --white-border: rgba(255,255,255,0.15);
+      --text-muted: rgba(255,255,255,0.65);
     }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; }
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .topbar, body.high-contrast .nav-card { background: #111 !important; border: 2px solid #ff0 !important; }
+    body.high-contrast .btn-ghost { border-color: #ff0 !important; color: #ff0 !important; }
+    body.high-contrast .text-muted { color: #ff0 !important; }
 
-    body{
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+    .btn-ghost:hover { background: var(--white-soft); }
 
-      min-height: 100vh;
+    .container { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
 
-      background: linear-gradient(135deg, #114ea8, #1e74df);
+    .welcome { margin-bottom: 40px; }
+    .welcome-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
+    .welcome h1 { font-family: 'Sora', sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+    .welcome p { font-size: 15px; color: var(--text-muted); }
 
-      color: white;
+    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-      transition: 0.3s;
-    }
+    .nav-card { display: flex; align-items: center; gap: 16px; background: var(--white-med); border: 1px solid var(--white-border); border-radius: 14px; padding: 20px; cursor: pointer; transition: 0.2s; text-decoration: none; color: #fff; }
+    .nav-card:hover { background: var(--white-hover); transform: translateY(-2px); }
 
-    /* ALTO CONTRASTE */
+    .nav-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(244,124,32,0.15); border: 1px solid rgba(244,124,32,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-icon svg { width: 20px; height: 20px; stroke: var(--orange); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    body.high-contrast{
-      background: black;
-      color: yellow;
-    }
+    .nav-card-text h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+    .nav-card-text p { font-size: 13px; color: var(--text-muted); }
 
-    body.high-contrast .card{
-      background: #111;
-      border: 2px solid yellow;
-    }
+    .footer { border-top: 1px solid var(--white-border); padding: 20px 32px; display: flex; justify-content: flex-end; }
+    .logout { color: var(--text-muted); font-size: 14px; font-weight: 500; text-decoration: none; transition: 0.2s; }
+    .logout:hover { color: #fff; }
 
-    body.high-contrast .topbar{
-      background: #000;
-      border-bottom: 2px solid yellow;
-    }
-
-    body.high-contrast .logout{
-      color: yellow;
-    }
-
-    /* TOPO */
-
-    .topbar{
-
-      width: 100%;
-      height: 70px;
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      padding: 0 25px;
-
-      background: rgba(255,255,255,0.08);
-
-      backdrop-filter: blur(5px);
-
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .logo{
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo img{
-      width: 45px;
-      height: 45px;
-
-      border-radius: 10px;
-      object-fit: cover;
-    }
-
-    .logo h2{
-      font-size: 22px;
-    }
-
-    .contrast-btn{
-
-      padding: 10px 18px;
-
-      border-radius: 30px;
-
-      border: 2px solid rgba(255,255,255,0.7);
-
-      background: transparent;
-
-      color: white;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-      transition: 0.3s;
-    }
-
-    .contrast-btn:hover{
-      background: rgba(255,255,255,0.1);
-    }
-
-    /* CONTAINER */
-
-    .container{
-      padding: 35px 25px;
-    }
-
-    .welcome{
-      margin-bottom: 30px;
-    }
-
-    .welcome h1{
-      font-size: 35px;
-      margin-bottom: 10px;
-    }
-
-    .welcome p{
-      font-size: 17px;
-      opacity: 0.9;
-    }
-
-    /* CARDS */
-
-    .cards{
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .card{
-
-      width: 100%;
-
-      background: rgba(255,255,255,0.12);
-
-      padding: 22px;
-
-      border-radius: 18px;
-
-      backdrop-filter: blur(5px);
-
-      cursor: pointer;
-
-      transition: 0.3s;
-
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .card:hover{
-      transform: translateY(-3px);
-      background: rgba(255,255,255,0.18);
-    }
-
-    .card h3{
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-
-    .card p{
-      font-size: 15px;
-      opacity: 0.9;
-    }
-
-    /* RODAPÉ */
-
-    .footer{
-
-      width: 100%;
-
-      margin-top: 35px;
-
-      display: flex;
-      justify-content: flex-end;
-
-      padding: 20px 25px;
-
-      border-top: 1px solid rgba(255,255,255,0.3);
-    }
-
-    .logout{
-
-      color: white;
-
-      text-decoration: none;
-
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .logout:hover{
-      text-decoration: underline;
-    }
-
-    /* VLIBRAS */
-
-    .vw-access-button{
-      right: 15px !important;
-      top: 50% !important;
-      transform: translateY(-50%);
-    }
-
-    /* RESPONSIVO */
-
-    @media(max-width: 700px){
-
-      .welcome h1{
-        font-size: 28px;
-      }
-
-      .card h3{
-        font-size: 18px;
-      }
-
-      .topbar{
-        flex-direction: column;
-        height: auto;
-        gap: 15px;
-        padding: 15px;
-      }
-
-    }
-
+    @media(max-width: 500px) { .nav-grid { grid-template-columns: 1fr; } .topbar { padding: 14px 20px; } }
   </style>
 </head>
-
 <body>
-
-  <!-- TOPO -->
-
   <div class="topbar">
-
     <div class="logo">
-
-      <img src="logo.png.jpeg" alt="Logo Inclui+">
-
-      <h2>Inclui+</h2>
-
+      <img src="logo.png.jpeg" alt="Inclui+">
+      <span>Inclui+</span>
     </div>
-
-    <button class="contrast-btn" onclick="toggleContrast()">
-      🌙 Alto Contraste
-    </button>
-
+    <div class="nav-right">
+      <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
+      <a href="login.html" class="btn-ghost" style="text-decoration:none">Sair</a>
+    </div>
   </div>
-
-  <!-- CONTEÚDO -->
 
   <div class="container">
-
     <div class="welcome">
-
-      <h1>Olá 👋</h1>
-
-      <p>
-        Encontre oportunidades inclusivas na UNINASSAU
-      </p>
-
+      <div class="welcome-label">Bem-vindo</div>
+      <h1>Olá, bom ver você!</h1>
+      <p>Encontre oportunidades inclusivas e gerencie seu perfil.</p>
     </div>
 
-    <!-- CARDS -->
-
-    <div class="cards">
-
-      <div 
-  class="card"
-  onclick="window.location.href='vagas.html'"
->
-
-  <h3>💼 Ver vagas</h3>
-
-  <p>
-    Explore oportunidades disponíveis
-  </p>
-
-</div>
-
-     <div 
-  class="card"
-  onclick="window.location.href='curriculo.html'"
->
-
-  <h3>📄 Meu currículo</h3>
-
-  <p>
-    Atualize seus dados profissionais
-  </p>
-
-</div>
-
-      <div 
-  class="card"
-  onclick="window.location.href='candidaturas.html'"
->
-
-  <h3>📌 Minhas candidaturas</h3>
-
-  <p>
-    Acompanhe suas inscrições
-  </p>
-
-</div>
-
-      <div 
-  class="card"
-  onclick="window.location.href='addlaudo.html'"
->
-
-  <h3>🩺 Adicionar laudo</h3>
-
-  <p>
-    Envie seu laudo médico
-  </p>
-
-</div>
-
- <div 
-  class="card"
-  onclick="window.location.href='acessibilidade.html'"
->
-
-  <h3>♿ Acessibilidade</h3>
-
-  <p>
-    Configure suas necessidades
-  </p>
-
-</div>
-
+    <div class="nav-grid">
+      <a class="nav-card" href="vagas.html">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+        <div class="nav-card-text"><h3>Ver vagas</h3><p>Explore oportunidades disponíveis</p></div>
+      </a>
+      <a class="nav-card" href="curriculo.html">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div class="nav-card-text"><h3>Meu currículo</h3><p>Atualize seus dados profissionais</p></div>
+      </a>
+      <a class="nav-card" href="candidaturas.html">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="nav-card-text"><h3>Minhas candidaturas</h3><p>Acompanhe suas inscrições</p></div>
+      </a>
+      <a class="nav-card" href="addlaudo.html">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <div class="nav-card-text"><h3>Adicionar laudo</h3><p>Envie seu laudo médico</p></div>
+      </a>
+      <a class="nav-card" href="acessibilidade.html" style="grid-column: span 2">
+        <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></div>
+        <div class="nav-card-text"><h3>Acessibilidade</h3><p>Configure suas preferências de acessibilidade</p></div>
+      </a>
+      <a class="nav-card" href="chat.html" style="grid-column: span 2">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="nav-card-text"><h3>Mensagens</h3><p>Converse com as empresas sobre suas candidaturas</p></div>
+      </a>
+    </div>
   </div>
-
-  <!-- RODAPÉ -->
 
   <div class="footer">
-
-    <a href="login.html" class="logout">
-      Sair
-    </a>
-
+    <a href="login.html" class="logout">Sair da conta</a>
+    <button onclick="deletarConta()" style="background:transparent;border:none;color:rgba(248,113,113,0.7);font-size:13px;cursor:pointer;padding:0">Excluir minha conta</button>
   </div>
 
-  <!-- VLIBRAS -->
-
-  <div vw class="enabled">
-    <div vw-access-button class="active"></div>
-    <div vw-plugin-wrapper>
-      <div class="vw-plugin-top-wrapper"></div>
-    </div>
-  </div>
-
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-
   <script>
-
     new window.VLibras.Widget('https://vlibras.gov.br/app');
+    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
 
-    function toggleContrast(){
-      document.body.classList.toggle("high-contrast");
+    async function deletarConta() {
+      const confirmacao = confirm('Tem certeza que deseja excluir sua conta?\n\nTodos os seus dados serão removidos permanentemente conforme a LGPD. Esta ação não pode ser desfeita.');
+      if (!confirmacao) return;
+      const token = localStorage.getItem('token');
+      try {
+        const r = await fetch('http://localhost:3000/minha-conta', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
+        const d = await r.json();
+        if (r.ok) {
+          localStorage.clear();
+          alert('Conta excluída com sucesso. Seus dados foram removidos.');
+          window.location.href = 'index.html';
+        } else { alert('Erro: ' + (d.mensagem || 'Tente novamente.')); }
+      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
     }
-
   </script>
-
 </body>
 </html>

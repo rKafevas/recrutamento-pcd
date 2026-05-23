@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Candidatos da Vaga</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(255,255,255,0.08); --white-med: rgba(255,255,255,0.10); --white-hover: rgba(255,255,255,0.16); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 48px; }
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .topbar, body.high-contrast .cand-card { background: #111 !important; border: 2px solid #ff0 !important; }
+    body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+    .btn-ghost:hover { background: var(--white-soft); }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+    .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+    .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+
+    /* PIPELINE */
+    .pipeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
+    .pipeline-col { background: var(--white-soft); border: 1px solid var(--white-border); border-radius: 12px; padding: 14px; min-height: 80px; }
+    .pipeline-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-pendente { background: #94a3b8; }
+    .dot-analise { background: #f59e0b; }
+    .dot-entrevista { background: #3b82f6; }
+    .dot-concluido { background: #22c55e; }
+    .pipeline-count { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; }
+    .pipeline-sub { font-size: 12px; color: var(--text-muted); }
+
+    /* LISTA */
+    .section-title { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+    .cand-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .cand-card { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 14px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 16px; transition: 0.2s; }
+    .cand-card:hover { background: var(--white-hover); }
+    .cand-info h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+    .cand-info p { font-size: 13px; color: var(--text-muted); }
+
+    .cand-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+    .status-select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 7px; color: #fff; font-size: 13px; font-weight: 500; padding: 7px 12px; cursor: pointer; font-family: 'Inter', sans-serif; transition: 0.2s; }
+    .status-select:focus { outline: none; border-color: rgba(255,255,255,0.4); }
+    .status-select option { background: #1250b0; }
+
+    .btn-save { background: var(--orange); border: none; color: #fff; padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-save:hover { background: var(--orange-hover); }
+
+    .status-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+    .badge-Pendente { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
+    .badge-Em\ análise { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-Entrevista { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .badge-Aprovado { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .badge-Reprovado { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 28px; }
+    .back:hover { color: #fff; }
+
+    .empty { text-align: center; padding: 48px; color: var(--text-muted); font-size: 14px; }
+
+    @media(max-width: 600px) { .pipeline { grid-template-columns: repeat(2,1fr); } .cand-card { flex-direction: column; align-items: flex-start; } }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
+    <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
+  </div>
+
+  <div class="container">
+    <div class="page-label">Gestão de candidatos</div>
+    <h1 id="titulo-vaga">Carregando...</h1>
+    <p class="sub" id="sub-vaga">Gerencie os candidatos e atualize o status do processo</p>
+
+    <!-- PIPELINE -->
+    <div class="pipeline">
+      <div class="pipeline-col">
+        <div class="pipeline-label"><span class="dot dot-pendente"></span>Recebidos</div>
+        <div class="pipeline-count" id="count-pendente">0</div>
+        <div class="pipeline-sub">candidatos</div>
+      </div>
+      <div class="pipeline-col">
+        <div class="pipeline-label"><span class="dot dot-analise"></span>Em análise</div>
+        <div class="pipeline-count" id="count-analise">0</div>
+        <div class="pipeline-sub">candidatos</div>
+      </div>
+      <div class="pipeline-col">
+        <div class="pipeline-label"><span class="dot dot-entrevista"></span>Entrevista</div>
+        <div class="pipeline-count" id="count-entrevista">0</div>
+        <div class="pipeline-sub">candidatos</div>
+      </div>
+      <div class="pipeline-col">
+        <div class="pipeline-label"><span class="dot dot-concluido"></span>Aprovados</div>
+        <div class="pipeline-count" id="count-aprovado">0</div>
+        <div class="pipeline-sub">candidatos</div>
+      </div>
+    </div>
+
+    <div class="section-title">Todos os candidatos</div>
+    <div class="cand-list" id="lista-candidatos">
+      <p class="empty">Carregando...</p>
+    </div>
+
+    <a href="rh-dashboard.html" class="back">← Voltar ao Painel</a>
+  </div>
+
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+
+    const params = new URLSearchParams(window.location.search);
+    const vagaId = params.get('vaga_id');
+    const titulo = params.get('titulo');
+
+    if (titulo) document.getElementById('titulo-vaga').textContent = decodeURIComponent(titulo);
+
+    const STATUS = ['Pendente', 'Em análise', 'Entrevista', 'Aprovado', 'Reprovado'];
+
+    function atualizarPipeline(candidatos) {
+      document.getElementById('count-pendente').textContent = candidatos.filter(c => c.status === 'Pendente').length;
+      document.getElementById('count-analise').textContent = candidatos.filter(c => c.status === 'Em análise').length;
+      document.getElementById('count-entrevista').textContent = candidatos.filter(c => c.status === 'Entrevista').length;
+      document.getElementById('count-aprovado').textContent = candidatos.filter(c => c.status === 'Aprovado').length;
+    }
+
+    async function atualizarStatus(inscricaoId, novoStatus, btn) {
+      const token = localStorage.getItem('token');
+      btn.textContent = '...';
+      btn.disabled = true;
+      try {
+        const r = await fetch(`http://localhost:3000/inscricoes/${inscricaoId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ status: novoStatus })
+        });
+        const d = await r.json();
+        if (r.ok) { carregarCandidatos(); }
+        else { alert('Erro: ' + (d.mensagem || 'Tente novamente.')); btn.textContent = 'Salvar'; btn.disabled = false; }
+      } catch(e) { alert('Erro de conexão.'); btn.textContent = 'Salvar'; btn.disabled = false; }
+    }
+
+    async function carregarCandidatos() {
+      const token = localStorage.getItem('token');
+      if (!token || !vagaId) { window.location.href = 'login.html'; return; }
+      const lista = document.getElementById('lista-candidatos');
+      try {
+        const r = await fetch(`http://localhost:3000/inscricoes/vaga/${vagaId}`, { headers: { 'Authorization': 'Bearer ' + token } });
+        const d = await r.json();
+        if (!r.ok) { lista.innerHTML = '<p class="empty">Erro ao carregar candidatos.</p>'; return; }
+        if (!d.length) { lista.innerHTML = '<p class="empty">Nenhum candidato inscrito ainda.</p>'; atualizarPipeline([]); return; }
+
+        atualizarPipeline(d);
+
+        lista.innerHTML = d.map(c => `
+          <div class="cand-card">
+            <div class="cand-info">
+              <h3>${c.nome_completo || 'Candidato'}</h3>
+              <p>${c.email} ${c.tipo_deficiencia ? '· ' + c.tipo_deficiencia : ''}</p>
+              ${c.necessidades_acessibilidade ? `<p style="margin-top:3px;font-size:12px">Necessidades: ${c.necessidades_acessibilidade}</p>` : ''}
+              ${c.curriculo_url ? `<a href="http://localhost:3000/${c.curriculo_url.replace(/\\/g,'/')}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:600;color:#f47c20;text-decoration:none">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Ver currículo
+              </a>` : '<p style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.4)">Currículo não enviado</p>'}
+              ${c.laudo_medico_url ? `<a href="http://localhost:3000/${c.laudo_medico_url.replace(/\\/g,'/')}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;font-weight:600;color:#60a5fa;text-decoration:none">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Ver laudo médico
+              </a>` : '<p style="margin-top:4px;font-size:12px;color:rgba(255,255,255,0.4)">Laudo não enviado</p>'}
+            </div>
+            <div class="cand-right">
+              <select class="status-select" id="sel-${c.inscricao_id}">
+                ${STATUS.map(s => `<option value="${s}" ${c.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+              <button class="btn-save" onclick="atualizarStatus(${c.inscricao_id}, document.getElementById('sel-${c.inscricao_id}').value, this)">Salvar</button>
+              <button class="btn-save" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2)" onclick="window.location.href='chat.html?inscricao=${c.inscricao_id}'">Chat</button>
+            </div>
+          </div>`).join('');
+      } catch(e) { lista.innerHTML = '<p class="empty">Não foi possível conectar ao servidor.</p>'; }
+    }
+
+    carregarCandidatos();
+  </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Painel RH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(255,255,255,0.08); --white-med: rgba(255,255,255,0.10); --white-hover: rgba(255,255,255,0.16); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 48px; }
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .topbar, body.high-contrast .vaga-card, body.high-contrast .modal-box { background: #111 !important; border: 2px solid #ff0 !important; }
+    body.high-contrast input, body.high-contrast textarea { background: #fff !important; color: #000 !important; }
+    body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .topbar-right { display: flex; gap: 10px; align-items: center; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+    .btn-ghost:hover { background: var(--white-soft); }
+    .btn-primary { background: var(--orange); border: none; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary:hover { background: var(--orange-hover); }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+    .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
+    .page-header h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; }
+    .page-header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+    .vagas-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .vaga-card { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 14px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; transition: 0.2s; }
+    .vaga-card:hover { background: var(--white-hover); }
+    .vaga-info h2 { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .vaga-info p { font-size: 13px; color: var(--text-muted); }
+    .vaga-actions { display: flex; gap: 10px; flex-shrink: 0; }
+    .btn-sm { padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
+    .btn-sm-primary { background: var(--orange); color: #fff; }
+    .btn-sm-primary:hover { background: var(--orange-hover); }
+    .btn-sm-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; }
+    .btn-sm-ghost:hover { background: var(--white-soft); }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; padding: 24px; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: #1250b0; border: 1px solid var(--white-border); border-radius: 18px; padding: 32px; width: 100%; max-width: 520px; }
+    .modal-box h2 { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .modal-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+    .field input, .field textarea, .field select { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; transition: 0.2s; }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: rgba(255,255,255,0.45); }
+    .field textarea { min-height: 90px; resize: vertical; }
+    .field select option { background: #1250b0; color: #fff; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+    .empty { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+
+    .logout { color: var(--text-muted); font-size: 14px; text-decoration: none; }
+    .logout:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
+    <div class="topbar-right">
+      <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
+      <a href="login.html" class="btn-ghost">Sair</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <div class="page-label">Recursos Humanos</div>
+        <h1>Painel RH</h1>
+        <p>Gerencie suas vagas e candidatos</p>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-ghost" onclick="window.location.href='rh-relatorio.html'">Relatório de Cotas</button>
+        <button class="btn-primary" onclick="window.location.href='rh-criar-vaga.html'">+ Nova vaga</button>
+      </div>
+    </div>
+
+    <div class="vagas-list" id="lista-vagas">
+      <p class="empty">Carregando vagas...</p>
+    </div>
+  </div>
+
+  <!-- MODAL CRIAR VAGA -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-box" style="max-height:90vh;overflow-y:auto">
+      <h2>Nova vaga</h2>
+      <p>Preencha os dados da vaga para publicar</p>
+
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin:16px 0 10px">Informações básicas</div>
+      <div class="field"><label>Título da vaga *</label><input type="text" id="titulo" placeholder="Ex: Desenvolvedor Front-End"></div>
+      <div class="field"><label>Descrição *</label><textarea id="descricao" placeholder="Responsabilidades e atividades do dia a dia"></textarea></div>
+      <div class="field"><label>Requisitos *</label><textarea id="requisitos" placeholder="Formação, conhecimentos e experiências necessárias"></textarea></div>
+      <div class="field"><label>Benefícios</label><textarea id="beneficios" placeholder="Plano de saúde, vale-alimentação, etc." style="min-height:70px"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field"><label>Modelo de trabalho *</label>
+          <select id="modelo_trabalho">
+            <option value="">Selecione</option>
+            <option value="Presencial">Presencial</option>
+            <option value="Híbrido">Híbrido</option>
+            <option value="Remoto">Remoto</option>
+          </select>
+        </div>
+        <div class="field"><label>Localização *</label><input type="text" id="localizacao" placeholder="Ex: Recife - PE"></div>
+      </div>
+      <div class="field"><label>Salário</label><input type="text" id="salario" placeholder="Ex: R$ 3.000 ou A combinar"></div>
+
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin:16px 0 10px">Inclusão e acessibilidade</div>
+      <div class="field"><label>Foco de deficiência *</label>
+        <select id="tipo_deficiencia_foco">
+          <option value="">Selecione</option>
+          <option value="Qualquer">Qualquer deficiência</option>
+          <option value="Física">Física</option>
+          <option value="Auditiva">Auditiva</option>
+          <option value="Visual">Visual</option>
+          <option value="Intelectual">Intelectual</option>
+          <option value="Múltipla">Múltipla</option>
+        </select>
+      </div>
+      <div class="field"><label>Acessibilidade no local</label><textarea id="acessibilidade_local" placeholder="Ex: Prédio com rampas, elevador com aviso sonoro, banheiros adaptados" style="min-height:70px"></textarea></div>
+      <div class="field"><label>Tecnologias assistivas oferecidas</label><textarea id="tecnologias_assistivas" placeholder="Ex: Leitores de tela, teclados em Braille, intérprete de Libras" style="min-height:70px"></textarea></div>
+
+      <div class="modal-actions">
+        <button class="btn-sm btn-sm-ghost" onclick="fecharModal()">Cancelar</button>
+        <button class="btn-sm btn-sm-primary" onclick="criarVaga()">Publicar vaga</button>
+      </div>
+    </div>
+  </div>
+
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+    function abrirModal(){ document.getElementById('modal').classList.add('active'); }
+    function fecharModal(){ document.getElementById('modal').classList.remove('active'); }
+
+    async function carregarVagas() {
+      const token = localStorage.getItem('token');
+      if (!token) { window.location.href = 'login.html'; return; }
+      const lista = document.getElementById('lista-vagas');
+      try {
+        const r = await fetch('http://localhost:3000/vagas/minhas', { headers: { 'Authorization': 'Bearer ' + token } });
+        const d = await r.json();
+        if (!d.length) { lista.innerHTML = '<p class="empty">Nenhuma vaga publicada ainda. Crie a primeira!</p>'; return; }
+        lista.innerHTML = d.map(v => `
+          <div class="vaga-card">
+            <div class="vaga-info">
+              <h2>${v.titulo}</h2>
+              <p>${v.modelo_trabalho ? v.modelo_trabalho + ' · ' : ''}${v.localizacao || ''}${v.tipo_deficiencia_foco ? ' · Foco: ' + v.tipo_deficiencia_foco : ''}</p>
+            </div>
+            <div class="vaga-actions">
+              <button class="btn-sm btn-sm-ghost" onclick="window.location.href='rh-editar-vaga.html?vaga_id=${v.id}'">Editar</button>
+              <button class="btn-sm btn-sm-ghost" style="color:#f87171;border-color:rgba(248,113,113,0.4)" onclick="encerrarVaga(${v.id}, this)">Encerrar</button>
+              <button class="btn-sm btn-sm-primary" onclick="window.location.href='rh-candidatos.html?vaga_id=${v.id}&titulo=${encodeURIComponent(v.titulo)}'">Ver candidatos</button>
+            </div>
+          </div>`).join('');
+      } catch(e) { lista.innerHTML = '<p class="empty">Não foi possível conectar ao servidor.</p>'; }
+    }
+
+    async function criarVaga() {
+      const token = localStorage.getItem('token');
+      const titulo = document.getElementById('titulo').value;
+      const descricao = document.getElementById('descricao').value;
+      const requisitos = document.getElementById('requisitos').value;
+      const beneficios = document.getElementById('beneficios').value;
+      const modelo_trabalho = document.getElementById('modelo_trabalho').value;
+      const localizacao = document.getElementById('localizacao').value;
+      const salario = document.getElementById('salario').value;
+      const tipo_deficiencia_foco = document.getElementById('tipo_deficiencia_foco').value;
+      const acessibilidade_local = document.getElementById('acessibilidade_local').value;
+      const tecnologias_assistivas = document.getElementById('tecnologias_assistivas').value;
+
+      if (!titulo || !descricao || !requisitos || !modelo_trabalho || !localizacao || !tipo_deficiencia_foco) {
+        alert('Preencha todos os campos obrigatórios (*).');
+        return;
+      }
+
+      try {
+        const r = await fetch('http://localhost:3000/vagas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ titulo, descricao, requisitos, beneficios, modelo_trabalho, localizacao, salario, tipo_deficiencia_foco, acessibilidade_local, tecnologias_assistivas })
+        });
+        const d = await r.json();
+        if (r.ok) { alert('Vaga publicada!'); fecharModal(); carregarVagas(); }
+        else { alert('Erro: ' + (d.mensagem || 'Tente novamente.')); }
+      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+    }
+
+    async function encerrarVaga(id, btn) {
+      if (!confirm('Tem certeza que deseja encerrar esta vaga? Ela não aparecerá mais para candidatos.')) return;
+      const token = localStorage.getItem('token');
+      btn.textContent = '...'; btn.disabled = true;
+      try {
+        const r = await fetch(`http://localhost:3000/vagas/${id}/encerrar`, { method: 'PATCH', headers: { 'Authorization': 'Bearer ' + token } });
+        const d = await r.json();
+        if (r.ok) { alert('Vaga encerrada!'); carregarVagas(); }
+        else { alert('Erro: ' + (d.mensagem || 'Tente novamente.')); btn.textContent = 'Encerrar'; btn.disabled = false; }
+      } catch(e) { alert('Erro de conexão.'); btn.textContent = 'Encerrar'; btn.disabled = false; }
+    }
+
+    carregarVagas();
+  </script>
+</body>
+</html>

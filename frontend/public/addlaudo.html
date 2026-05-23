@@ -4,384 +4,86 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inclui+ | Adicionar Laudo</title>
-
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-
-    *{
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    body{
-      min-height: 100vh;
-
-      background: linear-gradient(135deg, #114ea8, #1e74df);
-
-      color: white;
-
-      transition: 0.3s;
-    }
-
-    /* ALTO CONTRASTE */
-
-    body.high-contrast{
-      background: black;
-      color: yellow;
-    }
-
-    body.high-contrast .topbar,
-    body.high-contrast .card,
-    body.high-contrast .file-box{
-      background: #111;
-      border: 2px solid yellow;
-    }
-
-    body.high-contrast .contrast-btn{
-      color: yellow;
-      border-color: yellow;
-    }
-
-    body.high-contrast .send-btn{
-      background: yellow;
-      color: black;
-    }
-
-    /* TOPO */
-
-    .topbar{
-
-      width: 100%;
-      height: 70px;
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      padding: 0 25px;
-
-      background: rgba(255,255,255,0.08);
-
-      backdrop-filter: blur(5px);
-
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .logo{
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo img{
-      width: 45px;
-      height: 45px;
-
-      border-radius: 10px;
-      object-fit: cover;
-    }
-
-    .logo h2{
-      font-size: 22px;
-    }
-
-    .contrast-btn{
-
-      padding: 10px 18px;
-
-      border-radius: 30px;
-
-      border: 2px solid rgba(255,255,255,0.7);
-
-      background: transparent;
-
-      color: white;
-
-      font-weight: bold;
-
-      cursor: pointer;
-
-      transition: 0.3s;
-    }
-
-    /* CONTAINER */
-
-    .container{
-
-      width: 100%;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      padding: 50px 20px;
-    }
-
-    /* CARD */
-
-    .card{
-
-      width: 100%;
-      max-width: 550px;
-
-      background: rgba(255,255,255,0.12);
-
-      border-radius: 20px;
-
-      padding: 35px;
-
-      backdrop-filter: blur(5px);
-
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
-
-    .card h1{
-      font-size: 32px;
-      margin-bottom: 12px;
-    }
-
-    .card p{
-      margin-bottom: 30px;
-      opacity: 0.9;
-      line-height: 24px;
-    }
-
-    /* FILE BOX */
-
-    .file-box{
-
-      width: 100%;
-
-      background: rgba(255,255,255,0.08);
-
-      border: 2px dashed rgba(255,255,255,0.5);
-
-      border-radius: 18px;
-
-      padding: 35px;
-
-      text-align: center;
-
-      margin-bottom: 25px;
-    }
-
-    .file-box h3{
-      margin-bottom: 12px;
-      font-size: 22px;
-    }
-
-    .file-box p{
-      margin-bottom: 20px;
-      font-size: 15px;
-    }
-
-    .file-box input{
-      color: white;
-    }
-
-    /* BOTÃO */
-
-    .send-btn{
-
-      width: 100%;
-      height: 50px;
-
-      border: none;
-      border-radius: 12px;
-
-      background: #ff8400;
-
-      color: white;
-
-      font-size: 17px;
-      font-weight: bold;
-
-      cursor: pointer;
-
-      transition: 0.3s;
-    }
-
-    .send-btn:hover{
-      background: #ff9500;
-    }
-
-    /* VOLTAR */
-
-    .back{
-
-      display: inline-block;
-
-      margin-top: 25px;
-
-      color: white;
-
-      text-decoration: none;
-
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .back:hover{
-      text-decoration: underline;
-    }
-
-    /* VLIBRAS */
-
-    .vw-access-button{
-      right: 15px !important;
-      top: 50% !important;
-      transform: translateY(-50%);
-    }
-
-    /* RESPONSIVO */
-
-    @media(max-width: 700px){
-
-      .topbar{
-        flex-direction: column;
-        height: auto;
-        gap: 15px;
-        padding: 15px;
-      }
-
-      .card h1{
-        font-size: 26px;
-      }
-
-    }
-
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --orange: #f47c20; --white-med: rgba(255,255,255,0.10); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; }
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .topbar, body.high-contrast .panel { background: #111 !important; border: 2px solid #ff0 !important; }
+    body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
+
+    .container { max-width: 560px; margin: 0 auto; padding: 48px 24px; }
+    .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+
+    .panel { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
+
+    .file-area { border: 1px dashed rgba(255,255,255,0.25); border-radius: 10px; padding: 32px; text-align: center; }
+    .file-icon { width: 48px; height: 48px; background: rgba(244,124,32,0.12); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+    .file-icon svg { width: 22px; height: 22px; stroke: var(--orange); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .file-area h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .file-area p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+    .file-area input { color: rgba(255,255,255,0.7); font-size: 13px; }
+
+    .btn-primary { background: var(--orange); border: none; color: #fff; padding: 12px 24px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary:hover { background: #e06b10; }
+
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 20px; }
+    .back:hover { color: #fff; }
   </style>
 </head>
-
 <body>
-
-  <!-- TOPO -->
-
   <div class="topbar">
-
-    <div class="logo">
-
-      <img src="logo.png.jpeg" alt="Logo Inclui+">
-
-      <h2>Inclui+</h2>
-
-    </div>
-
-    <button class="contrast-btn" onclick="toggleContrast()">
-      🌙 Alto Contraste
-    </button>
-
+    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
+    <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
   </div>
-
-  <!-- CONTAINER -->
 
   <div class="container">
+    <div class="page-label">Documentação</div>
+    <h1>Adicionar laudo</h1>
+    <p class="sub">Envie seu laudo médico em PDF para validação na plataforma.</p>
 
-    <!-- CARD -->
-
-    <div class="card">
-
-      <h1>🩺 Adicionar laudo</h1>
-
-      <p>
-        Envie seu laudo médico em formato PDF para validação da plataforma.
-      </p>
-
-      <!-- PDF -->
-
-      <div class="file-box">
-
-        <h3>📎 Anexar PDF</h3>
-
-        <p>
-          Selecione o arquivo do seu laudo médico
-        </p>
-
-        <input 
-          type="file"
-          accept=".pdf"
-        >
-
+    <div class="panel">
+      <div class="file-area">
+        <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <h3>Selecione o arquivo</h3>
+        <p>Formato aceito: PDF</p>
+        <input type="file" accept=".pdf">
       </div>
-
-      <!-- BOTÃO -->
-
-      <button 
-        class="send-btn"
-        onclick="enviarLaudo()"
-      >
-        Enviar laudo
-      </button>
-
-      <!-- VOLTAR -->
-
-      <a href="home.html" class="back">
-        ← Voltar para Home
-      </a>
-
     </div>
 
+    <button class="btn-primary" onclick="enviarLaudo()">Enviar laudo</button>
+    <br>
+    <a href="home.html" class="back">← Voltar para Home</a>
   </div>
 
-  <!-- VLIBRAS -->
-
-  <div vw class="enabled">
-    <div vw-access-button class="active"></div>
-    <div vw-plugin-wrapper>
-      <div class="vw-plugin-top-wrapper"></div>
-    </div>
-  </div>
-
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-
   <script>
-
     new window.VLibras.Widget('https://vlibras.gov.br/app');
-
-    function toggleContrast(){
-      document.body.classList.toggle("high-contrast");
-    }
-
+    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
     async function enviarLaudo() {
       const arquivo = document.querySelector('input[type="file"]').files[0];
-
-      if (!arquivo) {
-        alert('Selecione um arquivo PDF antes de enviar.');
-        return;
-      }
-
+      if (!arquivo) { alert('Selecione um arquivo PDF.'); return; }
       const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Você precisa estar logado. Redirecionando...');
-        window.location.href = 'login.html';
-        return;
-      }
-
+      if (!token) { alert('Você precisa estar logado.'); window.location.href = 'login.html'; return; }
       const formData = new FormData();
       formData.append('laudo', arquivo);
-
       try {
-        const resposta = await fetch('http://localhost:3000/perfil/laudo', {
-          method: 'PATCH',
-          headers: { 'Authorization': `Bearer ${token}` },
-          // NÃO definir Content-Type aqui — o browser adiciona o boundary automaticamente
-          body: formData
-        });
-
-        const resultado = await resposta.json();
-
-        if (resposta.ok) {
-          alert('Laudo enviado com sucesso!');
-        } else {
-          alert('Erro ao enviar: ' + (resultado.mensagem || 'Tente novamente.'));
-        }
-      } catch (e) {
-        alert('Não foi possível conectar ao servidor.');
-      }
+        const r = await fetch('http://localhost:3000/perfil/laudo', { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
+        const d = await r.json();
+        alert(r.ok ? 'Laudo enviado com sucesso!' : 'Erro: ' + (d.mensagem || 'Tente novamente.'));
+      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
     }
-
   </script>
-
 </body>
 </html>

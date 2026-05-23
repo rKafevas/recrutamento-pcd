@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Relatório de Cotas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --orange: #f47c20; --white-med: rgba(255,255,255,0.10); --white-hover: rgba(255,255,255,0.16); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 60px; }
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .topbar, body.high-contrast .panel, body.high-contrast .stat-card, body.high-contrast .row-item { background: #111 !important; border: 2px solid #ff0 !important; }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+    .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 36px; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+    .stat-card { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 14px; padding: 22px; text-align: center; }
+    .stat-number { font-family: 'Sora', sans-serif; font-size: 36px; font-weight: 700; color: var(--orange); }
+    .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+
+    .panel { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+    .panel-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 16px 22px 12px; border-bottom: 1px solid var(--white-border); }
+
+    .row-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 22px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 14px; }
+    .row-item:last-child { border-bottom: none; }
+    .row-item span { color: var(--text-muted); font-size: 13px; }
+
+    .badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .badge-aberta { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .badge-encerrada { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
+
+    .nota-lei { background: rgba(244,124,32,0.1); border: 1px solid rgba(244,124,32,0.25); border-radius: 12px; padding: 16px 20px; font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.85); margin-bottom: 28px; }
+    .nota-lei strong { color: var(--orange); }
+
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 28px; }
+    .back:hover { color: #fff; }
+
+    @media(max-width:700px){ .stats-grid { grid-template-columns: repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
+      <a href="login.html" class="btn-ghost">Sair</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <a href="rh-dashboard.html" class="back">← Voltar ao Painel</a>
+    <div class="page-label">Conformidade Legal</div>
+    <h1>Relatório de Cotas</h1>
+    <p class="sub">Lei nº 8.213/91 — Acompanhe a conformidade da sua empresa</p>
+
+    <div class="nota-lei">
+      <strong>Lei de Cotas (Art. 93):</strong> Empresas com 100 a 200 funcionários devem reservar 2% das vagas para PcD. De 201 a 500: 3%. De 501 a 1.000: 4%. Acima de 1.001: 5%.
+    </div>
+
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Total de candidatos</div></div>
+      <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Contratados PcD</div></div>
+      <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Em entrevista</div></div>
+      <div class="stat-card"><div class="stat-number">—</div><div class="stat-label">Vagas abertas</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Contratados por tipo de deficiência</div>
+      <div id="lista-deficiencia"><div class="row-item">Carregando...</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Vagas e inscrições</div>
+      <div id="lista-vagas"><div class="row-item">Carregando...</div></div>
+    </div>
+  </div>
+
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+
+    async function carregarRelatorio() {
+      const token = localStorage.getItem('token');
+      if (!token) { window.location.href = 'login.html'; return; }
+      try {
+        const r = await fetch('http://localhost:3000/relatorio/cotas', { headers: {'Authorization':'Bearer '+token} });
+        const d = await r.json();
+        if (!r.ok) { alert('Erro ao carregar relatório.'); return; }
+
+        const { resumo, porDeficiencia, vagas } = d;
+
+        document.getElementById('stats-grid').innerHTML = `
+          <div class="stat-card"><div class="stat-number">${resumo.total_candidatos||0}</div><div class="stat-label">Total de candidatos</div></div>
+          <div class="stat-card"><div class="stat-number" style="color:#4ade80">${resumo.total_contratados||0}</div><div class="stat-label">Contratados PcD</div></div>
+          <div class="stat-card"><div class="stat-number" style="color:#60a5fa">${resumo.em_entrevista||0}</div><div class="stat-label">Em entrevista</div></div>
+          <div class="stat-card"><div class="stat-number">${resumo.vagas_abertas||0}</div><div class="stat-label">Vagas abertas</div></div>
+        `;
+
+        document.getElementById('lista-deficiencia').innerHTML = porDeficiencia.length
+          ? porDeficiencia.map(p => `<div class="row-item"><span>${p.tipo_deficiencia || 'Não informado'}</span><strong>${p.total} contratado(s)</strong></div>`).join('')
+          : '<div class="row-item"><span>Nenhum contratado registrado ainda.</span></div>';
+
+        document.getElementById('lista-vagas').innerHTML = vagas.length
+          ? vagas.map(v => `
+            <div class="row-item">
+              <div>
+                <div style="font-weight:600;margin-bottom:3px">${v.titulo}</div>
+                <span>${v.tipo_deficiencia_foco || 'Qualquer'} · ${v.total_inscritos} inscrito(s) · ${v.aprovados} aprovado(s)</span>
+              </div>
+              <span class="badge badge-${v.status.toLowerCase()}">${v.status}</span>
+            </div>`).join('')
+          : '<div class="row-item"><span>Nenhuma vaga encontrada.</span></div>';
+
+      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+    }
+
+    carregarRelatorio();
+  </script>
+</body>
+</html>
