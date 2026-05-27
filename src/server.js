@@ -35,10 +35,10 @@ app.use('/login', loginLimiter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // FRONTEND
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(process.cwd(), 'frontend/public')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
+  res.sendFile(path.join(process.cwd(), 'frontend/public/index.html'));
 });
 
 // Swagger
