@@ -175,7 +175,7 @@
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const r = await fetch('http://localhost:3000/notificacoes', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch('https://inclui-plus-api.onrender.com/notificacoes', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         const badge = document.getElementById('tb-badge');
         const lista = document.getElementById('tb-notif-lista');

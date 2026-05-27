@@ -9,7 +9,10 @@ const options = {
       description: 'API do Sistema de Recrutamento Inclusivo para PcD — Inclui+',
       contact: { name: 'Equipe Inclui+' }
     },
-    servers: [{ url: 'http://localhost:3000', description: 'Servidor local' }],
+    servers: [{
+    url: 'https://inclui-plus-api.onrender.com',
+    description: 'Servidor de Produção (Render)'
+  },],
     components: {
       securitySchemes: {
         bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
