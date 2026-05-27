@@ -19,15 +19,23 @@
     .field:last-child { margin-bottom: 0; }
     .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
     .field input, .field textarea { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; transition: 0.2s; }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.35); }
     .field input:focus, .field textarea:focus { outline: none; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.14); }
     .field textarea { min-height: 100px; resize: vertical; }
     .btn-primary { background: var(--orange); border: none; color: #fff; padding: 12px 24px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-primary:hover { background: #e06b10; }
     .btn-danger { background: transparent; border: 1px solid rgba(248,113,113,0.4); color: #f87171; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+    .btn-danger:hover { background: rgba(248,113,113,0.1); }
     .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 20px; }
+    .back:hover { color: #fff; }
     .curriculo-atual { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .curriculo-atual p { font-size: 13px; color: rgba(255,255,255,0.85); }
     .curriculo-atual a { font-size: 12px; font-weight: 600; color: #4ade80; text-decoration: none; }
+    .curriculo-atual a:hover { text-decoration: underline; }
     .file-area { border: 1px dashed rgba(255,255,255,0.25); border-radius: 10px; padding: 24px; text-align: center; }
+    .file-area p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    .file-area input { color: rgba(255,255,255,0.7); font-size: 13px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -35,50 +43,84 @@
   <div class="container">
     <div class="page-label">Perfil</div>
     <h1>Meu Currículo</h1>
-    
+    <p class="sub">Atualize suas informações profissionais</p>
+
     <div class="panel" style="display:flex;align-items:center;gap:20px">
-      <div id="foto-preview" style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;overflow:hidden"></div>
+      <div style="flex-shrink:0">
+        <div id="foto-preview" style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+      </div>
       <div style="flex:1">
-        <label style="background:var(--orange);color:#fff;padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer">
-          Alterar foto
-          <input type="file" id="arquivo-foto" accept=".jpg,.jpeg,.png,.webp" style="display:none" onchange="enviarFoto(this)">
-        </label>
-        <button id="btn-remover-foto" onclick="removerFoto()" style="display:none;background:transparent;border:1px solid rgba(248,113,113,0.4);color:#f87171;padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer">Remover</button>
+        <p style="font-size:14px;font-weight:600;margin-bottom:4px">Foto de perfil</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">JPG, PNG ou WEBP — máx. 5MB</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label style="background:var(--orange);color:#fff;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+            Alterar foto
+            <input type="file" id="arquivo-foto" accept=".jpg,.jpeg,.png,.webp" style="display:none" onchange="enviarFoto(this)">
+          </label>
+          <button id="btn-remover-foto" onclick="removerFoto()" style="display:none;background:transparent;border:1px solid rgba(248,113,113,0.4);color:#f87171;padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer">Remover</button>
+        </div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="field"><label>Nome completo</label><input type="text" id="nome"></div>
-      <div class="field"><label>E-mail</label><input type="email" id="email" disabled style="opacity:0.6"></div>
-      <div class="field"><label>Telefone</label><input type="text" id="telefone"></div>
-      <div class="field"><label>Sobre você</label><textarea id="sobre"></textarea></div>
-      <button class="btn-primary" onclick="salvarInfos()">Salvar informações</button>
+      <div class="panel-title">Informações pessoais</div>
+      <div class="field"><label>Nome completo</label><input type="text" id="nome" placeholder="Seu nome completo"></div>
+      <div class="field"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com" disabled style="opacity:0.6"></div>
+      <div class="field"><label>Telefone</label><input type="text" id="telefone" placeholder="(00) 00000-0000"></div>
+      <div class="field"><label>Sobre você</label><textarea id="sobre" placeholder="Fale sobre suas experiências, habilidades e objetivos profissionais"></textarea></div>
+      <div class="actions">
+        <button class="btn-primary" onclick="salvarInfos()">Salvar informações</button>
+      </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">Formação e Habilidades</div>
-      <div class="field"><textarea id="formacao" placeholder="Formação"></textarea></div>
-      <div class="field"><textarea id="experiencias" placeholder="Experiências"></textarea></div>
-      <div class="field"><textarea id="habilidades" placeholder="Habilidades"></textarea></div>
+      <div class="panel-title">Formação acadêmica</div>
+      <div class="field"><textarea id="formacao" placeholder="Ex: Bacharelado em Sistemas de Informação — UNINASSAU (2022-2026)&#10;Técnico em Informática — SENAC (2020)"></textarea></div>
     </div>
 
     <div class="panel">
+      <div class="panel-title">Experiências profissionais</div>
+      <div class="field"><textarea id="experiencias" placeholder="Ex: Desenvolvedor Front-End — Empresa X (2023-atual)&#10;Responsável por criar interfaces acessíveis..."></textarea></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Habilidades</div>
+      <div class="field"><textarea id="habilidades" placeholder="Ex: HTML, CSS, JavaScript, React, Node.js, Acessibilidade Web..." style="min-height:70px"></textarea></div>
+      <div class="actions">
+        <button class="btn-primary" onclick="salvarInfos()">Salvar tudo</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Currículo em PDF</div>
       <div id="curriculo-atual" style="display:none" class="curriculo-atual">
-        <div><p>Currículo anexado</p><a id="link-curriculo" href="#" target="_blank">Visualizar</a></div>
+        <div>
+          <p>📄 Currículo anexado</p>
+          <a id="link-curriculo" href="#" target="_blank">Visualizar currículo</a>
+        </div>
         <button class="btn-danger" onclick="removerCurriculo()">Remover</button>
       </div>
       <div id="upload-area" class="file-area">
+        <p>Selecione o arquivo do seu currículo</p>
         <input type="file" id="arquivo-curriculo" accept=".pdf">
       </div>
-      <button class="btn-primary" style="margin-top:16px" onclick="salvarCurriculo()">Enviar currículo</button>
+      <div class="actions" style="margin-top:16px">
+        <button class="btn-primary" onclick="salvarCurriculo()">Enviar currículo</button>
+      </div>
     </div>
 
     <a href="home.html" class="back">← Voltar para Home</a>
   </div>
 
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
   <script src="config.js"></script>
   <script src="toast.js"></script>
+  <script src="topbar.js"></script>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
     const token = localStorage.getItem('token');
     if (!token) window.location.href = 'login.html';
 
@@ -92,18 +134,21 @@
         if (d.telefone) document.getElementById('telefone').value = d.telefone;
         if (d.sobre) document.getElementById('sobre').value = d.sobre;
         if (d.foto_url) {
-          document.getElementById('foto-preview').innerHTML = `<img src="${API_URL}/${d.foto_url.replace(/\\/g,'/')}" style="width:100%;height:100%;object-fit:cover">`;
-          document.getElementById('btn-remover-foto').style.display = 'block';
+        const preview = document.getElementById('foto-preview');
+        preview.innerHTML = `<img src="${API_URL}/${d.foto_url.replace(/\\/g,'/')}" style="width:100%;height:100%;object-fit:cover">`;
+        document.getElementById('btn-remover-foto').style.display = 'block';
+      } // O IF da foto fecha AQUI
+
+      if (d.formacao) document.getElementById('formacao').value = d.formacao;
+      if (d.experiencias) document.getElementById('experiencias').value = d.experiencias;
+      if (d.habilidades) document.getElementById('habilidades').value = d.habilidades;
+      
+      // Estes comandos devem ficar FORA do IF da foto para funcionarem sempre
+      document.getElementById('curriculo-atual').style.display = 'flex';
+      document.getElementById('upload-area').style.display = 'none';
+      document.getElementById('link-curriculo').href = API_URL + '/' + d.curriculo_url.replace(/\\/g, '/');
         }
-        if (d.formacao) document.getElementById('formacao').value = d.formacao;
-        if (d.experiencias) document.getElementById('experiencias').value = d.experiencias;
-        if (d.habilidades) document.getElementById('habilidades').value = d.habilidades;
-        if (d.curriculo_url) {
-          document.getElementById('curriculo-atual').style.display = 'flex';
-          document.getElementById('upload-area').style.display = 'none';
-          document.getElementById('link-curriculo').href = API_URL + '/' + d.curriculo_url.replace(/\\/g, '/');
-        }
-      } catch(e) { console.error(e); }
+       catch(e) {}
     }
 
     async function enviarFoto(input) {
@@ -113,38 +158,79 @@
       formData.append('foto', arquivo);
       try {
         const r = await fetch(API_URL + "/perfil/foto", { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
-        if (r.ok) { Toast.show('Foto atualizada!', 'success'); carregarPerfil(); }
+        const d = await r.json();
+        if (r.ok) {
+          Toast.show('Foto atualizada!', 'success');
+          const preview = document.getElementById('foto-preview');
+          preview.innerHTML = `<img src="" + API_URL + "/${d.dados.foto_url.replace(/\\/g,'/')}" style="width:100%;height:100%;object-fit:cover">`;
+          document.getElementById('btn-remover-foto').style.display = 'block';
+        } else Toast.show(d.mensagem || 'Erro ao enviar foto.', 'error');
       } catch(e) { Toast.show('Erro de conexão.', 'error'); }
     }
 
+    async function removerFoto() {
+      if (!confirm('Deseja remover sua foto de perfil?')) return;
+      try {
+        const r = await fetch(API_URL + "/perfil/foto", { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
+        if (r.ok) {
+          Toast.show('Foto removida.', 'info');
+          document.getElementById('foto-preview').innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+          document.getElementById('btn-remover-foto').style.display = 'none';
+        }
+      } catch(e) { Toast.show('Erro ao remover.', 'error'); }
+    }
+
     async function salvarInfos() {
-      const dados = {
-        nome: document.getElementById('nome').value,
-        sobre: document.getElementById('sobre').value,
-        telefone: document.getElementById('telefone').value,
-        formacao: document.getElementById('formacao').value,
-        experiencias: document.getElementById('experiencias').value,
-        habilidades: document.getElementById('habilidades').value
-      };
+      const nome = document.getElementById('nome').value;
+      const sobre = document.getElementById('sobre').value;
+      const telefone = document.getElementById('telefone').value;
+      const formacao = document.getElementById('formacao').value;
+      const experiencias = document.getElementById('experiencias').value;
+      const habilidades = document.getElementById('habilidades').value;
       try {
         const r = await fetch(API_URL + "/perfil/infos", {
           method: 'PATCH',
           headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
-          body: JSON.stringify(dados)
+          body: JSON.stringify({ nome, sobre, telefone, formacao, experiencias, habilidades })
         });
-        if (r.ok) Toast.show('Informações salvas!', 'success');
-      } catch(e) { Toast.show('Erro ao conectar.', 'error'); }
+        const d = await r.json();
+        if (r.ok) Toast.show('Informações salvas com sucesso!', 'success');
+        else Toast.show(d.mensagem || 'Erro ao salvar.', 'error');
+      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
     }
 
     async function salvarCurriculo() {
       const arquivo = document.getElementById('arquivo-curriculo').files[0];
-      if (!arquivo) return Toast.show('Selecione um PDF.', 'warning');
+      if (!arquivo) { Toast.show('Selecione um arquivo PDF.', 'warning'); return; }
+      const nome = document.getElementById('nome').value;
+      const sobre = document.getElementById('sobre').value;
+      const telefone = document.getElementById('telefone').value;
       const formData = new FormData();
       formData.append('curriculo', arquivo);
+      if (nome) formData.append('nome', nome);
+      if (sobre) formData.append('sobre', sobre);
+      if (telefone) formData.append('telefone', telefone);
       try {
         const r = await fetch(API_URL + "/perfil/curriculo", { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
-        if (r.ok) { Toast.show('Currículo enviado!', 'success'); carregarPerfil(); }
-      } catch(e) { Toast.show('Erro ao enviar.', 'error'); }
+        const d = await r.json();
+        if (r.ok) {
+          Toast.show('Currículo enviado com sucesso!', 'success');
+          carregarPerfil();
+        } else Toast.show(d.mensagem || 'Erro ao enviar.', 'error');
+      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
+    }
+
+    async function removerCurriculo() {
+      if (!confirm('Deseja remover o currículo atual?')) return;
+      try {
+        const r = await fetch(API_URL + "/perfil/curriculo", { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
+        if (r.ok) {
+          Toast.show('Currículo removido.', 'info');
+          document.getElementById('curriculo-atual').style.display = 'none';
+          document.getElementById('upload-area').style.display = 'block';
+          document.getElementById('arquivo-curriculo').value = '';
+        }
+      } catch(e) { Toast.show('Erro ao remover.', 'error'); }
     }
 
     carregarPerfil();
