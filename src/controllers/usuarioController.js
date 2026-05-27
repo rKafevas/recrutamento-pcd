@@ -1,38 +1,31 @@
 const UsuarioService = require('../services/usuarioService');
 
 class UsuarioController {
-  async registrar(req, res, next) { // Adicionamos 'next' para o erro global
+async registrar(req, res, next) {
     try {
-      // 1. O Joi já validou os dados no middleware da rota, 
-      // então aqui apenas recebemos o que está pronto para o banco.
       const { 
-        nome_completo, 
-        email, 
-        senha, 
-        tipo_deficiencia, 
-        necessidades_acessibilidade 
+        nome_completo, email, senha, tipo_deficiencia, necessidades_acessibilidade 
       } = req.body;
 
-      // 2. ENVIO PARA O SERVICE
-      // O Service deve ser responsável por:
-      // - Verificar se o e-mail existe
-      // - Criptografar a senha (Bcrypt)
-      // - Fazer o INSERT
       const resultado = await UsuarioService.registrarCandidato({
-        nome_completo,
-        email,
-        senha,
-        tipo_deficiencia,
-        necessidades_acessibilidade
+        nome_completo, email, senha, tipo_deficiencia, necessidades_acessibilidade
       });
 
-      // 3. Resposta de sucesso
       return res.status(201).json(resultado);
 
     } catch (err) {
-      // 4. Se o e-mail já existir ou der erro no banco, o Service lança o erro
-      // e o 'next(err)' manda direto para o Error Handler Global no server.js
-      next(err); 
+      // 1. Loga o erro no servidor para você saber o que aconteceu
+      console.error("Erro no registro:", err);
+
+      // 2. Tenta usar o next(err) para o tratamento global
+      // Mas se o servidor não responder, a linha abaixo garante que o front-end 
+      // saia do estado (pending) e receba uma mensagem de erro.
+      if (!res.headersSent) {
+        return res.status(500).json({ 
+          mensagem: "Erro ao processar o registro. Tente novamente mais tarde." 
+        });
+      }
+      next(err);
     }
   }
   async registrarRH(req, res, next) {
