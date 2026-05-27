@@ -95,62 +95,83 @@
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 
   <script>
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
+  new window.VLibras.Widget('https://vlibras.gov.br/app');
 
-    function toggleContrast(){ document.body.classList.toggle("high-contrast"); }
+  function toggleContrast() {
+    document.body.classList.toggle("high-contrast");
+  }
 
-    async function executarCadastroRH() {
-      const nome_completo = document.getElementById('nome_completo').value;
-      const email = document.getElementById('email').value;
-      const nome_fantasia = document.getElementById('nome_fantasia').value;
-      const cnpj = document.getElementById('cnpj').value;
-      const senha = document.getElementById('senha').value;
-      const confirmarSenha = document.getElementById('confirmarSenha').value;
+  async function executarCadastroRH() {
+    const nome_completo = document.getElementById('nome_completo').value;
+    const email = document.getElementById('email').value;
+    const nome_fantasia = document.getElementById('nome_fantasia').value;
+    const cnpj = document.getElementById('cnpj').value;
+    const senha = document.getElementById('senha').value;
+    const confirmarSenha = document.getElementById('confirmarSenha').value;
 
-      if (!nome_completo || !email || !nome_fantasia || !cnpj || !senha) {
-        alert('Preencha todos os campos obrigatórios.');
-        return;
-      }
-
-      if (!document.getElementById('lgpd').checked) {
-        alert('Você precisa aceitar a Política de Privacidade e a LGPD para criar sua conta.');
-        return;
-      }
-
-      if (senha !== confirmarSenha) {
-        alert('As senhas não coincidem!');
-        return;
-      }
-
-      try {
-        const resposta = await fetch(API_URL + "/usuarios/rh', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome_completo, email, senha, nome_fantasia, cnpj })
-        });
-
-        const resultado = await resposta.json();
-
-        if (resposta.ok) {
-          const uid = resultado.usuario_id || resultado.usuario?.id;
-          window.location.href = `confirmar-email.html?id=${uid}&email=${encodeURIComponent(email)}`;
-        } else {
-          alert('Erro ao cadastrar: ' + (resultado.mensagem || 'Verifique os dados.'));
-        }
-      } catch (e) {
-        alert('Não foi possível conectar ao servidor.');
-      }
+    if (!nome_completo || !email || !nome_fantasia || !cnpj || !senha) {
+      alert('Preencha todos os campos obrigatórios.');
+      return;
     }
 
-    // Máscara CNPJ
-    document.getElementById('cnpj').addEventListener('input', function () {
-      let v = this.value.replace(/\D/g, '').slice(0, 14);
-      v = v.replace(/^(\d{2})(\d)/, '$1.$2');
-      v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-      v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
-      v = v.replace(/(\d{4})(\d)/, '$1-$2');
-      this.value = v;
-    });
-  </script>
-</body>
-</html>
+    if (!document.getElementById('lgpd').checked) {
+      alert('Você precisa aceitar a LGPD.');
+      return;
+    }
+
+    if (senha !== confirmarSenha) {
+      alert('As senhas não coincidem!');
+      return;
+    }
+
+    try {
+      const resposta = await fetch(`${window.API_URL}/usuarios/rh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nome_completo,
+          email,
+          senha,
+          nome_fantasia,
+          cnpj
+        })
+      });
+
+      let resultado;
+
+      try {
+        resultado = await resposta.json();
+      } catch (e) {
+        const texto = await resposta.text();
+        console.log("RESPOSTA NÃO JSON:", texto);
+        throw new Error("Backend não retornou JSON válido");
+      }
+
+      console.log("STATUS:", resposta.status);
+      console.log("RESPOSTA:", resultado);
+
+      if (resposta.ok) {
+        const uid = resultado.usuario_id || resultado.usuario?.id;
+        window.location.href = `confirmar-email.html?id=${uid}&email=${encodeURIComponent(email)}`;
+      } else {
+        alert('Erro ao cadastrar: ' + (resultado.mensagem || 'Verifique os dados.'));
+      }
+
+    } catch (e) {
+      console.error(e);
+      alert('Não foi possível conectar ao servidor.');
+    }
+  }
+
+  // máscara CNPJ
+  document.getElementById('cnpj').addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 14);
+    v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+    v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+    v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+    v = v.replace(/(\d{4})(\d)/, '$1-$2');
+    this.value = v;
+  });
+</script>

@@ -4,86 +4,125 @@ const EmailService = require('../services/emailService');
 const bcrypt = require('bcrypt');
 
 class UsuarioService {
+
   async registrarCandidato(dados) {
-    // 1. VERIFICAÇÃO DE SEGURANÇA: O e-mail já existe?
     const usuarioExistente = await UsuarioRepository.buscarPorEmail(dados.email);
+
     if (usuarioExistente) {
-      const error = new Error('Este e-mail já está cadastrado no sistema.');
-      error.status = 409; // Status 409: Conflict
+      const error = new Error('Este e-mail já está cadastrado.');
+      error.status = 409;
       throw error;
     }
 
-    // 2. CRIPTOGRAFIA
-    const saltRounds = 10;
-    const senhaCriptografada = await bcrypt.hash(dados.senha, saltRounds);
+    const senhaCriptografada = await bcrypt.hash(dados.senha, 10);
 
     try {
-      // 3. REGISTRO DE LOGIN (Tabela usuarios)
       const usuario = await UsuarioRepository.criarUsuario(
-        dados.email, 
-        senhaCriptografada, 
+        dados.email,
+        senhaCriptografada,
         'Candidato'
       );
 
-      // 4. PERFIL DETALHADO (Tabela candidatos)
       const candidato = await UsuarioRepository.criarCandidato(
-        usuario.id, 
+        usuario.id,
         dados.nome_completo,
-        dados.tipo_deficiencia,
-        dados.necessidades_acessibilidade
+        dados.tipo_deficiencia || null
       );
 
-      // Envia e-mail de confirmação
       try {
         const token = await TokenRepository.criar(usuario.id, 'confirmacao');
-        await EmailService.enviarConfirmacaoCadastro(dados.email, dados.nome_completo, token);
-      } catch(e) { console.error('Erro ao enviar e-mail de confirmação:', e.message); }
 
-      return { 
-        mensagem: "Cadastro realizado! Verifique seu e-mail para confirmar a conta.",
-        usuario: { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
+        await EmailService.enviarConfirmacaoCadastro(
+          dados.email,
+          dados.nome_completo,
+          token
+        );
+
+      } catch (e) {
+        console.error('Erro ao enviar e-mail:', e.message);
+      }
+
+      return {
+        mensagem: "Cadastro realizado com sucesso!",
+        usuario: {
+          id: usuario.id,
+          email: usuario.email,
+          tipo: usuario.tipo
+        },
         perfil: candidato,
         usuario_id: usuario.id
       };
 
     } catch (err) {
-      // Se algo der errado no INSERT (ex: banco fora do ar)
-      console.error("Erro ao salvar no banco:", err);
-      throw new Error("Erro técnico ao salvar os dados. Tente novamente.");
+      console.error("🔥 ERRO AO SALVAR CANDIDATO:", err);
+      throw new Error("Erro ao criar cadastro. Tente novamente.");
     }
   }
+
   async registrarRH(dados) {
     const usuarioExistente = await UsuarioRepository.buscarPorEmail(dados.email);
+
     if (usuarioExistente) {
-      const error = new Error('Este e-mail já está cadastrado no sistema.');
+      const error = new Error('Este e-mail já está cadastrado.');
       error.status = 409;
       throw error;
     }
 
-    const saltRounds = 10;
-    const senhaCriptografada = await bcrypt.hash(dados.senha, saltRounds);
+    const senhaCriptografada = await bcrypt.hash(dados.senha, 10);
 
     try {
-      const usuario = await UsuarioRepository.criarUsuario(dados.email, senhaCriptografada, 'RH');
-      const empresa = await UsuarioRepository.criarEmpresa(usuario.id, dados.nome_fantasia, dados.cnpj);
+      const usuario = await UsuarioRepository.criarUsuario(
+        dados.email,
+        senhaCriptografada,
+        'RH'
+      );
 
-      // Envia e-mail de confirmação
+      let empresa;
+
+      try {
+        empresa = await UsuarioRepository.criarEmpresa(
+          usuario.id,
+          dados.nome_fantasia,
+          dados.cnpj
+        );
+      } catch (err) {
+        console.error("🔥 ERRO AO CRIAR EMPRESA NO BANCO:", err);
+
+        // aqui você decide:
+        // ou apaga o usuário criado, ou lança erro
+        throw new Error("Usuário criado, mas falha ao salvar empresa.");
+      }
+
       try {
         const token = await TokenRepository.criar(usuario.id, 'confirmacao');
-        await EmailService.enviarConfirmacaoCadastro(dados.email, dados.nome_completo, token);
-      } catch(e) { console.error('Erro ao enviar e-mail de confirmação:', e.message); }
+
+        await EmailService.enviarConfirmacaoCadastro(
+          dados.email,
+          dados.nome_fantasia,
+          token
+        );
+
+      } catch (e) {
+        console.error('Erro ao enviar e-mail:', e.message);
+      }
 
       return {
-        mensagem: "Conta RH criada! Verifique seu e-mail para confirmar a conta.",
-        usuario: { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
+        mensagem: "Cadastro realizado com sucesso!",
+        usuario: {
+          id: usuario.id,
+          email: usuario.email,
+          tipo: usuario.tipo
+        },
         empresa,
         usuario_id: usuario.id
       };
+
     } catch (err) {
-      console.error("Erro ao salvar no banco:", err);
-      throw new Error("Erro técnico ao salvar os dados. Tente novamente.");
+      console.error("🔥 ERRO AO SALVAR RH:", err);
+      throw new Error("Erro ao criar cadastro. Tente novamente.");
     }
   }
+
   async deletarConta(usuarioId) {
     await UsuarioRepository.deletarConta(usuarioId);
   }

@@ -148,73 +148,84 @@
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 
   <script>
-    // Inicializa o VLibras
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
+  // Inicializa o VLibras
+  new window.VLibras.Widget('https://vlibras.gov.br/app');
 
-    // Função de alto contraste
-    function toggleContrast(){
-      document.body.classList.toggle("high-contrast");
+  function toggleContrast(){
+    document.body.classList.toggle("high-contrast");
+  }
+
+  async function executarCadastro() {
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const confirmarSenha = document.getElementById('confirmarSenha').value;
+    const tipoDeficiencia = document.getElementById('tipoDeficiencia').value;
+
+    // validações
+    if (!nome || !email || !senha) {
+      alert("Preencha todos os campos obrigatórios.");
+      return;
     }
 
-    // NOVA FUNÇÃO DE INTEGRAÇÃO COM O BACKEND
-    async function executarCadastro() {
-      const nome = document.getElementById('nome').value;
-      const email = document.getElementById('email').value;
-      const senha = document.getElementById('senha').value;
-      const confirmarSenha = document.getElementById('confirmarSenha').value;
-      const tipoDeficiencia = document.getElementById('tipoDeficiencia').value;
-
-      // Validação básica no front-end
-      if (!nome || !email || !senha) {
-        alert("Preencha todos os campos obrigatórios (Nome, Email, Senha).");
-        return;
-      }
-
-      if (!document.getElementById('lgpd').checked) {
-        alert('Você precisa aceitar a Política de Privacidade e a LGPD para criar sua conta.');
-        return;
-      }
-
-      if (senha !== confirmarSenha) {
-        alert("As senhas não coincidem!");
-        return;
-      }
-
-      // Montando o objeto para o backend
-      // Montando o objeto para o backend
-      // Montando o objeto para o backend
-      const dadosCadastro = {
-        nome_completo: nome,
-        email: email,
-        senha: senha,
-        tipo_deficiencia: tipoDeficiencia || null
-      };
-
-      try {
-        // Altere a porta caso seu backend não esteja rodando na 3000
-        const resposta = await fetch(`${window.API_URL}/usuarios`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(dadosCadastro)
-        });
-
-        const resultado = await resposta.json();
-
-        if (resposta.ok) {
-          const uid = resultado.usuario_id || resultado.usuario?.id;
-          window.location.href = `confirmar-email.html?id=${uid}&email=${encodeURIComponent(email)}`;
-        } else {
-          // Exibe a mensagem de erro vinda do Joi/Controller
-          alert('Erro ao cadastrar: ' + (resultado.mensagem || 'Verifique os dados enviados.'));
-        }
-      } catch (erro) {
-        console.error('Erro na requisição:', erro);
-        alert('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
-      }
+    if (!document.getElementById('lgpd').checked) {
+      alert('Você precisa aceitar a LGPD.');
+      return;
     }
-  </script>
 
-</body>
-</html>
+    if (senha !== confirmarSenha) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
+    const dadosCadastro = {
+      nome_completo: nome,
+      email: email,
+      senha: senha,
+      tipo_deficiencia: tipoDeficiencia || null
+    };
+
+    // 🔥 FIX IMPORTANTE: evita API_URL indefinido
+    const API = window.API_URL || "http://localhost:3000";
+
+    try {
+      const resposta = await fetch(`${API}/usuarios`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosCadastro)
+      });
+
+      // 🔥 tenta ler resposta mesmo se não for JSON
+      let resultado = {};
+      const contentType = resposta.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        resultado = await resposta.json();
+      } else {
+        const texto = await resposta.text();
+        console.log("RESPOSTA NÃO JSON:", texto);
+        throw new Error("Backend não retornou JSON");
+      }
+
+      console.log("STATUS:", resposta.status);
+      console.log("RESPOSTA:", resultado);
+
+      if (resposta.ok) {
+        const uid = resultado.usuario_id || resultado.usuario?.id;
+        window.location.href = `confirmar-email.html?id=${uid}&email=${encodeURIComponent(email)}`;
+      } else {
+        alert(
+          resultado.mensagem ||
+          resultado.error ||
+          "Erro ao cadastrar. Verifique os dados enviados."
+        );
+      }
+
+    } catch (erro) {
+      console.error("ERRO COMPLETO:", erro);
+      alert("Erro de conexão com o servidor. Verifique se o backend está rodando.");
+    }
+  }
+</script>

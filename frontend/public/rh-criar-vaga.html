@@ -157,16 +157,22 @@
   </div>
 
   <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
-  <script src="config.js"></script>
-  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
-    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+  new window.VLibras.Widget('https://vlibras.gov.br/app');
 
-    async function criarVaga() {
+  function toggleContrast(){
+    document.body.classList.toggle('high-contrast');
+  }
+
+async function criarVaga() {
+    try {
       const token = localStorage.getItem('token');
-      if (!token) { window.location.href = 'login.html'; return; }
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
 
+      // Captura dos valores
       const titulo = document.getElementById('titulo').value;
       const descricao = document.getElementById('descricao').value;
       const requisitos = document.getElementById('requisitos').value;
@@ -183,17 +189,32 @@
         return;
       }
 
-      try {
-        const r = await fetch(API_URL + "/vagas", {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify({ titulo, descricao, requisitos, beneficios, modelo_trabalho, localizacao, salario, tipo_deficiencia_foco, acessibilidade_local, tecnologias_assistivas })
-        });
-        const d = await r.json();
-        if (r.ok) { alert('Vaga publicada com sucesso!'); window.location.href = 'rh-dashboard.html'; }
-        else { alert('Erro: ' + (d.mensagem || 'Verifique os campos e tente novamente.')); }
-      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+      const payload = {
+        titulo, descricao, requisitos, beneficios, modelo_trabalho, 
+        localizacao, salario, tipo_deficiencia_foco, acessibilidade_local, tecnologias_assistivas
+      };
+
+      // Apenas UMA chamada ao servidor
+      const response = await fetch(`${API_URL}/vagas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Vaga publicada com sucesso!');
+        window.location.href = 'rh-dashboard.html';
+      } else {
+        alert('Erro: ' + (data.mensagem || 'Verifique os campos e tente novamente.'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Não foi possível conectar ao servidor.');
     }
-  </script>
-</body>
-</html>
+  }
+</script>

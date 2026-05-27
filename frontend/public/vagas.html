@@ -185,7 +185,7 @@
       params.append('pagina', pagina);
       params.append('limite', LIMITE);
       try {
-        const r = await fetch(API_URL + "/vagas/filtro?' + params.toString());
+        const r = await fetch(API_URL + "/vagas/filtro?" + params.toString());
         const d = await r.json();
         renderVagas(r.ok ? d : { vagas: [] });
       } catch(e) { Toast.show('Erro de conexão com o servidor.', 'error'); }
@@ -211,7 +211,7 @@
       const token = localStorage.getItem('token');
       if (!token) { Toast.show('Você precisa estar logado.', 'warning'); window.location.href = 'login.html'; return; }
       try {
-        const r = await fetch(API_URL + "/inscricoes', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({vaga_id: vagaId}) });
+        const r = await fetch(API_URL + "/inscricoes", { method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({vaga_id: vagaId}) });
         const d = await r.json();
         if (r.ok) Toast.show('Candidatura realizada com sucesso!', 'success');
         else Toast.show(d.mensagem || 'Erro ao candidatar-se.', 'error');
