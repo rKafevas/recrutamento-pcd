@@ -79,7 +79,7 @@
       const senha = document.getElementById('senha').value;
       if (!email || !senha) { alert('Preencha o email e a senha.'); return; }
       try {
-        const r = await fetch(API_URL + "/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, senha}) });
+        const r = await fetch(API_URL + "/login", { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, senha}) });
         const d = await r.json();
         if (r.ok) { localStorage.setItem('token', d.token); localStorage.setItem('tipo', d.usuario?.tipo||''); localStorage.setItem('nome', d.usuario?.email||''); window.location.href = (d.usuario?.tipo === 'RH') ? 'rh-dashboard.html' : 'home.html'; }
         else { alert('Erro: ' + (d.mensagem || 'Credenciais inválidas.')); }
