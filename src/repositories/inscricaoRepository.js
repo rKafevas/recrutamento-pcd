@@ -27,7 +27,8 @@ class InscricaoRepository {
         i.id AS inscricao_id, 
         i.status, 
         i.data_inscricao, 
-        v.titulo AS vaga_titulo, 
+        v.titulo AS vaga_titulo,
+        v.status AS vaga_status,
         e.nome_fantasia AS empresa_nome
       FROM inscricoes i
       JOIN vagas v ON i.vaga_id = v.id
@@ -50,6 +51,7 @@ class InscricaoRepository {
         c.necessidades_acessibilidade,
         c.curriculo_url,
         c.laudo_medico_url,
+        c.foto_url,
         u.email
       FROM inscricoes i
       JOIN candidatos c ON i.candidato_id = c.id

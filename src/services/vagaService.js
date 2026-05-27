@@ -17,16 +17,20 @@ class VagaService {
     }
   }
 
-  async listarComFiltro({ deficiencia, modelo, busca }) {
-    return await VagaRepository.listarComFiltro({ deficiencia, modelo, busca });
+  async buscarPorId(id) {
+    return await VagaRepository.buscarPorId(id);
+  }
+
+  async listarComFiltro({ deficiencia, modelo, busca, pagina, limite }) {
+    return await VagaRepository.listarComFiltro({ deficiencia, modelo, busca, pagina, limite });
   }
 
   async listarVagasDoRh(rhId) {
     return await VagaRepository.listarPorRh(rhId);
   }
 
-  async listarVagas() {
-    return await VagaRepository.listarTodas();
+  async listarVagas(pagina, limite) {
+    return await VagaRepository.listarTodas(pagina, limite);
   }
 
   async recomendarVagasParaCandidato(usuarioId) {

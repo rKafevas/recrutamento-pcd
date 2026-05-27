@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
   }
 
   // 3. Valida se o token é verdadeiro
-  jwt.verify(token, process.env.JWT_SECRET || 'inclui_secret_key', (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(401).json({ error: 'Token inválido' });
     }

@@ -1,6 +1,8 @@
 const InscricaoRepository = require('../repositories/inscricaoRepository');
 const CandidatoRepository = require('../repositories/candidatoRepository');
 const LogRepository = require('../repositories/logRepository');
+const NotificacaoRepository = require('../repositories/notificacaoRepository');
+const db = require('../database');
 
 class InscricaoService {
   async seCandidatar(usuarioId, vagaId) {
@@ -41,7 +43,7 @@ class InscricaoService {
   }
 
   async alterarStatus(id, novoStatus) {
-    const statusPermitidos = ['Pendente', 'Aprovado', 'Reprovado', 'Entrevista'];
+    const statusPermitidos = ['Pendente', 'Em análise', 'Aprovado', 'Reprovado', 'Entrevista'];
     if (!statusPermitidos.includes(novoStatus)) {
       const error = new Error(`Status inválido. Escolha entre: ${statusPermitidos.join(', ')}`);
       error.status = 400;
@@ -50,6 +52,30 @@ class InscricaoService {
     const atualizada = await InscricaoRepository.atualizarStatus(id, novoStatus);
     if (!atualizada) { const e = new Error('Inscrição não encontrada.'); e.status = 404; throw e; }
     await LogRepository.registrar(null, `Status da inscrição ID ${id} alterado para "${novoStatus}"`);
+
+    // Notifica o candidato
+    try {
+      const { rows } = await db.query(`
+        SELECT c.usuario_id, v.titulo FROM inscricoes i
+        JOIN candidatos c ON i.candidato_id = c.id
+        JOIN vagas v ON i.vaga_id = v.id
+        WHERE i.id = $1`, [id]);
+      if (rows[0]) {
+        const msgs = {
+          'Aprovado':   '🎉 Parabéns! Você foi aprovado(a)',
+          'Reprovado':  '❌ Sua candidatura foi reprovada',
+          'Entrevista': '📅 Entrevista agendada — aguarde contato da empresa',
+          'Em análise': '🔍 Sua candidatura está sendo analisada',
+          'Pendente':   '📩 Candidatura recebida com sucesso'
+        };
+        await NotificacaoRepository.criar(
+          rows[0].usuario_id,
+          `${msgs[novoStatus] || 'Status atualizado'} para a vaga "${rows[0].titulo}"`,
+          'candidaturas.html'
+        );
+      }
+    } catch(e) { console.error('Erro ao notificar candidato:', e.message); }
+
     return atualizada;
   }
 }

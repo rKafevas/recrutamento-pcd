@@ -1,4 +1,6 @@
 const UsuarioRepository = require('../repositories/usuarioRepository');
+const TokenRepository = require('../repositories/tokenRepository');
+const EmailService = require('../services/emailService');
 const bcrypt = require('bcrypt');
 
 class UsuarioService {
@@ -31,11 +33,17 @@ class UsuarioService {
         dados.necessidades_acessibilidade
       );
 
-      // Retornamos os dados sem a senha para segurança
+      // Envia e-mail de confirmação
+      try {
+        const token = await TokenRepository.criar(usuario.id, 'confirmacao');
+        await EmailService.enviarConfirmacaoCadastro(dados.email, dados.nome_completo, token);
+      } catch(e) { console.error('Erro ao enviar e-mail de confirmação:', e.message); }
+
       return { 
-        mensagem: "Cadastro realizado com sucesso!",
+        mensagem: "Cadastro realizado! Verifique seu e-mail para confirmar a conta.",
         usuario: { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
-        perfil: candidato 
+        perfil: candidato,
+        usuario_id: usuario.id
       };
 
     } catch (err) {
@@ -59,10 +67,17 @@ class UsuarioService {
       const usuario = await UsuarioRepository.criarUsuario(dados.email, senhaCriptografada, 'RH');
       const empresa = await UsuarioRepository.criarEmpresa(usuario.id, dados.nome_fantasia, dados.cnpj);
 
+      // Envia e-mail de confirmação
+      try {
+        const token = await TokenRepository.criar(usuario.id, 'confirmacao');
+        await EmailService.enviarConfirmacaoCadastro(dados.email, dados.nome_completo, token);
+      } catch(e) { console.error('Erro ao enviar e-mail de confirmação:', e.message); }
+
       return {
-        mensagem: "Conta RH criada com sucesso!",
+        mensagem: "Conta RH criada! Verifique seu e-mail para confirmar a conta.",
         usuario: { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
-        empresa
+        empresa,
+        usuario_id: usuario.id
       };
     } catch (err) {
       console.error("Erro ao salvar no banco:", err);

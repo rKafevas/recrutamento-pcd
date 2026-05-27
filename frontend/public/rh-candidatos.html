@@ -114,6 +114,7 @@
   </div>
 
   <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
     new window.VLibras.Widget('https://vlibras.gov.br/app');
@@ -139,7 +140,7 @@
       btn.textContent = '...';
       btn.disabled = true;
       try {
-        const r = await fetch(`http://localhost:3000/inscricoes/${inscricaoId}/status`, {
+        const r = await fetch(`${API_URL}/inscricoes/${inscricaoId}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({ status: novoStatus })
@@ -155,7 +156,7 @@
       if (!token || !vagaId) { window.location.href = 'login.html'; return; }
       const lista = document.getElementById('lista-candidatos');
       try {
-        const r = await fetch(`http://localhost:3000/inscricoes/vaga/${vagaId}`, { headers: { 'Authorization': 'Bearer ' + token } });
+        const r = await fetch(`${API_URL}/inscricoes/vaga/${vagaId}`, { headers: { 'Authorization': 'Bearer ' + token } });
         const d = await r.json();
         if (!r.ok) { lista.innerHTML = '<p class="empty">Erro ao carregar candidatos.</p>'; return; }
         if (!d.length) { lista.innerHTML = '<p class="empty">Nenhum candidato inscrito ainda.</p>'; atualizarPipeline([]); return; }
@@ -164,24 +165,30 @@
 
         lista.innerHTML = d.map(c => `
           <div class="cand-card">
-            <div class="cand-info">
-              <h3>${c.nome_completo || 'Candidato'}</h3>
-              <p>${c.email} ${c.tipo_deficiencia ? '· ' + c.tipo_deficiencia : ''}</p>
-              ${c.necessidades_acessibilidade ? `<p style="margin-top:3px;font-size:12px">Necessidades: ${c.necessidades_acessibilidade}</p>` : ''}
-              ${c.curriculo_url ? `<a href="http://localhost:3000/${c.curriculo_url.replace(/\\/g,'/')}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:600;color:#f47c20;text-decoration:none">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Ver currículo
-              </a>` : '<p style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.4)">Currículo não enviado</p>'}
-              ${c.laudo_medico_url ? `<a href="http://localhost:3000/${c.laudo_medico_url.replace(/\\/g,'/')}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;font-weight:600;color:#60a5fa;text-decoration:none">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                Ver laudo médico
-              </a>` : '<p style="margin-top:4px;font-size:12px;color:rgba(255,255,255,0.4)">Laudo não enviado</p>'}
+            <div style="display:flex;align-items:flex-start;gap:14px;flex:1">
+              <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+                ${c.foto_url
+                  ? `<img src="" + API_URL + "/${c.foto_url.replace(/\\/g,'/')}" style="width:100%;height:100%;object-fit:cover">`
+                  : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
+              </div>
+              <div class="cand-info">
+                <h3>${c.nome_completo || 'Candidato'}</h3>
+                <p>${c.email} ${c.tipo_deficiencia ? '· ' + c.tipo_deficiencia : ''}</p>
+                ${c.necessidades_acessibilidade ? `<p style="margin-top:3px;font-size:12px">Necessidades: ${c.necessidades_acessibilidade}</p>` : ''}
+                ${c.curriculo_url ? `<a href="" + API_URL + "/${c.curriculo_url.replace(/\\/g,'/')}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:600;color:#f47c20;text-decoration:none">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Ver currículo</a>` : '<p style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.4)">Currículo não enviado</p>'}
+                ${c.laudo_medico_url ? `<a href="" + API_URL + "/${c.laudo_medico_url.replace(/\\/g,'/')}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;font-weight:600;color:#60a5fa;text-decoration:none">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                  Ver laudo</a>` : '<p style="margin-top:4px;font-size:12px;color:rgba(255,255,255,0.4)">Laudo não enviado</p>'}
+              </div>
             </div>
             <div class="cand-right">
               <select class="status-select" id="sel-${c.inscricao_id}">
                 ${STATUS.map(s => `<option value="${s}" ${c.status === s ? 'selected' : ''}>${s}</option>`).join('')}
               </select>
               <button class="btn-save" onclick="atualizarStatus(${c.inscricao_id}, document.getElementById('sel-${c.inscricao_id}').value, this)">Salvar</button>
+              <button class="btn-save" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2)" onclick="window.location.href='rh-perfil-candidato.html?inscricao=${c.inscricao_id}&vaga=${vagaId}'">Perfil</button>
               <button class="btn-save" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2)" onclick="window.location.href='chat.html?inscricao=${c.inscricao_id}'">Chat</button>
             </div>
           </div>`).join('');

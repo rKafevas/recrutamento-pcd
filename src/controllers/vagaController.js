@@ -23,30 +23,35 @@ class VagaController {
 
   async listar(req, res, next) {
     try {
-      const vagas = await VagaService.listarVagas();
-      return res.json(vagas);
-    } catch (err) {
-      next(err);
-    }
+      const pagina = parseInt(req.query.pagina) || 1;
+      const limite = parseInt(req.query.limite) || 10;
+      const resultado = await VagaService.listarVagas(pagina, limite);
+      return res.json(resultado);
+    } catch (err) { next(err); }
   }
-  
+
+  async buscarPorId(req, res, next) {
+    try {
+      const vaga = await VagaService.buscarPorId(req.params.id);
+      if (!vaga) { const e = new Error('Vaga não encontrada.'); e.status = 404; throw e; }
+      return res.json(vaga);
+    } catch(err) { next(err); }
+  }
+
   async listarRecomendadas(req, res, next) {
     try {
-      // Usamos o ID que o authMiddleware extraiu do Token JWT
-      const usuarioId = req.usuarioId; 
-    
-      const vagas = await VagaService.recomendarVagasParaCandidato(usuarioId);
-    
+      const vagas = await VagaService.recomendarVagasParaCandidato(req.usuarioId);
       return res.json(vagas);
-    } catch (err) {
-      next(err);
-    }
+    } catch(err) { next(err); }
   }
+
   async listarComFiltro(req, res, next) {
     try {
       const { deficiencia, modelo, busca } = req.query;
-      const vagas = await VagaService.listarComFiltro({ deficiencia, modelo, busca });
-      return res.json(vagas);
+      const pagina = parseInt(req.query.pagina) || 1;
+      const limite = parseInt(req.query.limite) || 10;
+      const resultado = await VagaService.listarComFiltro({ deficiencia, modelo, busca, pagina, limite });
+      return res.json(resultado);
     } catch(err) { next(err); }
   }
 

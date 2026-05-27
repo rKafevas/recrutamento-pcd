@@ -111,6 +111,13 @@
         <input type="text" id="tipoDeficiencia" placeholder="Ex: Visual, Auditiva, Motora...">
       </div>
 
+      <div style="margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
+        <input type="checkbox" id="lgpd" style="margin-top:3px;width:16px;height:16px;flex-shrink:0;accent-color:#f47c20">
+        <label for="lgpd" style="font-size:13px;line-height:1.5;color:rgba(255,255,255,0.85)">
+          Li e aceito a <strong>Política de Privacidade</strong> e o tratamento dos meus dados pessoais conforme a <strong>Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>.
+        </label>
+      </div>
+
       <button 
         class="register-btn" 
         type="button"
@@ -137,6 +144,7 @@
     </div>
   </div>
 
+  <script src="config.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
 
   <script>
@@ -162,6 +170,11 @@
         return;
       }
 
+      if (!document.getElementById('lgpd').checked) {
+        alert('Você precisa aceitar a Política de Privacidade e a LGPD para criar sua conta.');
+        return;
+      }
+
       if (senha !== confirmarSenha) {
         alert("As senhas não coincidem!");
         return;
@@ -179,7 +192,7 @@
 
       try {
         // Altere a porta caso seu backend não esteja rodando na 3000
-        const resposta = await fetch('http://localhost:3000/usuarios', {
+        const resposta = await fetch('" + API_URL + "/usuarios', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -190,8 +203,8 @@
         const resultado = await resposta.json();
 
         if (resposta.ok) {
-          alert('Conta criada com sucesso! Redirecionando para o login...');
-          window.location.href = 'login.html';
+          const uid = resultado.usuario_id || resultado.usuario?.id;
+          window.location.href = `confirmar-email.html?id=${uid}&email=${encodeURIComponent(email)}`;
         } else {
           // Exibe a mensagem de erro vinda do Joi/Controller
           alert('Erro ao cadastrar: ' + (resultado.mensagem || 'Verifique os dados enviados.'));

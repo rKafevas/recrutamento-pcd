@@ -109,6 +109,7 @@
   </div>
 
   <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
     new window.VLibras.Widget('https://vlibras.gov.br/app');
@@ -133,7 +134,7 @@
     async function carregarVaga() {
       if (!vagaId) { alert('Vaga não identificada.'); window.location.href = 'rh-dashboard.html'; return; }
       try {
-        const r = await fetch(`http://localhost:3000/vagas`);
+        const r = await fetch(`${API_URL}/vagas`);
         const d = await r.json();
         const vaga = d.find(v => v.id == vagaId);
         if (vaga) preencher(vaga);
@@ -162,7 +163,7 @@
       }
 
       try {
-        const r = await fetch(`http://localhost:3000/vagas/${vagaId}`, {
+        const r = await fetch(`${API_URL}/vagas/${vagaId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify(dados)

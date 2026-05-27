@@ -9,6 +9,7 @@ const db = require('./database');
 const routes = require('./routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
+const rateLimit = require('express-rate-limit');
 const MensagemRepository = require('./repositories/mensagemRepository');
 
 const app = express();
@@ -17,6 +18,16 @@ const io = new Server(server, { cors: { origin: '*' } });
 
 app.use(cors());
 app.use(express.json());
+
+// Rate limiting — máximo 10 tentativas de login por IP a cada 15 minutos
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { erro: 'Muitas tentativas de login. Tente novamente em 15 minutos.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.use('/login', loginLimiter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(routes);
@@ -26,7 +37,7 @@ io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) return next(new Error('Token não fornecido'));
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'inclui_secret_key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     socket.usuarioId = decoded.id;
     socket.usuarioTipo = decoded.tipo;
     next();
@@ -46,10 +57,27 @@ io.on('connection', (socket) => {
     try {
       const msg = await MensagemRepository.salvar(socket.usuarioId, destinatarioId, inscricaoId, conteudo.trim());
       io.to(`inscricao_${inscricaoId}`).emit('nova_mensagem', {
-        ...msg,
-        remetente_id: socket.usuarioId,
-        remetente_tipo: socket.usuarioTipo
+        ...msg, remetente_id: socket.usuarioId, remetente_tipo: socket.usuarioTipo
       });
+
+      // Notifica o destinatário
+      const NotificacaoRepository = require('./repositories/notificacaoRepository');
+      const { rows } = await db.query(`
+        SELECT u.email, e.nome_fantasia, v.titulo
+        FROM usuarios u
+        LEFT JOIN empresas e ON e.usuario_id = u.id
+        LEFT JOIN inscricoes i ON i.id = $2
+        LEFT JOIN vagas v ON v.id = i.vaga_id
+        WHERE u.id = $1
+      `, [socket.usuarioId, inscricaoId]);
+      const r = rows[0];
+      const nomeRemetente = r?.nome_fantasia || r?.email || 'Alguém';
+      const vagaTitulo = r?.titulo || 'uma vaga';
+      await NotificacaoRepository.criar(
+        destinatarioId,
+        `💬 Nova mensagem de ${nomeRemetente} sobre "${vagaTitulo}"`,
+        `chat.html?inscricao=${inscricaoId}`
+      );
     } catch(e) { console.error('Erro ao salvar mensagem:', e); }
   });
 

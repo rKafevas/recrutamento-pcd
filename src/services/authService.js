@@ -13,7 +13,7 @@ class AuthService {
 
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
-      process.env.JWT_SECRET || 'inclui_secret_key',
+      process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 

@@ -28,18 +28,65 @@ class CandidatoController {
     }
   }
 
+  async buscarPorId(req, res, next) {
+    try {
+      const { rows } = await require('../database').query(`
+        SELECT c.*, u.email FROM candidatos c
+        JOIN usuarios u ON c.usuario_id = u.id
+        WHERE c.id = $1
+      `, [req.params.id]);
+      return res.json(rows[0] || {});
+    } catch(err) { next(err); }
+  }
+
+  async buscarPerfil(req, res, next) {
+    try {
+      const perfil = await CandidatoService.buscarPerfil(req.usuarioId);
+      return res.json(perfil || {});
+    } catch(err) { next(err); }
+  }
+
   async atualizarCurriculo(req, res, next) {
     try {
-      if (!req.file) {
-        const error = new Error('Nenhum arquivo de currículo foi enviado.');
-        error.status = 400;
-        throw error;
-      }
-      const usuarioId = req.usuarioId;
-      const urlCurriculo = req.file.path;
-      const { nome, sobre } = req.body;
-      const perfil = await CandidatoService.salvarCurriculo(usuarioId, urlCurriculo, nome, sobre);
+      if (!req.file) { const e = new Error('Nenhum arquivo enviado.'); e.status = 400; throw e; }
+      const { nome, sobre, telefone } = req.body;
+      const perfil = await CandidatoService.salvarCurriculo(req.usuarioId, req.file.path, nome, sobre, telefone);
       return res.status(200).json({ mensagem: 'Currículo salvo com sucesso!', dados: perfil });
+    } catch(err) { next(err); }
+  }
+
+  async atualizarInfos(req, res, next) {
+    try {
+      const { nome, sobre, telefone, formacao, experiencias, habilidades } = req.body;
+      const perfil = await CandidatoService.atualizarInfos(req.usuarioId, nome, sobre, telefone, formacao, experiencias, habilidades);
+      return res.status(200).json({ mensagem: 'Informações salvas!', dados: perfil });
+    } catch(err) { next(err); }
+  }
+
+  async removerCurriculo(req, res, next) {
+    try {
+      const perfil = await CandidatoService.removerCurriculo(req.usuarioId);
+      return res.json({ mensagem: 'Currículo removido.', dados: perfil });
+    } catch(err) { next(err); }
+  }
+  async removerLaudo(req, res, next) {
+    try {
+      const perfil = await CandidatoService.removerLaudo(req.usuarioId);
+      return res.json({ mensagem: 'Laudo removido.', dados: perfil });
+    } catch(err) { next(err); }
+  }
+  async atualizarFoto(req, res, next) {
+    try {
+      if (!req.file) { const e = new Error('Nenhum arquivo enviado.'); e.status = 400; throw e; }
+      const perfil = await CandidatoService.atualizarFoto(req.usuarioId, req.file.path);
+      return res.json({ mensagem: 'Foto atualizada!', dados: perfil });
+    } catch(err) { next(err); }
+  }
+
+  async removerFoto(req, res, next) {
+    try {
+      const perfil = await CandidatoService.removerFoto(req.usuarioId);
+      return res.json({ mensagem: 'Foto removida.', dados: perfil });
     } catch(err) { next(err); }
   }
 }

@@ -53,7 +53,8 @@
   <div class="topbar">
     <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
     <div style="display:flex;gap:10px">
-      <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
+      <a href="rh-busca-candidatos.html" class="btn-ghost" style="text-decoration:none">Banco de talentos</a>
+    <button class="btn-primary" onclick="exportarPDF()">Exportar PDF</button>
       <a href="login.html" class="btn-ghost">Sair</a>
     </div>
   </div>
@@ -87,6 +88,7 @@
   </div>
 
   <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
     new window.VLibras.Widget('https://vlibras.gov.br/app');
@@ -96,7 +98,7 @@
       const token = localStorage.getItem('token');
       if (!token) { window.location.href = 'login.html'; return; }
       try {
-        const r = await fetch('http://localhost:3000/relatorio/cotas', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch('" + API_URL + "/relatorio/cotas', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (!r.ok) { alert('Erro ao carregar relatório.'); return; }
 
@@ -125,6 +127,16 @@
           : '<div class="row-item"><span>Nenhuma vaga encontrada.</span></div>';
 
       } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+    }
+
+    function exportarPDF() {
+      const token = localStorage.getItem('token');
+      const a = document.createElement('a');
+      a.href = `${API_URL}/relatorio/cotas/pdf`;
+      // Fetch with auth header and trigger download
+      fetch('" + API_URL + "/relatorio/cotas/pdf', { headers: {'Authorization':'Bearer '+token} })
+        .then(r => r.blob())
+        .then(blob => { const url = URL.createObjectURL(blob); a.href = url; a.download = 'relatorio-cotas.pdf'; a.click(); });
     }
 
     carregarRelatorio();

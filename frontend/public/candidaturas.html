@@ -35,15 +35,22 @@
 
     .status-badge { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; background: rgba(244,124,32,0.18); color: var(--orange); border: 1px solid rgba(244,124,32,0.3); white-space: nowrap; flex-shrink: 0; }
 
-    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 28px; transition: 0.2s; }
-    .back:hover { color: #fff; }
+    .progress { display: flex; align-items: center; gap: 0; margin-top: 12px; }
+    .step-item { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
+    .step-item:not(:last-child)::after { content: ''; position: absolute; top: 10px; left: 50%; width: 100%; height: 2px; background: rgba(255,255,255,0.15); z-index: 0; }
+    .step-item.done:not(:last-child)::after { background: #f47c20; }
+    .step-dot { width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.2); position: relative; z-index: 1; }
+    .step-item.done .step-dot { background: #f47c20; border-color: #f47c20; }
+    .step-item.current .step-dot { background: #fff; border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244,124,32,0.3); }
+    .step-label { font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 5px; text-align: center; }
+    .step-item.done .step-label, .step-item.current .step-label { color: rgba(255,255,255,0.8); }
+    .vaga-status-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+    .vaga-aberta { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .vaga-encerrada { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
-    <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
-  </div>
+  
 
   <div class="container">
     <div class="page-label">Histórico</div>
@@ -58,6 +65,8 @@
   </div>
 
   <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
+  <script src="topbar.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
     new window.VLibras.Widget('https://vlibras.gov.br/app');
@@ -68,18 +77,36 @@
       if (!token) { window.location.href = 'login.html'; return; }
       const lista = document.getElementById('lista-candidaturas');
       try {
-        const r = await fetch('http://localhost:3000/inscricoes/minhas', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch('" + API_URL + "/inscricoes/minhas', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (!r.ok) { lista.innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:14px">Erro ao carregar.</p>'; return; }
         if (!d.length) { lista.innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:14px">Você ainda não se candidatou a nenhuma vaga.</p>'; return; }
+        const STEPS = ['Pendente','Em análise','Entrevista','Aprovado'];
+        const statusCores = { 'Aprovado':'#4ade80','Reprovado':'#f87171','Entrevista':'#60a5fa','Em análise':'#f59e0b','Pendente':'rgba(255,255,255,0.5)' };
+
+        function buildProgress(status) {
+          if (status === 'Reprovado') return `<p style="font-size:11px;color:#f87171;margin-top:10px">❌ Candidatura reprovada</p>`;
+          return `<div class="progress">${STEPS.map((s,i) => {
+            const idx = STEPS.indexOf(status);
+            const cls = i < idx ? 'done' : i === idx ? 'current' : '';
+            return `<div class="step-item ${cls}"><div class="step-dot"></div><div class="step-label">${s}</div></div>`;
+          }).join('')}</div>`;
+        }
+
         lista.innerHTML = d.map(i => `
-          <div class="cand-card">
-            <div class="cand-info">
-              <h2>${i.vaga?.titulo || 'Vaga'}</h2>
-              <p>${i.vaga?.empresa || ''} ${i.vaga?.local ? '· ' + i.vaga.local : ''}</p>
-              <p style="margin-top:4px">Inscrito em ${new Date(i.createdAt||i.data_inscricao).toLocaleDateString('pt-BR')}</p>
+          <div class="cand-card" style="flex-direction:column;align-items:stretch">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+              <div class="cand-info">
+                <h2>${i.vaga_titulo || 'Vaga'}</h2>
+                <p>${i.empresa_nome || ''}</p>
+                <p style="margin-top:4px">Inscrito em ${new Date(i.data_inscricao).toLocaleDateString('pt-BR')}</p>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                <span class="status-badge" style="background:${statusCores[i.status]||'rgba(244,124,32,0.18)'}22;color:${statusCores[i.status]||'#f47c20'};border-color:${statusCores[i.status]||'rgba(244,124,32,0.3)'}44">${i.status||'Pendente'}</span>
+                ${i.vaga_status ? `<span class="vaga-status-badge ${i.vaga_status==='Aberta'?'vaga-aberta':'vaga-encerrada'}">${i.vaga_status}</span>` : ''}
+              </div>
             </div>
-            <span class="status-badge">${i.status || 'Em análise'}</span>
+            ${buildProgress(i.status)}
           </div>`).join('');
       } catch(e) { lista.innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:14px">Não foi possível conectar ao servidor.</p>'; }
     }

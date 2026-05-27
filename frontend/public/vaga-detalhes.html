@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Detalhes da Vaga</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --orange: #f47c20; --white-med: rgba(255,255,255,0.10); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 60px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn-primary { background: var(--orange); border: none; color: #fff; padding: 12px 28px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary:hover { background: #e06b10; }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 40px 24px; }
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 28px; }
+    .back:hover { color: #fff; }
+
+    .vaga-header { margin-bottom: 28px; }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .badge { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+    .badge-modelo { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .badge-deficiencia { background: rgba(244,124,32,0.15); color: #f47c20; border: 1px solid rgba(244,124,32,0.3); }
+    .vaga-titulo { font-family: 'Sora', sans-serif; font-size: 30px; font-weight: 700; margin-bottom: 8px; }
+    .vaga-meta { font-size: 14px; color: var(--text-muted); display: flex; gap: 16px; flex-wrap: wrap; }
+    .vaga-meta span { display: flex; align-items: center; gap: 5px; }
+
+    .panel { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+    .panel-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+    .panel p { font-size: 14px; line-height: 1.8; color: rgba(255,255,255,0.85); white-space: pre-wrap; }
+
+    .salario-box { background: rgba(244,124,32,0.1); border: 1px solid rgba(244,124,32,0.25); border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .salario-box span { font-size: 12px; color: var(--text-muted); }
+    .salario-box strong { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; color: #f47c20; }
+
+    .actions { display: flex; gap: 12px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  
+
+  <div class="container">
+    <a href="vagas.html" class="back">← Voltar às vagas</a>
+    <div id="conteudo"><p style="color:rgba(255,255,255,0.5);font-size:14px">Carregando...</p></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="toast.js"></script>
+  <script src="topbar.js"></script>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+
+    const params = new URLSearchParams(window.location.search);
+    const vagaId = params.get('id');
+    const modeloCor = { 'Remoto': 'badge-modelo', 'Híbrido': 'badge-modelo', 'Presencial': 'badge-modelo' };
+
+    async function carregarVaga() {
+      try {
+        const r = await fetch(`${API_URL}/vagas/${vagaId}`);
+        const vaga = await r.json();
+        if (!r.ok || !vaga) { Toast.show('Vaga não encontrada.', 'error'); return; }
+        if (!vaga) { document.getElementById('conteudo').innerHTML = '<p>Vaga não encontrada.</p>'; return; }
+
+        document.title = `Inclui+ | ${vaga.titulo}`;
+        document.getElementById('conteudo').innerHTML = `
+          <div class="vaga-header">
+            <div class="badges">
+              ${vaga.modelo_trabalho ? `<span class="badge badge-modelo">${vaga.modelo_trabalho}</span>` : ''}
+              ${vaga.tipo_deficiencia_foco ? `<span class="badge badge-deficiencia">${vaga.tipo_deficiencia_foco}</span>` : ''}
+            </div>
+            <h1 class="vaga-titulo">${vaga.titulo}</h1>
+            <div class="vaga-meta">
+              ${vaga.localizacao ? `<span>📍 ${vaga.localizacao}</span>` : ''}
+              ${vaga.nome_empresa ? `<span>🏢 ${vaga.nome_empresa}</span>` : ''}
+            </div>
+          </div>
+
+          ${vaga.salario ? `<div class="salario-box"><span>Salário</span><strong>${vaga.salario}</strong></div>` : ''}
+
+          <div class="panel">
+            <div class="panel-title">Descrição da vaga</div>
+            <p>${vaga.descricao}</p>
+          </div>
+
+          ${vaga.requisitos ? `<div class="panel"><div class="panel-title">Requisitos</div><p>${vaga.requisitos}</p></div>` : ''}
+          ${vaga.beneficios ? `<div class="panel"><div class="panel-title">Benefícios</div><p>${vaga.beneficios}</p></div>` : ''}
+          ${vaga.acessibilidade_local ? `<div class="panel"><div class="panel-title">Acessibilidade no local</div><p>${vaga.acessibilidade_local}</p></div>` : ''}
+          ${vaga.tecnologias_assistivas ? `<div class="panel"><div class="panel-title">Tecnologias assistivas</div><p>${vaga.tecnologias_assistivas}</p></div>` : ''}
+
+          <div class="actions">
+            <button class="btn-primary" onclick="candidatar(${vaga.id})">Candidatar-se a esta vaga</button>
+            <a href="vagas.html" class="btn-ghost">Ver outras vagas</a>
+          </div>`;
+      } catch(e) { Toast.show('Não foi possível carregar a vaga.', 'error'); }
+    }
+
+    async function candidatar(vagaId) {
+      const token = localStorage.getItem('token');
+      if (!token) { Toast.show('Você precisa estar logado.', 'warning'); window.location.href = 'login.html'; return; }
+      try {
+        const r = await fetch('" + API_URL + "/inscricoes', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({vaga_id: vagaId}) });
+        const d = await r.json();
+        if (r.ok) { Toast.show('Candidatura realizada com sucesso!', 'success'); setTimeout(() => window.location.href = 'candidaturas.html', 1500); }
+        else Toast.show(d.mensagem || 'Erro ao candidatar-se.', 'error');
+      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
+    }
+
+    carregarVaga();
+  </script>
+</body>
+</html>

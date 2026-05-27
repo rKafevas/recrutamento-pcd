@@ -41,34 +41,29 @@
     .nav-icon { width: 44px; height: 44px; border-radius: 10px; background: rgba(244,124,32,0.15); border: 1px solid rgba(244,124,32,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .nav-icon svg { width: 20px; height: 20px; stroke: var(--orange); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    .nav-card-text h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
-    .nav-card-text p { font-size: 13px; color: var(--text-muted); }
-
-    .footer { border-top: 1px solid var(--white-border); padding: 20px 32px; display: flex; justify-content: flex-end; }
     .logout { color: var(--text-muted); font-size: 14px; font-weight: 500; text-decoration: none; transition: 0.2s; }
     .logout:hover { color: #fff; }
+
+    .footer { border-top: 1px solid var(--white-border); padding: 20px 32px; display: flex; justify-content: flex-end; }
+    .metric-card { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 12px; padding: 16px; text-align: center; }
+    .metric-num { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; color: #f47c20; }
+    .metric-label { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 
     @media(max-width: 500px) { .nav-grid { grid-template-columns: 1fr; } .topbar { padding: 14px 20px; } }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="logo">
-      <img src="logo.png.jpeg" alt="Inclui+">
-      <span>Inclui+</span>
-    </div>
-    <div class="nav-right">
-      <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
-      <a href="login.html" class="btn-ghost" style="text-decoration:none">Sair</a>
-    </div>
-  </div>
+  
 
   <div class="container">
     <div class="welcome">
       <div class="welcome-label">Bem-vindo</div>
-      <h1>Olá, bom ver você!</h1>
+      <h1 id="saudacao">Olá, bom ver você!</h1>
       <p>Encontre oportunidades inclusivas e gerencie seu perfil.</p>
     </div>
+
+    <!-- MÉTRICAS -->
+    <div id="metricas" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px"></div>
 
     <div class="nav-grid">
       <a class="nav-card" href="vagas.html">
@@ -104,25 +99,90 @@
   </div>
 
   <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
+  <script src="toast.js"></script>
+  <script src="topbar.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
     new window.VLibras.Widget('https://vlibras.gov.br/app');
     function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+
+    async function carregarMetricas() {
+      const token = localStorage.getItem('token');
+      const tipo = localStorage.getItem('tipo') || (token ? JSON.parse(atob(token.split('.')[1])).tipo : '');
+      if (tipo !== 'Candidato') { document.getElementById('metricas').style.display = 'none'; return; }
+      try {
+        const r = await fetch('" + API_URL + "/inscricoes/minhas', { headers: {'Authorization':'Bearer '+token} });
+        const d = await r.json();
+        if (!r.ok) return;
+        const total = d.length;
+        const analise = d.filter(i => ['Pendente','Em análise'].includes(i.status)).length;
+        const entrevista = d.filter(i => i.status === 'Entrevista').length;
+        document.getElementById('metricas').innerHTML = `
+          <div class="metric-card"><div class="metric-num">${total}</div><div class="metric-label">Candidaturas</div></div>
+          <div class="metric-card"><div class="metric-num" style="color:#60a5fa">${analise}</div><div class="metric-label">Em análise</div></div>
+          <div class="metric-card"><div class="metric-num" style="color:#4ade80">${entrevista}</div><div class="metric-label">Entrevistas</div></div>`;
+      } catch(e) { document.getElementById('metricas').style.display = 'none'; }
+    }
 
     async function deletarConta() {
       const confirmacao = confirm('Tem certeza que deseja excluir sua conta?\n\nTodos os seus dados serão removidos permanentemente conforme a LGPD. Esta ação não pode ser desfeita.');
       if (!confirmacao) return;
       const token = localStorage.getItem('token');
       try {
-        const r = await fetch('http://localhost:3000/minha-conta', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch('" + API_URL + "/minha-conta', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
-        if (r.ok) {
-          localStorage.clear();
-          alert('Conta excluída com sucesso. Seus dados foram removidos.');
-          window.location.href = 'index.html';
-        } else { alert('Erro: ' + (d.mensagem || 'Tente novamente.')); }
-      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+        if (r.ok) { localStorage.clear(); Toast.show('Conta excluída com sucesso.', 'success'); setTimeout(() => window.location.href = 'index.html', 1500); }
+        else Toast.show(d.mensagem || 'Erro ao excluir conta.', 'error');
+      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
     }
+
+    async function carregarNotificacoes() {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const r = await fetch('" + API_URL + "/notificacoes', { headers: {'Authorization':'Bearer '+token} });
+        const d = await r.json();
+        const badge = document.getElementById('badge-notif');
+        const lista = document.getElementById('lista-notif');
+        if (d.total > 0) { badge.style.display = 'block'; badge.textContent = d.total; }
+        else { badge.style.display = 'none'; }
+        lista.innerHTML = d.notificacoes.length
+          ? d.notificacoes.map(n => `
+            <div onclick="${n.link ? `window.location.href='${n.link}'` : ''}"
+              style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.07);font-size:13px;line-height:1.5;${n.link ? 'cursor:pointer;' : ''}transition:0.2s"
+              onmouseover="this.style.background='rgba(255,255,255,0.07)'"
+              onmouseout="this.style.background='transparent'">
+              <p style="margin-bottom:4px">${n.mensagem}</p>
+              <p style="font-size:11px;color:rgba(255,255,255,0.4)">${new Date(n.criado_em).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</p>
+            </div>`).join('')
+          : '<div style="padding:24px;text-align:center;font-size:13px;color:rgba(255,255,255,0.4)">Nenhuma notificação.</div>';
+      } catch(e) {}
+    }
+
+    function toggleNotificacoes() {
+      const painel = document.getElementById('painel-notif');
+      painel.style.display = painel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function marcarLidas() {
+      const token = localStorage.getItem('token');
+      await fetch('" + API_URL + "/notificacoes/lidas', { method: 'PATCH', headers: {'Authorization':'Bearer '+token} });
+      document.getElementById('badge-notif').style.display = 'none';
+      document.getElementById('lista-notif').innerHTML = '<div style="padding:20px;text-align:center;font-size:13px;color:rgba(255,255,255,0.4)">Nenhuma notificação.</div>';
+    }
+
+    // Fecha painel ao clicar fora
+    document.addEventListener('click', e => {
+      const painel = document.getElementById('painel-notif');
+      const btn = document.getElementById('btn-notif');
+      if (!painel.contains(e.target) && !btn.contains(e.target)) painel.style.display = 'none';
+    });
+
+    carregarMetricas();
+    carregarNotificacoes();
+    // Atualiza notificações a cada 30s
+    setInterval(carregarNotificacoes, 30000);
   </script>
 </body>
 </html>

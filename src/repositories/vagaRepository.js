@@ -26,32 +26,22 @@ class VagaRepository {
     return rows[0];
   }
 
-  async listarComFiltro({ deficiencia, modelo, busca }) {
+  async listarComFiltro({ deficiencia, modelo, busca, pagina = 1, limite = 10 }) {
+    const offset = (pagina - 1) * limite;
     let conditions = ["v.status = 'Aberta'"];
     const params = [];
-
-    if (deficiencia && deficiencia !== 'Todas') {
-      params.push(deficiencia);
-      conditions.push(`(v.tipo_deficiencia_foco = $${params.length} OR v.tipo_deficiencia_foco = 'Qualquer')`);
-    }
-    if (modelo) {
-      params.push(modelo);
-      conditions.push(`v.modelo_trabalho = $${params.length}`);
-    }
-    if (busca) {
-      params.push(`%${busca}%`);
-      conditions.push(`(v.titulo ILIKE $${params.length} OR v.descricao ILIKE $${params.length})`);
-    }
-
-    const query = `
-      SELECT v.*, e.nome_fantasia as nome_empresa
-      FROM vagas v
+    if (deficiencia && deficiencia !== 'Todas') { params.push(deficiencia); conditions.push(`(v.tipo_deficiencia_foco = $${params.length} OR v.tipo_deficiencia_foco = 'Qualquer')`); }
+    if (modelo) { params.push(modelo); conditions.push(`v.modelo_trabalho = $${params.length}`); }
+    if (busca) { params.push(`%${busca}%`); conditions.push(`(v.titulo ILIKE $${params.length} OR v.descricao ILIKE $${params.length})`); }
+    const where = conditions.join(' AND ');
+    const { rows: vagas } = await db.query(`
+      SELECT v.*, e.nome_fantasia as nome_empresa FROM vagas v
       LEFT JOIN empresas e ON v.empresa_id = e.id
-      WHERE ${conditions.join(' AND ')}
-      ORDER BY v.data_criacao DESC
-    `;
-    const { rows } = await db.query(query, params);
-    return rows;
+      WHERE ${where} ORDER BY v.data_criacao DESC LIMIT $${params.length+1} OFFSET $${params.length+2}
+    `, [...params, limite, offset]);
+    const { rows: cnt } = await db.query(`SELECT COUNT(*) as total FROM vagas v WHERE ${where}`, params);
+    const total = parseInt(cnt[0].total);
+    return { vagas, total, pagina, limite, totalPaginas: Math.ceil(total / limite) };
   }
 
   async buscarEmpresaPorUsuarioId(usuarioId) {
@@ -71,16 +61,17 @@ class VagaRepository {
     return rows;
   }
 
-  async listarTodas() {
-    const query = `
-      SELECT v.*, u.email as contato_rh
-      FROM vagas v
-      LEFT JOIN usuarios u ON v.empresa_id = u.id
+  async listarTodas(pagina = 1, limite = 10) {
+    const offset = (pagina - 1) * limite;
+    const { rows: vagas } = await db.query(`
+      SELECT v.*, e.nome_fantasia as nome_empresa
+      FROM vagas v LEFT JOIN empresas e ON v.empresa_id = e.id
       WHERE v.status = 'Aberta'
-      ORDER BY v.data_criacao DESC
-    `;
-    const { rows } = await db.query(query);
-    return rows;
+      ORDER BY v.data_criacao DESC LIMIT $1 OFFSET $2
+    `, [limite, offset]);
+    const { rows: cnt } = await db.query(`SELECT COUNT(*) as total FROM vagas WHERE status = 'Aberta'`);
+    const total = parseInt(cnt[0].total);
+    return { vagas, total, pagina, limite, totalPaginas: Math.ceil(total / limite) };
   }
 
   async listarPorTipoDeficiencia(tipo) {

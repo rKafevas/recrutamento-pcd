@@ -56,12 +56,7 @@
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
-    <div class="topbar-right">
-      <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
-    </div>
-  </div>
+  
 
   <div class="container">
     <div class="page-header">
@@ -99,34 +94,87 @@
       <p style="color:rgba(255,255,255,0.6);font-size:14px">Carregando vagas...</p>
     </div>
 
+    <div id="paginacao" style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:28px"></div>
+
     <a href="home.html" class="back">← Voltar para Home</a>
   </div>
 
   <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="topbar.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script src="config.js"></script>
+  <script src="toast.js"></script>
   <script>
     new window.VLibras.Widget('https://vlibras.gov.br/app');
     function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
 
-    let todasVagas = [];
+    let paginaAtual = 1;
+    const LIMITE = 8;
 
-    function renderVagas(vagas) {
-      const lista = document.getElementById('lista-vagas');
-      if (!vagas.length) { lista.innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:14px">Nenhuma vaga encontrada.</p>'; return; }
-      lista.innerHTML = vagas.map(v => {
-        const tags = v.requisitos ? v.requisitos.split(',').map(r => `<span class="tag">${r.trim()}</span>`).join('') : '';
-        return `<div class="vaga-card">
-          <div class="vaga-top"><h2>${v.titulo}</h2>${v.modelo_trabalho ? `<span class="tag">${v.modelo_trabalho}</span>` : ''}</div>
-          <p class="vaga-empresa">${v.localizacao || ''} ${v.nome_empresa ? '· ' + v.nome_empresa : ''}</p>
-          <p class="vaga-desc">${v.descricao || ''}</p>
-          ${v.tipo_deficiencia_foco ? `<p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px">Foco: ${v.tipo_deficiencia_foco}</p>` : ''}
-          ${tags ? `<div class="tags">${tags}</div>` : ''}
-          <button class="btn-apply" onclick="candidatar(${v.id})">Candidatar-se</button>
-        </div>`;
-      }).join('');
+    function renderPaginacao(totalPaginas, pagina) {
+      const div = document.getElementById('paginacao');
+      if (totalPaginas <= 1) { div.innerHTML = ''; return; }
+      const btnStyle = (ativo) => `background:${ativo?'#f47c20':'rgba(255,255,255,0.1)'};border:1px solid ${ativo?'#f47c20':'rgba(255,255,255,0.2)'};color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:0.2s`;
+      let html = `<button style="${btnStyle(false)}" onclick="irPagina(${pagina-1})" ${pagina===1?'disabled':''}>←</button>`;
+      for (let i = 1; i <= totalPaginas; i++) {
+        if (totalPaginas > 7 && i > 2 && i < totalPaginas - 1 && Math.abs(i - pagina) > 1) {
+          if (i === 3 || i === totalPaginas - 2) html += `<span style="color:rgba(255,255,255,0.4);padding:0 4px">...</span>`;
+          continue;
+        }
+        html += `<button style="${btnStyle(i===pagina)}" onclick="irPagina(${i})">${i}</button>`;
+      }
+      html += `<button style="${btnStyle(false)}" onclick="irPagina(${pagina+1})" ${pagina===totalPaginas?'disabled':''}>→</button>`;
+      div.innerHTML = html;
     }
 
-    async function aplicarFiltros() {
+    function irPagina(pagina) {
+      paginaAtual = pagina;
+      const busca = document.getElementById('busca').value;
+      const deficiencia = document.getElementById('filtro-deficiencia').value;
+      const modelo = document.getElementById('filtro-modelo').value;
+      if (busca || deficiencia || modelo) aplicarFiltros(pagina);
+      else carregarVagas(pagina);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    const modeloCor = { 'Remoto': '#22c55e', 'Híbrido': '#f59e0b', 'Presencial': '#3b82f6' };
+
+    function renderVagas(resultado) {
+      const vagas = resultado.vagas || resultado;
+      const lista = document.getElementById('lista-vagas');
+      if (!vagas.length) {
+        lista.innerHTML = `<div style="text-align:center;padding:48px 24px;color:rgba(255,255,255,0.5)">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px;opacity:0.4"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          <p style="font-size:14px">Nenhuma vaga encontrada.</p>
+        </div>`;
+        document.getElementById('paginacao').innerHTML = '';
+        return;
+      }
+      lista.innerHTML = vagas.map(v => `
+        <div class="vaga-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px">
+            <h2>${v.titulo}</h2>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
+              ${v.modelo_trabalho ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:${modeloCor[v.modelo_trabalho]||'#6366f1'}22;color:${modeloCor[v.modelo_trabalho]||'#818cf8'};border:1px solid ${modeloCor[v.modelo_trabalho]||'#6366f1'}44">${v.modelo_trabalho}</span>` : ''}
+              ${v.tipo_deficiencia_foco ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(244,124,32,0.12);color:#f47c20;border:1px solid rgba(244,124,32,0.3)">${v.tipo_deficiencia_foco}</span>` : ''}
+            </div>
+          </div>
+          <p class="vaga-empresa">${v.localizacao || ''} ${v.nome_empresa ? '· ' + v.nome_empresa : ''}</p>
+          ${v.salario ? `<p style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:8px">💰 ${v.salario}</p>` : ''}
+          <p class="vaga-desc">${v.descricao || ''}</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+            <button class="btn-apply" onclick="verDetalhes(${v.id})">Ver detalhes</button>
+            <button class="btn-apply" style="background:transparent;border:1px solid rgba(255,255,255,0.2)" onclick="candidatar(${v.id})">Candidatar-se</button>
+          </div>
+        </div>`).join('');
+      if (resultado.totalPaginas) renderPaginacao(resultado.totalPaginas, resultado.pagina);
+    }
+
+    function verDetalhes(id) {
+      window.location.href = `vaga-detalhes.html?id=${id}`;
+    }
+
+    async function aplicarFiltros(pagina = 1) {
       const busca = document.getElementById('busca').value;
       const deficiencia = document.getElementById('filtro-deficiencia').value;
       const modelo = document.getElementById('filtro-modelo').value;
@@ -134,37 +182,40 @@
       if (busca) params.append('busca', busca);
       if (deficiencia) params.append('deficiencia', deficiencia);
       if (modelo) params.append('modelo', modelo);
+      params.append('pagina', pagina);
+      params.append('limite', LIMITE);
       try {
-        const r = await fetch('http://localhost:3000/vagas/filtro?' + params.toString());
+        const r = await fetch('" + API_URL + "/vagas/filtro?' + params.toString());
         const d = await r.json();
-        renderVagas(r.ok ? d : []);
-      } catch(e) { document.getElementById('lista-vagas').innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:14px">Erro de conexão.</p>'; }
+        renderVagas(r.ok ? d : { vagas: [] });
+      } catch(e) { Toast.show('Erro de conexão com o servidor.', 'error'); }
     }
 
     function limparFiltros() {
       document.getElementById('busca').value = '';
       document.getElementById('filtro-deficiencia').value = '';
       document.getElementById('filtro-modelo').value = '';
-      carregarVagas();
+      paginaAtual = 1;
+      carregarVagas(1);
     }
 
-    async function carregarVagas() {
+    async function carregarVagas(pagina = 1) {
       try {
-        const r = await fetch('http://localhost:3000/vagas');
+        const r = await fetch(`${API_URL}/vagas?pagina=${pagina}&limite=${LIMITE}`);
         const d = await r.json();
-        todasVagas = r.ok ? d : [];
-        renderVagas(todasVagas);
-      } catch(e) { document.getElementById('lista-vagas').innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:14px">Não foi possível conectar ao servidor.</p>'; }
+        renderVagas(r.ok ? d : { vagas: [] });
+      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
     }
 
     async function candidatar(vagaId) {
       const token = localStorage.getItem('token');
-      if (!token) { alert('Você precisa estar logado.'); window.location.href = 'login.html'; return; }
+      if (!token) { Toast.show('Você precisa estar logado.', 'warning'); window.location.href = 'login.html'; return; }
       try {
-        const r = await fetch('http://localhost:3000/inscricoes', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({vaga_id: vagaId}) });
+        const r = await fetch('" + API_URL + "/inscricoes', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({vaga_id: vagaId}) });
         const d = await r.json();
-        alert(r.ok ? 'Candidatura realizada com sucesso!' : 'Erro: ' + (d.mensagem || 'Tente novamente.'));
-      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+        if (r.ok) Toast.show('Candidatura realizada com sucesso!', 'success');
+        else Toast.show(d.mensagem || 'Erro ao candidatar-se.', 'error');
+      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
     }
 
     document.getElementById('busca').addEventListener('keydown', e => { if (e.key === 'Enter') aplicarFiltros(); });

@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: inclui-plus-api
+    runtime: node
+    rootDir: src
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: DB_USER
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_PORT
+        value: 5432
+      - key: JWT_SECRET
+        generateValue: true
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: PORT
+        value: 3000

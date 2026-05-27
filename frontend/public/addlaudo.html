@@ -3,87 +3,119 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inclui+ | Adicionar Laudo</title>
+  <title>Inclui+ | Laudo Médico</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root { --orange: #f47c20; --white-med: rgba(255,255,255,0.10); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; }
-    body.high-contrast { background: #000 !important; color: #ff0 !important; }
-    body.high-contrast .topbar, body.high-contrast .panel { background: #111 !important; border: 2px solid #ff0 !important; }
-    body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
-
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); }
-    .logo { display: flex; align-items: center; gap: 10px; }
-    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
-    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
-    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; }
-    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
-
-    .container { max-width: 560px; margin: 0 auto; padding: 48px 24px; }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 48px; }
+    .container { max-width: 560px; margin: 0 auto; padding: 40px 24px; }
     .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
     h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
     .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
-
-    .panel { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
-
+    .panel { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; padding: 28px; margin-bottom: 16px; }
+    .panel-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+    .laudo-atual { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .laudo-atual p { font-size: 13px; color: rgba(255,255,255,0.85); }
+    .laudo-atual a { font-size: 12px; font-weight: 600; color: #4ade80; text-decoration: none; }
+    .laudo-atual a:hover { text-decoration: underline; }
     .file-area { border: 1px dashed rgba(255,255,255,0.25); border-radius: 10px; padding: 32px; text-align: center; }
     .file-icon { width: 48px; height: 48px; background: rgba(244,124,32,0.12); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
     .file-icon svg { width: 22px; height: 22px; stroke: var(--orange); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .file-area h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
     .file-area p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
     .file-area input { color: rgba(255,255,255,0.7); font-size: 13px; }
-
-    .btn-primary { background: var(--orange); border: none; color: #fff; padding: 12px 24px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary { background: var(--orange); border: none; color: #fff; padding: 12px 24px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 16px; }
     .btn-primary:hover { background: #e06b10; }
-
+    .btn-danger { background: transparent; border: 1px solid rgba(248,113,113,0.4); color: #f87171; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+    .btn-danger:hover { background: rgba(248,113,113,0.1); }
     .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 20px; }
     .back:hover { color: #fff; }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
-    <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
-  </div>
-
   <div class="container">
     <div class="page-label">Documentação</div>
-    <h1>Adicionar laudo</h1>
+    <h1>Laudo médico</h1>
     <p class="sub">Envie seu laudo médico em PDF para validação na plataforma.</p>
 
     <div class="panel">
+      <div class="panel-title">Laudo atual</div>
+      <div id="laudo-atual" style="display:none" class="laudo-atual">
+        <div>
+          <p>📄 Laudo anexado</p>
+          <a id="link-laudo" href="#" target="_blank">Visualizar laudo</a>
+        </div>
+        <button class="btn-danger" onclick="removerLaudo()">Remover</button>
+      </div>
+      <div id="sem-laudo" style="display:none;font-size:13px;color:var(--text-muted)">Nenhum laudo anexado.</div>
+    </div>
+
+    <div class="panel" id="upload-panel">
       <div class="file-area">
         <div class="file-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
         <h3>Selecione o arquivo</h3>
         <p>Formato aceito: PDF</p>
-        <input type="file" accept=".pdf">
+        <input type="file" id="arquivo-laudo" accept=".pdf">
       </div>
+      <button class="btn-primary" onclick="enviarLaudo()">Enviar laudo</button>
     </div>
 
-    <button class="btn-primary" onclick="enviarLaudo()">Enviar laudo</button>
-    <br>
     <a href="home.html" class="back">← Voltar para Home</a>
   </div>
 
   <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
+  <script src="toast.js"></script>
+  <script src="topbar.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
     new window.VLibras.Widget('https://vlibras.gov.br/app');
-    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'login.html';
+
+    async function carregarPerfil() {
+      try {
+        const r = await fetch('" + API_URL + "/perfil', { headers: {'Authorization':'Bearer '+token} });
+        const d = await r.json();
+        if (d.laudo_medico_url) {
+          document.getElementById('laudo-atual').style.display = 'flex';
+          document.getElementById('sem-laudo').style.display = 'none';
+          document.getElementById('upload-panel').style.display = 'none';
+          document.getElementById('link-laudo').href = '" + API_URL + "/' + d.laudo_medico_url.replace(/\\/g, '/');
+        } else {
+          document.getElementById('laudo-atual').style.display = 'none';
+          document.getElementById('sem-laudo').style.display = 'block';
+          document.getElementById('upload-panel').style.display = 'block';
+        }
+      } catch(e) {}
+    }
+
     async function enviarLaudo() {
-      const arquivo = document.querySelector('input[type="file"]').files[0];
-      if (!arquivo) { alert('Selecione um arquivo PDF.'); return; }
-      const token = localStorage.getItem('token');
-      if (!token) { alert('Você precisa estar logado.'); window.location.href = 'login.html'; return; }
+      const arquivo = document.getElementById('arquivo-laudo').files[0];
+      if (!arquivo) { Toast.show('Selecione um arquivo PDF.', 'warning'); return; }
       const formData = new FormData();
       formData.append('laudo', arquivo);
       try {
-        const r = await fetch('http://localhost:3000/perfil/laudo', { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
+        const r = await fetch('" + API_URL + "/perfil/laudo', { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
         const d = await r.json();
-        alert(r.ok ? 'Laudo enviado com sucesso!' : 'Erro: ' + (d.mensagem || 'Tente novamente.'));
-      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+        if (r.ok) { Toast.show('Laudo enviado com sucesso!', 'success'); carregarPerfil(); }
+        else Toast.show(d.mensagem || 'Erro ao enviar.', 'error');
+      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
     }
+
+    async function removerLaudo() {
+      if (!confirm('Deseja remover o laudo atual?')) return;
+      try {
+        const r = await fetch('" + API_URL + "/perfil/laudo', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
+        if (r.ok) {
+          Toast.show('Laudo removido.', 'info');
+          carregarPerfil();
+        }
+      } catch(e) { Toast.show('Erro ao remover.', 'error'); }
+    }
+
+    carregarPerfil();
   </script>
 </body>
 </html>

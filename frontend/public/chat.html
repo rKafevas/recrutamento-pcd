@@ -76,7 +76,7 @@
     </div>
   </div>
 
-  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script src="" + API_URL + "/socket.io/socket.io.js"></script>
   <script>
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = 'login.html'; }
@@ -89,7 +89,7 @@
     // Ajusta botão voltar por tipo
     document.getElementById('btn-voltar').href = meuTipo === 'RH' ? 'rh-dashboard.html' : 'home.html';
 
-    const socket = io('http://localhost:3000', { auth: { token } });
+    const socket = io('" + API_URL + "', { auth: { token } });
     let inscricaoAtual = null;
     let destinatarioAtual = null;
 
@@ -107,7 +107,7 @@
 
     // Carrega lista de conversas
     async function carregarConversas() {
-      const r = await fetch('http://localhost:3000/mensagens/conversas', { headers: {'Authorization':'Bearer '+token} });
+      const r = await fetch('" + API_URL + "/mensagens/conversas', { headers: {'Authorization':'Bearer '+token} });
       const d = await r.json();
       const lista = document.getElementById('lista-conversas');
 
@@ -138,7 +138,7 @@
       socket.emit('entrar_sala', inscricaoId);
 
       // Busca dados da inscrição (para saber quem é o destinatário)
-      const rdados = await fetch(`http://localhost:3000/mensagens/inscricao/${inscricaoId}/dados`, { headers: {'Authorization':'Bearer '+token} });
+      const rdados = await fetch(`${API_URL}/mensagens/inscricao/${inscricaoId}/dados`, { headers: {'Authorization':'Bearer '+token} });
       const dados = await rdados.json();
 
       destinatarioAtual = meuTipo === 'RH' ? dados.candidato_usuario_id : dados.rh_usuario_id;
@@ -146,7 +146,7 @@
       const nomeOutro = meuTipo === 'RH' ? dados.candidato_nome : 'RH';
 
       // Busca mensagens
-      const r = await fetch(`http://localhost:3000/mensagens/${inscricaoId}`, { headers: {'Authorization':'Bearer '+token} });
+      const r = await fetch(`${API_URL}/mensagens/${inscricaoId}`, { headers: {'Authorization':'Bearer '+token} });
       const msgs = await r.json();
 
       document.getElementById('chat-area').innerHTML = `
