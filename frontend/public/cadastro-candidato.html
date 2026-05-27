@@ -192,7 +192,7 @@
 
       try {
         // Altere a porta caso seu backend não esteja rodando na 3000
-        const resposta = await fetch('" + API_URL + "/usuarios', {
+        const resposta = await fetch(`${window.API_URL}/usuarios`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
