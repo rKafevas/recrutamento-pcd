@@ -4,247 +4,236 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inclui+ | Nova Vaga</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(255,255,255,0.08); --white-med: rgba(255,255,255,0.10); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 60px; }
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .topbar, body.high-contrast .panel { background: #111 !important; border: 2px solid #ff0 !important; }
+    body.high-contrast input, body.high-contrast textarea, body.high-contrast select { background: #fff !important; color: #000 !important; }
+    body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
 
-    :root {
-      --orange: #f47c20;
-      --orange-hover: #e06b10;
-      --white-soft: rgba(255,255,255,0.08);
-      --white-med: rgba(255,255,255,0.10);
-      --white-border: rgba(255,255,255,0.15);
-      --text-muted: rgba(255,255,255,0.65);
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%);
-      color: #fff;
-      min-height: 100vh;
-      padding-bottom: 60px;
-    }
-
-    body.high-contrast {
-      background: #000 !important;
-      color: #ff0 !important;
-    }
-
-    body.high-contrast .topbar,
-    body.high-contrast .panel {
-      background: #111 !important;
-      border: 2px solid #ff0 !important;
-    }
-
-    body.high-contrast input,
-    body.high-contrast textarea,
-    body.high-contrast select {
-      background: #fff !important;
-      color: #000 !important;
-    }
-
-    body.high-contrast .btn-primary {
-      background: #ff0 !important;
-      color: #000 !important;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 32px;
-      background: rgba(13,59,142,0.6);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--white-border);
-      position: sticky;
-      top: 0;
-      z-index: 99;
-    }
-
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
     .logo { display: flex; align-items: center; gap: 10px; }
-    .logo img { width: 36px; height: 36px; border-radius: 8px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; }
+    .btn-ghost:hover { background: var(--white-soft); }
 
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid var(--white-border);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 7px;
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 13px;
-    }
+    .container { max-width: 760px; margin: 0 auto; padding: 40px 24px; }
 
-    .container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 40px 24px;
-    }
+    .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 36px; }
 
-    .panel {
-      background: var(--white-med);
-      border: 1px solid var(--white-border);
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 16px;
-    }
+    .panel { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; padding: 28px; margin-bottom: 16px; }
+    .panel-title { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--white-border); }
 
     .field { margin-bottom: 18px; }
-
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-      padding: 11px 14px;
-      border-radius: 9px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.08);
-      color: #fff;
+    .field:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+    .field label span { color: var(--orange); margin-left: 2px; }
+    .field input, .field textarea, .field select {
+      width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #fff;
+      font-family: 'Inter', sans-serif; transition: 0.2s;
     }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.12); }
+    .field textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
+    .field select option { background: #1250b0; color: #fff; }
 
-    .btn-primary {
-      background: var(--orange);
-      border: none;
-      padding: 12px 28px;
-      border-radius: 9px;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
+    .hint { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+
+    .actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+    .btn-primary { background: var(--orange); border: none; color: #fff; padding: 12px 28px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-primary:hover { background: var(--orange-hover); }
+
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 28px; transition: 0.2s; }
+    .back:hover { color: #fff; }
+
+    @media(max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } .topbar { padding: 14px 20px; } }
   </style>
 </head>
-
 <body>
-
   <div class="topbar">
-    <div class="logo">
-      <img src="logo.png.jpeg" alt="Inclui+">
-      <span>Inclui+</span>
-    </div>
-
-    <div>
+    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
+    <div style="display:flex;gap:10px">
       <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
       <a href="login.html" class="btn-ghost">Sair</a>
     </div>
   </div>
 
   <div class="container">
+    <a href="rh-dashboard.html" class="back">← Voltar ao Painel</a>
+
+    <div class="page-label">Recursos Humanos</div>
     <h1>Publicar nova vaga</h1>
+    <p class="sub">Preencha as informações da vaga. Campos marcados com <span style="color:var(--orange)">*</span> são obrigatórios.</p>
 
+    <!-- SEÇÃO 1 -->
     <div class="panel">
+      <div class="panel-title">Informações básicas</div>
 
       <div class="field">
-        <label>Título *</label>
-        <input id="titulo">
+        <label>Título da vaga <span>*</span></label>
+        <input type="text" id="titulo" placeholder="Ex: Desenvolvedor Front-End, Assistente Administrativo">
       </div>
 
       <div class="field">
-        <label>Descrição *</label>
-        <textarea id="descricao"></textarea>
+        <label>Descrição <span>*</span></label>
+        <textarea id="descricao" placeholder="Descreva as responsabilidades e atividades do dia a dia"></textarea>
       </div>
 
       <div class="field">
-        <label>Requisitos *</label>
-        <textarea id="requisitos"></textarea>
+        <label>Requisitos <span>*</span></label>
+        <textarea id="requisitos" placeholder="Formação, conhecimentos técnicos e experiências necessárias"></textarea>
       </div>
 
       <div class="field">
-        <label>Modelo de trabalho *</label>
-        <select id="modelo_trabalho">
-          <option value="">Selecione</option>
-          <option>Presencial</option>
-          <option>Híbrido</option>
-          <option>Remoto</option>
-        </select>
+        <label>Benefícios</label>
+        <textarea id="beneficios" placeholder="Ex: Plano de saúde, vale-alimentação, Gympass, home office..." style="min-height:80px"></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Modelo de trabalho <span>*</span></label>
+          <select id="modelo_trabalho">
+            <option value="">Selecione</option>
+            <option value="Presencial">Presencial</option>
+            <option value="Híbrido">Híbrido</option>
+            <option value="Remoto">Remoto</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Localização <span>*</span></label>
+          <input type="text" id="localizacao" placeholder="Ex: Recife - PE">
+          <div class="hint">Informe mesmo para vagas remotas</div>
+        </div>
       </div>
 
       <div class="field">
-        <label>Localização *</label>
-        <input id="localizacao">
+        <label>Salário</label>
+        <input type="text" id="salario" placeholder="Ex: R$ 3.000, R$ 2.500 – R$ 4.000, ou A combinar">
       </div>
-
-      <div class="field">
-        <label>Foco deficiência *</label>
-        <select id="tipo_deficiencia_foco">
-          <option value="">Selecione</option>
-          <option>Qualquer</option>
-          <option>Física</option>
-          <option>Auditiva</option>
-          <option>Visual</option>
-          <option>Intelectual</option>
-          <option>Múltipla</option>
-        </select>
-      </div>
-
     </div>
 
-    <button class="btn-primary" onclick="criarVaga()">Publicar vaga</button>
+    <!-- SEÇÃO 2 -->
+    <div class="panel">
+      <div class="panel-title">Inclusão e acessibilidade</div>
+
+      <div class="field">
+        <label>Foco de deficiência <span>*</span></label>
+        <select id="tipo_deficiencia_foco">
+          <option value="">Selecione</option>
+          <option value="Qualquer">Qualquer deficiência</option>
+          <option value="Física">Física</option>
+          <option value="Auditiva">Auditiva</option>
+          <option value="Visual">Visual</option>
+          <option value="Intelectual">Intelectual</option>
+          <option value="Múltipla">Múltipla</option>
+        </select>
+        <div class="hint">Selecione "Qualquer deficiência" para vagas abertas a todos os perfis PcD</div>
+      </div>
+
+      <div class="field">
+        <label>Acessibilidade no local de trabalho</label>
+        <textarea id="acessibilidade_local" placeholder="Ex: Prédio com rampas de acesso, elevador com aviso sonoro, banheiros adaptados, estacionamento para PcD" style="min-height:80px"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Tecnologias assistivas oferecidas</label>
+        <textarea id="tecnologias_assistivas" placeholder="Ex: Leitores de tela, teclados em Braille, intérprete de Libras nas reuniões, softwares de acessibilidade" style="min-height:80px"></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="rh-dashboard.html" class="btn-ghost">Cancelar</a>
+      <button class="btn-primary" onclick="criarVaga()">Publicar vaga</button>
+    </div>
   </div>
 
-  <script src="config.js"></script>
-  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
   <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      if (window.VLibras) {
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
+  new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+  function toggleContrast(){
+    document.body.classList.toggle('high-contrast');
+  }
+
+  async function criarVaga() {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
       }
-    });
 
-    function toggleContrast() {
-      document.body.classList.toggle('high-contrast');
-    }
+      const titulo = document.getElementById('titulo').value;
+      const descricao = document.getElementById('descricao').value;
+      const requisitos = document.getElementById('requisitos').value;
+      const beneficios = document.getElementById('beneficios').value;
+      const modelo_trabalho = document.getElementById('modelo_trabalho').value;
+      const localizacao = document.getElementById('localizacao').value;
+      const salario = document.getElementById('salario').value;
+      const tipo_deficiencia_foco = document.getElementById('tipo_deficiencia_foco').value;
+      const acessibilidade_local = document.getElementById('acessibilidade_local').value;
+      const tecnologias_assistivas = document.getElementById('tecnologias_assistivas').value;
 
-    async function criarVaga() {
+      if (!titulo || !descricao || !requisitos || !modelo_trabalho || !localizacao || !tipo_deficiencia_foco) {
+        alert('Preencha todos os campos obrigatórios (*).');
+        return;
+      }
+
+      const payload = {
+        titulo,
+        descricao,
+        requisitos,
+        beneficios,
+        modelo_trabalho,
+        localizacao,
+        salario,
+        tipo_deficiencia_foco,
+        acessibilidade_local,
+        tecnologias_assistivas
+      };
+
+      const response = await fetch(`${API_URL}/vagas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      let data;
+
       try {
-        const token = localStorage.getItem('token');
-        if (!token) return (window.location.href = 'login.html');
-
-        const payload = {
-          titulo: document.getElementById('titulo').value,
-          descricao: document.getElementById('descricao').value,
-          requisitos: document.getElementById('requisitos').value,
-          modelo_trabalho: document.getElementById('modelo_trabalho').value,
-          localizacao: document.getElementById('localizacao').value,
-          tipo_deficiencia_foco: document.getElementById('tipo_deficiencia_foco').value
-        };
-
-        if (!Object.values(payload).every(v => v)) {
-          alert("Preencha todos os campos obrigatórios.");
-          return;
-        }
-
-        const response = await fetch(`${API_URL}/vagas`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
-
-        let data = {};
-        try {
-          data = await response.json();
-        } catch {}
-
-        if (response.ok) {
-          alert("Vaga publicada com sucesso!");
-          window.location.href = "rh-dashboard.html";
-        } else {
-          alert(data.mensagem || "Erro ao criar vaga");
-        }
-
-      } catch (err) {
-        console.error(err);
-        alert("Erro de conexão com o servidor.");
+        data = await response.json();
+      } catch (e) {
+        const text = await response.text();
+        console.error("Resposta não JSON:", text);
+        throw new Error("Backend não retornou JSON válido");
       }
-    }
-  </script>
 
-</body>
-</html>
+      console.log("STATUS:", response.status);
+      console.log("RESPOSTA:", data);
+
+      if (response.ok) {
+        alert('Vaga publicada com sucesso!');
+        window.location.href = 'rh-dashboard.html';
+      } else {
+        alert('Erro: ' + (data.mensagem || data.erro || 'Verifique os campos.'));
+      }
+
+    } catch (err) {
+      console.error("Erro ao criar vaga:", err);
+      alert('Não foi possível conectar ao servidor.');
+    }
+  }
+</script>
