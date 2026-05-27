@@ -18,6 +18,7 @@ const io = new Server(server, { cors: { origin: '*' } });
 
 app.use(cors());
 app.use(express.json());
+app.set('trust proxy', 1);
 
 // Rate limiting — máximo 10 tentativas de login por IP a cada 15 minutos
 const loginLimiter = rateLimit({
