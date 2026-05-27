@@ -54,7 +54,7 @@ class UsuarioService {
       };
 
     } catch (err) {
-      console.error("Erro ao salvar no banco:", err);
+      console.error("🔥 ERRO AO SALVAR CANDIDATO:", err);
       throw new Error("Erro ao criar cadastro. Tente novamente.");
     }
   }
@@ -77,11 +77,21 @@ class UsuarioService {
         'RH'
       );
 
-      const empresa = await UsuarioRepository.criarEmpresa(
-        usuario.id,
-        dados.nome_fantasia,
-        dados.cnpj
-      );
+      let empresa;
+
+      try {
+        empresa = await UsuarioRepository.criarEmpresa(
+          usuario.id,
+          dados.nome_fantasia,
+          dados.cnpj
+        );
+      } catch (err) {
+        console.error("🔥 ERRO AO CRIAR EMPRESA NO BANCO:", err);
+
+        // aqui você decide:
+        // ou apaga o usuário criado, ou lança erro
+        throw new Error("Usuário criado, mas falha ao salvar empresa.");
+      }
 
       try {
         const token = await TokenRepository.criar(usuario.id, 'confirmacao');
@@ -108,7 +118,7 @@ class UsuarioService {
       };
 
     } catch (err) {
-      console.error("Erro ao salvar no banco:", err);
+      console.error("🔥 ERRO AO SALVAR RH:", err);
       throw new Error("Erro ao criar cadastro. Tente novamente.");
     }
   }
