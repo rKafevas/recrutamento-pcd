@@ -77,7 +77,7 @@
       if (!token) { window.location.href = 'login.html'; return; }
       const lista = document.getElementById('lista-candidaturas');
       try {
-        const r = await fetch('" + API_URL + "/inscricoes/minhas', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + "/inscricoes/minhas', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (!r.ok) { lista.innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:14px">Erro ao carregar.</p>'; return; }
         if (!d.length) { lista.innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:14px">Você ainda não se candidatou a nenhuma vaga.</p>'; return; }

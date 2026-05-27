@@ -112,7 +112,7 @@
       const tipo = localStorage.getItem('tipo') || (token ? JSON.parse(atob(token.split('.')[1])).tipo : '');
       if (tipo !== 'Candidato') { document.getElementById('metricas').style.display = 'none'; return; }
       try {
-        const r = await fetch('" + API_URL + "/inscricoes/minhas', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + "/inscricoes/minhas', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (!r.ok) return;
         const total = d.length;
@@ -130,7 +130,7 @@
       if (!confirmacao) return;
       const token = localStorage.getItem('token');
       try {
-        const r = await fetch('" + API_URL + "/minha-conta', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + "/minha-conta', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (r.ok) { localStorage.clear(); Toast.show('Conta excluída com sucesso.', 'success'); setTimeout(() => window.location.href = 'index.html', 1500); }
         else Toast.show(d.mensagem || 'Erro ao excluir conta.', 'error');
@@ -141,7 +141,7 @@
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const r = await fetch('" + API_URL + "/notificacoes', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + "/notificacoes', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         const badge = document.getElementById('badge-notif');
         const lista = document.getElementById('lista-notif');
@@ -167,7 +167,7 @@
 
     async function marcarLidas() {
       const token = localStorage.getItem('token');
-      await fetch('" + API_URL + "/notificacoes/lidas', { method: 'PATCH', headers: {'Authorization':'Bearer '+token} });
+      await fetch(API_URL + "/notificacoes/lidas', { method: 'PATCH', headers: {'Authorization':'Bearer '+token} });
       document.getElementById('badge-notif').style.display = 'none';
       document.getElementById('lista-notif').innerHTML = '<div style="padding:20px;text-align:center;font-size:13px;color:rgba(255,255,255,0.4)">Nenhuma notificação.</div>';
     }

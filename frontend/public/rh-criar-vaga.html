@@ -184,7 +184,7 @@
       }
 
       try {
-        const r = await fetch('" + API_URL + "/vagas', {
+        const r = await fetch(API_URL + "/vagas', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({ titulo, descricao, requisitos, beneficios, modelo_trabalho, localizacao, salario, tipo_deficiencia_foco, acessibilidade_local, tecnologias_assistivas })

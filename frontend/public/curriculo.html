@@ -126,7 +126,7 @@
 
     async function carregarPerfil() {
       try {
-        const r = await fetch('" + API_URL + "/perfil', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + "/perfil', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (!r.ok) return;
         if (d.nome_completo) document.getElementById('nome').value = d.nome_completo;
@@ -154,7 +154,7 @@
       const formData = new FormData();
       formData.append('foto', arquivo);
       try {
-        const r = await fetch('" + API_URL + "/perfil/foto', { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
+        const r = await fetch(API_URL + "/perfil/foto', { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
         const d = await r.json();
         if (r.ok) {
           Toast.show('Foto atualizada!', 'success');
@@ -168,7 +168,7 @@
     async function removerFoto() {
       if (!confirm('Deseja remover sua foto de perfil?')) return;
       try {
-        const r = await fetch('" + API_URL + "/perfil/foto', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + "/perfil/foto', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
         if (r.ok) {
           Toast.show('Foto removida.', 'info');
           document.getElementById('foto-preview').innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
@@ -185,7 +185,7 @@
       const experiencias = document.getElementById('experiencias').value;
       const habilidades = document.getElementById('habilidades').value;
       try {
-        const r = await fetch('" + API_URL + "/perfil/infos', {
+        const r = await fetch(API_URL + "/perfil/infos', {
           method: 'PATCH',
           headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
           body: JSON.stringify({ nome, sobre, telefone, formacao, experiencias, habilidades })
@@ -208,7 +208,7 @@
       if (sobre) formData.append('sobre', sobre);
       if (telefone) formData.append('telefone', telefone);
       try {
-        const r = await fetch('" + API_URL + "/perfil/curriculo', { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
+        const r = await fetch(API_URL + "/perfil/curriculo', { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
         const d = await r.json();
         if (r.ok) {
           Toast.show('Currículo enviado com sucesso!', 'success');
@@ -220,7 +220,7 @@
     async function removerCurriculo() {
       if (!confirm('Deseja remover o currículo atual?')) return;
       try {
-        const r = await fetch('" + API_URL + "/perfil/curriculo', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + "/perfil/curriculo', { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
         if (r.ok) {
           Toast.show('Currículo removido.', 'info');
           document.getElementById('curriculo-atual').style.display = 'none';

@@ -107,7 +107,7 @@
 
     // Carrega lista de conversas
     async function carregarConversas() {
-      const r = await fetch('" + API_URL + "/mensagens/conversas', { headers: {'Authorization':'Bearer '+token} });
+      const r = await fetch(API_URL + "/mensagens/conversas', { headers: {'Authorization':'Bearer '+token} });
       const d = await r.json();
       const lista = document.getElementById('lista-conversas');
 

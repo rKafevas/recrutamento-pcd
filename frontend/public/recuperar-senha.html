@@ -75,7 +75,7 @@
       const email = document.getElementById('email').value.trim();
       if (!email) { alert('Digite seu e-mail.'); return; }
       try {
-        const r = await fetch('" + API_URL + "/recuperar-senha', {
+        const r = await fetch(API_URL + "/recuperar-senha', {
           method: 'POST', headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ email })
         });
@@ -90,7 +90,7 @@
       const codigo = document.getElementById('codigo').value.trim();
       if (codigo.length !== 6) { alert('Digite o código de 6 dígitos.'); return; }
       try {
-        const r = await fetch('" + API_URL + "/recuperar-senha/verificar', {
+        const r = await fetch(API_URL + "/recuperar-senha/verificar', {
           method: 'POST', headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ usuario_id: usuarioId, token: codigo })
         });
@@ -106,7 +106,7 @@
       if (nova.length < 6) { alert('A senha deve ter no mínimo 6 caracteres.'); return; }
       if (nova !== confirmar) { alert('As senhas não coincidem.'); return; }
       try {
-        const r = await fetch('" + API_URL + "/recuperar-senha/redefinir', {
+        const r = await fetch(API_URL + "/recuperar-senha/redefinir', {
           method: 'POST', headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ usuario_id: usuarioId, token: codigoValido, nova_senha: nova })
         });
