@@ -8,5 +8,10 @@ window.API_URL = API_URL;
 
 window.fileUrl = function(url) {
   if (!url) return '';
-  return url.startsWith('http') ? url : API_URL + '/' + url.replace(/\\/g, '/');
+  if (!url.startsWith('http')) return API_URL + '/' + url.replace(/\\/g, '/');
+  // Cloudinary raw URL sem extensão: adiciona .pdf para Content-Type correto
+  if (url.includes('/raw/upload/') && !/\.\w{2,4}$/.test(url.split('?')[0])) {
+    return url + '.pdf';
+  }
+  return url;
 };

@@ -1,4 +1,5 @@
 const cloudinary = require('cloudinary').v2;
+const path = require('path');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,14 +14,16 @@ async function uploadToCloudinary(req, res, next) {
 
   try {
     const folder = folderMap[req.file.fieldname] || 'uploads';
-    const resourceType = req.file.fieldname === 'foto' ? 'image' : 'raw';
+    const isFoto = req.file.fieldname === 'foto';
+    const resourceType = isFoto ? 'image' : 'raw';
+    const ext = isFoto ? '' : (path.extname(req.file.originalname).toLowerCase() || '.pdf');
 
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
           folder,
           resource_type: resourceType,
-          public_id: `${req.file.fieldname}-${req.usuarioId}-${Date.now()}`
+          public_id: `${req.file.fieldname}-${req.usuarioId}-${Date.now()}${ext}`
         },
         (err, r) => err ? reject(err) : resolve(r)
       ).end(req.file.buffer);
