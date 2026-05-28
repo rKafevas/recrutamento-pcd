@@ -59,66 +59,80 @@
     const params = new URLSearchParams(window.location.search);
     const inscricaoId = params.get('inscricao');
     const vagaId = params.get('vaga');
+    const candidatoIdParam = params.get('candidato_id');
     if (vagaId) document.getElementById('btn-voltar').href = `rh-candidatos.html?vaga_id=${vagaId}`;
+    if (candidatoIdParam) document.getElementById('btn-voltar').href = 'rh-banco-talentos.html';
+
+    function renderPerfilHTML(c, chatLink) {
+      return `
+        <div class="perfil-header">
+          <div class="avatar">
+            ${c.foto_url
+              ? `<img src="${fileUrl(c.foto_url)}" alt="Foto">`
+              : `<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26,39,68,0.3)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
+          </div>
+          <div class="perfil-header-info">
+            <h1>${c.nome_completo || 'Candidato'}</h1>
+            <p>${c.email || ''}</p>
+            ${c.tipo_deficiencia ? `<span class="badge">${c.tipo_deficiencia}</span>` : ''}
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Informações de contato</div>
+          <div class="info-row"><span class="info-label">E-mail</span><span class="info-value">${c.email || '—'}</span></div>
+          <div class="info-row"><span class="info-label">Telefone</span><span class="info-value">${c.telefone || '—'}</span></div>
+        </div>
+
+        ${c.sobre ? `<div class="panel"><div class="panel-title">Sobre o candidato</div><p style="font-size:14px;line-height:1.7;color:#6b7a99">${c.sobre}</p></div>` : ''}
+        ${c.formacao ? `<div class="panel"><div class="panel-title">Formação acadêmica</div><p style="font-size:14px;line-height:1.7;white-space:pre-wrap;color:#6b7a99">${c.formacao}</p></div>` : ''}
+        ${c.experiencias ? `<div class="panel"><div class="panel-title">Experiências profissionais</div><p style="font-size:14px;line-height:1.7;white-space:pre-wrap;color:#6b7a99">${c.experiencias}</p></div>` : ''}
+        ${c.habilidades ? `<div class="panel"><div class="panel-title">Habilidades</div><p style="font-size:14px;line-height:1.7;color:#6b7a99">${c.habilidades}</p></div>` : ''}
+
+        <div class="panel">
+          <div class="panel-title">Deficiência e acessibilidade</div>
+          <div class="info-row"><span class="info-label">Tipo de deficiência</span><span class="info-value">${c.tipo_deficiencia || '—'}</span></div>
+          <div class="info-row"><span class="info-label">Necessidades</span><span class="info-value">${c.necessidades_acessibilidade || '—'}</span></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Documentos</div>
+          <div class="docs">
+            ${c.curriculo_url
+              ? `<a href="${fileUrl(c.curriculo_url)}" target="_blank" class="doc-link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  Ver currículo</a>`
+              : '<p style="font-size:13px;color:#6b7a99">Currículo não enviado</p>'}
+            ${c.laudo_medico_url
+              ? `<a href="${fileUrl(c.laudo_medico_url)}" target="_blank" class="doc-link blue">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                  Ver laudo médico</a>`
+              : '<p style="font-size:13px;color:#6b7a99">Laudo não enviado</p>'}
+          </div>
+        </div>
+
+        <a href="${chatLink}" class="btn-primary">Enviar mensagem</a>
+      `;
+    }
 
     async function carregarPerfil() {
       try {
-        const r = await fetch(`${API_URL}/mensagens/inscricao/${inscricaoId}/dados`, { headers: {'Authorization':'Bearer '+token} });
-        const d = await r.json();
-
-        // Busca perfil completo do candidato
-        const r2 = await fetch(`${API_URL}/candidatos/${d.candidato_id}`, { headers: {'Authorization':'Bearer '+token} });
-        const c = await r2.json();
-
-        document.getElementById('conteudo').innerHTML = `
-          <div class="perfil-header">
-            <div class="avatar">
-              ${c.foto_url
-                ? `<img src="${fileUrl(c.foto_url)}" alt="Foto">`
-                : `<svg viewBox="0 0 24 24" fill="none" stroke="rgba(26,39,68,0.3)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
-            </div>
-            <div class="perfil-header-info">
-              <h1>${c.nome_completo || 'Candidato'}</h1>
-              <p>${c.email || ''}</p>
-              ${c.tipo_deficiencia ? `<span class="badge">${c.tipo_deficiencia}</span>` : ''}
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-title">Informações de contato</div>
-            <div class="info-row"><span class="info-label">E-mail</span><span class="info-value">${c.email || '—'}</span></div>
-            <div class="info-row"><span class="info-label">Telefone</span><span class="info-value">${c.telefone || '—'}</span></div>
-          </div>
-
-          ${c.sobre ? `<div class="panel"><div class="panel-title">Sobre o candidato</div><p style="font-size:14px;line-height:1.7;color:#6b7a99">${c.sobre}</p></div>` : ''}
-          ${c.formacao ? `<div class="panel"><div class="panel-title">Formação acadêmica</div><p style="font-size:14px;line-height:1.7;white-space:pre-wrap;color:#6b7a99">${c.formacao}</p></div>` : ''}
-          ${c.experiencias ? `<div class="panel"><div class="panel-title">Experiências profissionais</div><p style="font-size:14px;line-height:1.7;white-space:pre-wrap;color:#6b7a99">${c.experiencias}</p></div>` : ''}
-          ${c.habilidades ? `<div class="panel"><div class="panel-title">Habilidades</div><p style="font-size:14px;line-height:1.7;color:#6b7a99">${c.habilidades}</p></div>` : ''}
-
-          <div class="panel">
-            <div class="panel-title">Deficiência e acessibilidade</div>
-            <div class="info-row"><span class="info-label">Tipo de deficiência</span><span class="info-value">${c.tipo_deficiencia || '—'}</span></div>
-            <div class="info-row"><span class="info-label">Necessidades</span><span class="info-value">${c.necessidades_acessibilidade || '—'}</span></div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-title">Documentos</div>
-            <div class="docs">
-              ${c.curriculo_url
-                ? `<a href="${fileUrl(c.curriculo_url)}" target="_blank" class="doc-link">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    Ver currículo</a>`
-                : '<p style="font-size:13px;color:#6b7a99">Currículo não enviado</p>'}
-              ${c.laudo_medico_url
-                ? `<a href="${fileUrl(c.laudo_medico_url)}" target="_blank" class="doc-link blue">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    Ver laudo médico</a>`
-                : '<p style="font-size:13px;color:#6b7a99">Laudo não enviado</p>'}
-            </div>
-          </div>
-
-          <a href="chat.html?inscricao=${inscricaoId}" class="btn-primary">Enviar mensagem</a>
-        `;
+        let c, chatLink;
+        if (inscricaoId) {
+          const r = await fetch(`${API_URL}/mensagens/inscricao/${inscricaoId}/dados`, { headers: {'Authorization':'Bearer '+token} });
+          const d = await r.json();
+          const r2 = await fetch(`${API_URL}/candidatos/${d.candidato_id}`, { headers: {'Authorization':'Bearer '+token} });
+          c = await r2.json();
+          chatLink = `chat.html?inscricao=${inscricaoId}`;
+        } else if (candidatoIdParam) {
+          const r = await fetch(`${API_URL}/candidatos/${candidatoIdParam}`, { headers: {'Authorization':'Bearer '+token} });
+          c = await r.json();
+          chatLink = `chat.html?candidato_id=${candidatoIdParam}`;
+        } else {
+          document.getElementById('conteudo').innerHTML = '<p style="color:#6b7a99">Parâmetros inválidos.</p>';
+          return;
+        }
+        document.getElementById('conteudo').innerHTML = renderPerfilHTML(c, chatLink);
       } catch(e) { document.getElementById('conteudo').innerHTML = '<p style="color:#6b7a99">Erro ao carregar perfil.</p>'; }
     }
 

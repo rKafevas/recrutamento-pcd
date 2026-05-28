@@ -19,6 +19,10 @@
     .chat-layout { display: flex; flex: 1; overflow: hidden; }
 
     .sidebar { width: 300px; border-right: 1px solid var(--white-border); display: flex; flex-direction: column; flex-shrink: 0; background: #f0f2f8; }
+    .sidebar-tabs { display: flex; border-bottom: 1px solid var(--white-border); flex-shrink: 0; }
+    .tab-btn { flex: 1; padding: 11px 6px; border: none; background: transparent; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text-muted); font-family: 'Inter', sans-serif; transition: 0.2s; border-bottom: 2px solid transparent; }
+    .tab-btn:hover { background: rgba(26,39,68,0.04); }
+    .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
     .sidebar-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 16px 18px 12px; border-bottom: 1px solid var(--white-border); }
     .conversas { overflow-y: auto; flex: 1; }
     .conversa-item { padding: 14px 18px; cursor: pointer; border-bottom: 1px solid rgba(26,39,68,0.06); transition: 0.2s; }
@@ -58,8 +62,14 @@
 <body>
   <div class="chat-layout">
     <div class="sidebar">
-      <div class="sidebar-title">Conversas</div>
+      <div class="sidebar-tabs">
+        <button class="tab-btn active" id="tab-inscricoes" onclick="switchTab('inscricoes')">Candidaturas</button>
+        <button class="tab-btn" id="tab-diretas" onclick="switchTab('diretas')">Banco de Talentos</button>
+      </div>
       <div class="conversas" id="lista-conversas">
+        <div class="empty-sidebar">Carregando...</div>
+      </div>
+      <div class="conversas" id="lista-diretas" style="display:none">
         <div class="empty-sidebar">Carregando...</div>
       </div>
     </div>
@@ -84,6 +94,79 @@
     let inscricaoAtual = null;
     let destinatarioAtual = null;
     let socket = null;
+    let modoAtual = 'inscricoes';
+    let outroUsuarioAtual = null;
+
+    // ── Banco de Talentos — mensagens diretas ──────────────────────────────
+    function switchTab(modo) {
+      modoAtual = modo;
+      document.getElementById('tab-inscricoes').classList.toggle('active', modo === 'inscricoes');
+      document.getElementById('tab-diretas').classList.toggle('active', modo === 'diretas');
+      document.getElementById('lista-conversas').style.display = modo === 'inscricoes' ? '' : 'none';
+      document.getElementById('lista-diretas').style.display = modo === 'diretas' ? '' : 'none';
+      if (modo === 'diretas') carregarConversasDiretas();
+    }
+
+    async function carregarConversasDiretas() {
+      const lista = document.getElementById('lista-diretas');
+      try {
+        const r = await fetch(API_URL + '/mensagens-diretas/conversas', { headers: {'Authorization':'Bearer '+token} });
+        if (!r.ok) { lista.innerHTML = '<div class="empty-sidebar">Erro ao carregar.</div>'; return; }
+        const d = await r.json();
+        if (!d.length) { lista.innerHTML = '<div class="empty-sidebar">Nenhuma conversa direta ainda.</div>'; return; }
+        lista.innerHTML = d.map(c => {
+          const nome = meuTipo === 'RH' ? (c.candidato_nome || 'Candidato') : (c.outro_nome || 'RH');
+          const nomeSafe = (nome || '').replace(/'/g, "\\'");
+          return `<div class="conversa-item ${String(c.outro_usuario_id) === String(outroUsuarioAtual) ? 'active' : ''}"
+            onclick="abrirConversaDireta(${c.outro_usuario_id}, ${c.candidato_id || 'null'}, '${nomeSafe}')">
+            <h4>${nome}${c.nao_lidas > 0 ? `<span class="badge-nao-lida">${c.nao_lidas}</span>` : ''}</h4>
+            <p>${c.ultima_mensagem || ''}</p>
+          </div>`;
+        }).join('');
+      } catch(e) {
+        lista.innerHTML = '<div class="empty-sidebar">Não foi possível carregar.</div>';
+      }
+    }
+
+    async function abrirConversaDireta(outroId, candidatoId, nome) {
+      outroUsuarioAtual = outroId;
+      document.querySelectorAll('#lista-diretas .conversa-item').forEach(el => el.classList.remove('active'));
+      event?.currentTarget?.classList.add('active');
+      if (socket) socket.emit('entrar_sala_direta', outroId);
+      try {
+        const r = await fetch(`${API_URL}/mensagens-diretas/${outroId}`, { headers: {'Authorization':'Bearer '+token} });
+        const msgs = await r.json();
+        const perfilLink = meuTipo === 'RH' && candidatoId
+          ? ` <a href="rh-perfil-candidato.html?candidato_id=${candidatoId}" style="font-size:12px;color:#6b7a99;text-decoration:none;font-weight:500">Ver perfil ↗</a>`
+          : '';
+        document.getElementById('chat-area').innerHTML = `
+          <div class="chat-header">
+            <h3 style="display:flex;align-items:center;gap:8px">${nome}${perfilLink}</h3>
+            <p>Banco de Talentos</p>
+          </div>
+          <div class="mensagens" id="msgs-container">
+            ${msgs.length ? msgs.map(m => buildMsg(m)).join('') : '<div style="text-align:center;color:#6b7a99;font-size:13px;margin-top:20px">Nenhuma mensagem ainda. Seja o primeiro a enviar!</div>'}
+          </div>
+          <div class="chat-input">
+            <input type="text" id="input-msg" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter') enviarMsgDireta()">
+            <button class="btn-enviar" onclick="enviarMsgDireta()">Enviar</button>
+          </div>`;
+        scrollBottom();
+      } catch(e) {
+        document.getElementById('chat-area').innerHTML = '<div class="empty-chat"><p>Erro ao carregar mensagens.</p></div>';
+      }
+    }
+
+    function enviarMsgDireta() {
+      const input = document.getElementById('input-msg');
+      const conteudo = input?.value?.trim();
+      if (!conteudo || !outroUsuarioAtual) return;
+      renderMensagem({ remetente_id: meuId, conteudo, criado_em: new Date().toISOString() });
+      scrollBottom();
+      if (socket) socket.emit('enviar_mensagem_direta', { destinatarioId: outroUsuarioAtual, conteudo });
+      input.value = '';
+    }
+    // ───────────────────────────────────────────────────────────────────────
 
     // Carrega lista de conversas
     async function carregarConversas() {
@@ -126,6 +209,14 @@
             }
           }
           carregarConversas();
+        });
+
+        socket.on('nova_mensagem_direta', (msg) => {
+          if (modoAtual === 'diretas' && msg.remetente_id != meuId && String(msg.remetente_id) === String(outroUsuarioAtual)) {
+            renderMensagem(msg);
+            scrollBottom();
+          }
+          if (modoAtual === 'diretas') carregarConversasDiretas();
         });
       } catch(e) {
         console.warn('Socket.io indisponível, chat em modo somente REST:', e.message);
@@ -218,13 +309,26 @@
       }, 50);
     }
 
-    // Verifica se veio com parâmetro ?inscricao=ID na URL
+    // Verifica parâmetros da URL
     const params = new URLSearchParams(window.location.search);
     const inscricaoParam = params.get('inscricao');
+    const candidatoIdParam = params.get('candidato_id');
 
     carregarConversas().then(() => {
       if (inscricaoParam) abrirConversa(inscricaoParam);
     });
+
+    if (candidatoIdParam) {
+      switchTab('diretas');
+      fetch(`${API_URL}/candidatos/${candidatoIdParam}`, { headers: {'Authorization':'Bearer '+token} })
+        .then(r => r.json())
+        .then(c => {
+          if (c && c.usuario_id) {
+            abrirConversaDireta(c.usuario_id, parseInt(candidatoIdParam), c.nome_completo || 'Candidato');
+          }
+        })
+        .catch(() => {});
+    }
   </script>
 </body>
 </html>

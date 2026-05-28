@@ -50,7 +50,7 @@ class RelatorioRepository {
     if (busca) { params.push(`%${busca}%`); conditions.push(`(c.nome_completo ILIKE $${params.length} OR u.email ILIKE $${params.length})`); }
     if (deficiencia) { params.push(deficiencia); conditions.push(`c.tipo_deficiencia = $${params.length}`); }
     const { rows } = await db.query(`
-      SELECT c.id, c.nome_completo, c.tipo_deficiencia, c.sobre, c.habilidades, c.foto_url, c.curriculo_url, u.email
+      SELECT c.id, c.usuario_id, c.nome_completo, c.tipo_deficiencia, c.sobre, c.habilidades, c.foto_url, c.curriculo_url, c.laudo_medico_url, u.email
       FROM candidatos c JOIN usuarios u ON c.usuario_id = u.id
       WHERE ${conditions.join(' AND ')}
       ORDER BY c.nome_completo ASC LIMIT 50

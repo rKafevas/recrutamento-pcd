@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Banco de Talentos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(26,39,68,0.04); --white-med: #ffffff; --white-hover: rgba(26,39,68,0.06); --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1a2744; min-height: 100vh; padding-bottom: 48px; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+    .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    h1 { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+    .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+
+    .search-wrap { display: flex; gap: 10px; margin-bottom: 24px; align-items: center; background: #fff; border: 1px solid var(--white-border); border-radius: 12px; padding: 12px 16px; }
+    .search-wrap svg { stroke: var(--text-muted); flex-shrink: 0; }
+    .search-wrap input { flex: 1; border: none; background: transparent; font-size: 14px; color: #1a2744; font-family: 'Inter', sans-serif; }
+    .search-wrap input:focus { outline: none; }
+    .search-wrap input::placeholder { color: rgba(26,39,68,0.35); }
+    .filter-select { background: #f8f9fd; border: 1px solid rgba(26,39,68,0.14); border-radius: 8px; color: #1a2744; font-size: 13px; padding: 8px 12px; cursor: pointer; font-family: 'Inter', sans-serif; flex-shrink: 0; }
+    .filter-select:focus { outline: none; border-color: #1e74df; }
+
+    .stats-bar { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+    .stats-bar strong { color: #1a2744; }
+
+    .cand-grid { display: flex; flex-direction: column; gap: 10px; }
+    .cand-card { background: #fff; border: 1px solid var(--white-border); border-radius: 14px; padding: 18px 22px; display: flex; gap: 16px; align-items: flex-start; transition: 0.2s; }
+    .cand-card:hover { background: var(--white-hover); }
+    .cand-avatar { width: 52px; height: 52px; border-radius: 50%; background: rgba(26,39,68,0.06); border: 1px solid rgba(26,39,68,0.12); overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cand-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .cand-body { flex: 1; min-width: 0; }
+    .cand-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+    .cand-email { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+    .cand-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; background: rgba(244,124,32,0.1); border: 1px solid rgba(244,124,32,0.2); color: var(--orange); }
+    .tag.blue { background: rgba(30,116,223,0.08); border-color: rgba(30,116,223,0.2); color: #1e74df; }
+    .tag.green { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.2); color: #16a34a; }
+    .cand-habilidades { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 420px; margin-bottom: 8px; }
+    .doc-links { display: flex; gap: 6px; flex-wrap: wrap; }
+    .doc-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--orange); text-decoration: none; padding: 5px 10px; border: 1px solid rgba(244,124,32,0.3); border-radius: 7px; background: rgba(244,124,32,0.08); transition: 0.2s; }
+    .doc-link:hover { background: rgba(244,124,32,0.15); }
+    .doc-link.blue { color: #1e74df; border-color: rgba(30,116,223,0.3); background: rgba(30,116,223,0.08); }
+    .doc-link.blue:hover { background: rgba(30,116,223,0.15); }
+    .cand-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; align-items: stretch; }
+    .btn-sm { padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; white-space: nowrap; text-align: center; }
+    .btn-sm-primary { background: var(--orange); color: #fff; }
+    .btn-sm-primary:hover { background: var(--orange-hover); }
+    .btn-sm-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; }
+    .btn-sm-ghost:hover { background: var(--white-soft); }
+
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 28px; }
+    .back:hover { color: #1a2744; }
+    .empty { text-align: center; padding: 48px; color: var(--text-muted); font-size: 14px; }
+
+    @media(max-width: 600px) {
+      .cand-card { flex-direction: column; }
+      .cand-actions { flex-direction: row; }
+      .cand-habilidades { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-label">Recrutamento</div>
+    <h1>Banco de Talentos</h1>
+    <p class="sub">Explore candidatos cadastrados na plataforma e entre em contato diretamente</p>
+
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="input-busca" placeholder="Buscar por nome ou e-mail..." oninput="debounce()">
+      <select class="filter-select" id="sel-deficiencia" onchange="buscar()">
+        <option value="">Todos os tipos</option>
+        <option value="Física">Física</option>
+        <option value="Auditiva">Auditiva</option>
+        <option value="Visual">Visual</option>
+        <option value="Intelectual">Intelectual</option>
+        <option value="Múltipla">Múltipla</option>
+      </select>
+    </div>
+
+    <div class="stats-bar" id="stats-bar"></div>
+    <div class="cand-grid" id="lista-candidatos"><p class="empty">Carregando...</p></div>
+
+    <a href="rh-dashboard.html" class="back">← Voltar ao Painel</a>
+  </div>
+
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
+  <script src="topbar.js"></script>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    if (window.VLibras) new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+    const token = localStorage.getItem('token');
+    if (!token || localStorage.getItem('tipo') !== 'RH') window.location.href = 'login.html';
+
+    let timer = null;
+    function debounce() { clearTimeout(timer); timer = setTimeout(buscar, 400); }
+
+    async function buscar() {
+      const busca = document.getElementById('input-busca').value.trim();
+      const deficiencia = document.getElementById('sel-deficiencia').value;
+      const grid = document.getElementById('lista-candidatos');
+      grid.innerHTML = '<p class="empty">Buscando...</p>';
+      try {
+        const params = new URLSearchParams();
+        if (busca) params.set('busca', busca);
+        if (deficiencia) params.set('deficiencia', deficiencia);
+        const r = await fetch(`${API_URL}/candidatos/busca?${params}`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!r.ok) { grid.innerHTML = '<p class="empty">Erro ao buscar candidatos.</p>'; return; }
+        const d = await r.json();
+
+        const n = d.length;
+        document.getElementById('stats-bar').innerHTML =
+          `<strong>${n}</strong> candidato${n !== 1 ? 's' : ''} encontrado${n !== 1 ? 's' : ''}`;
+
+        if (!n) { grid.innerHTML = '<p class="empty">Nenhum candidato encontrado.</p>'; return; }
+
+        grid.innerHTML = d.map(c => `
+          <div class="cand-card">
+            <div class="cand-avatar">
+              ${c.foto_url
+                ? `<img src="${fileUrl(c.foto_url)}" alt="">`
+                : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(26,39,68,0.3)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
+            </div>
+            <div class="cand-body">
+              <div class="cand-name">${c.nome_completo || 'Candidato'}</div>
+              <div class="cand-email">${c.email}</div>
+              <div class="cand-tags">
+                ${c.tipo_deficiencia ? `<span class="tag">${c.tipo_deficiencia}</span>` : ''}
+                ${c.curriculo_url ? '<span class="tag green">Currículo</span>' : ''}
+                ${c.laudo_medico_url ? '<span class="tag blue">Laudo</span>' : ''}
+              </div>
+              ${c.habilidades ? `<div class="cand-habilidades">${c.habilidades}</div>` : ''}
+              <div class="doc-links">
+                ${c.curriculo_url
+                  ? `<a href="${fileUrl(c.curriculo_url)}" target="_blank" class="doc-link">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Currículo</a>` : ''}
+                ${c.laudo_medico_url
+                  ? `<a href="${fileUrl(c.laudo_medico_url)}" target="_blank" class="doc-link blue">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                      Laudo</a>` : ''}
+              </div>
+            </div>
+            <div class="cand-actions">
+              <button class="btn-sm btn-sm-ghost"
+                onclick="window.location.href='rh-perfil-candidato.html?candidato_id=${c.id}'">
+                Ver perfil
+              </button>
+              <button class="btn-sm btn-sm-primary"
+                onclick="window.location.href='chat.html?candidato_id=${c.id}'">
+                Mensagem
+              </button>
+            </div>
+          </div>`).join('');
+      } catch(e) {
+        grid.innerHTML = '<p class="empty">Não foi possível conectar ao servidor.</p>';
+      }
+    }
+
+    buscar();
+  </script>
+</body>
+</html>

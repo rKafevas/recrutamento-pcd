@@ -22,6 +22,7 @@ const CandidatoController = require('./controllers/CandidatoController');
 const RelatorioController = require('./controllers/relatorioController');
 const MensagemController = require('./controllers/mensagemController');
 const NotificacaoController = require('./controllers/notificacaoController');
+const MensagemDiretaController = require('./controllers/mensagemDiretaController');
 routes.get('/', (req, res) => {
   return res.json({ 
     mensagem: "Bem-vindo à API do Sistema de Recrutamento PcD!",
@@ -139,5 +140,8 @@ routes.get('/candidatos/:id', authMiddleware, authorize(['RH']), CandidatoContro
 
 routes.get('/notificacoes', authMiddleware, NotificacaoController.listar);
 routes.patch('/notificacoes/lidas', authMiddleware, NotificacaoController.marcarLidas);
+
+routes.get('/mensagens-diretas/conversas', authMiddleware, MensagemDiretaController.listarConversas);
+routes.get('/mensagens-diretas/:outro_usuario_id', authMiddleware, MensagemDiretaController.listarPorConversa);
 
 module.exports = routes;

@@ -149,6 +149,47 @@ io.on('connection', (socket) => {
 
   });
 
+  // Mensagens diretas — Banco de Talentos
+  socket.on('entrar_sala_direta', (outroUsuarioId) => {
+    const roomId = [socket.usuarioId, outroUsuarioId].sort((a, b) => a - b).join('_');
+    socket.join(`direto_${roomId}`);
+  });
+
+  socket.on('enviar_mensagem_direta', async ({ destinatarioId, conteudo }) => {
+    if (!conteudo?.trim()) return;
+    const candidatoUsuarioId = socket.usuarioTipo === 'Candidato' ? socket.usuarioId : destinatarioId;
+    try {
+      const MensagemDiretaRepository = require('./repositories/mensagemDiretaRepository');
+      const msg = await MensagemDiretaRepository.salvar(
+        socket.usuarioId,
+        destinatarioId,
+        candidatoUsuarioId,
+        conteudo.trim()
+      );
+      const roomId = [socket.usuarioId, destinatarioId].sort((a, b) => a - b).join('_');
+      io.to(`direto_${roomId}`).emit('nova_mensagem_direta', {
+        ...msg,
+        remetente_id: socket.usuarioId,
+        remetente_tipo: socket.usuarioTipo
+      });
+
+      const NotificacaoRepository = require('./repositories/notificacaoRepository');
+      const { rows } = await db.query(
+        `SELECT COALESCE(e.nome_fantasia, u.email) AS nome
+         FROM usuarios u LEFT JOIN empresas e ON e.usuario_id = u.id
+         WHERE u.id = $1`,
+        [socket.usuarioId]
+      );
+      await NotificacaoRepository.criar(
+        destinatarioId,
+        `💼 Nova mensagem do Banco de Talentos de ${rows[0]?.nome || 'Alguém'}`,
+        'chat.html'
+      );
+    } catch(e) {
+      console.error('Erro ao salvar mensagem direta:', e);
+    }
+  });
+
   socket.on('disconnect', () => {});
 
 });
@@ -209,6 +250,22 @@ async function runMigrations() {
     `);
   } catch (e) {
     console.error('Erro na migration de colunas URL:', e.message);
+  }
+
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS mensagens_diretas (
+        id SERIAL PRIMARY KEY,
+        remetente_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+        destinatario_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+        candidato_usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+        conteudo TEXT NOT NULL,
+        lida BOOLEAN DEFAULT FALSE,
+        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+  } catch (e) {
+    console.error('Erro na migration de mensagens_diretas:', e.message);
   }
 }
 
