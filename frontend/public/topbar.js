@@ -4,6 +4,19 @@
 (function() {
   const PAGINAS_CANDIDATO = ['home.html','vagas.html','vaga-detalhes.html','candidaturas.html','curriculo.html','addlaudo.html','acessibilidade.html','chat.html'];
 
+  // ── Aplica dark mode ANTES de renderizar (evita flash) ──────────────────
+  const _saved = localStorage.getItem('dm-theme');
+  const _prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (_saved === 'dark' || (_saved === null && _prefersDark)) {
+    document.body.classList.add('dark-mode');
+  }
+
+  // ── Injeta theme.css no <head> ───────────────────────────────────────────
+  const _themeLink = document.createElement('link');
+  _themeLink.rel = 'stylesheet';
+  _themeLink.href = 'theme.css';
+  document.head.appendChild(_themeLink);
+
   // ── Injeta estilos ──────────────────────────────────────────────
   const style = document.createElement('style');
   style.textContent = `
@@ -97,6 +110,10 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           VLibras
         </button>
+        <button class="tb-btn" id="tb-dark" onclick="Topbar.toggleDark()" title="Modo noturno">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Noturno
+        </button>
       </div>
 
       <div id="topbar-right">
@@ -132,6 +149,10 @@
     if (localStorage.getItem('ac-teclado') === '1') { document.body.classList.add('ac-teclado'); document.getElementById('tb-teclado')?.classList.add('active'); }
     if (localStorage.getItem('ac-vlibras') === '0') { document.querySelector('[vw-access-button]')?.style.setProperty('display','none'); }
     else { document.getElementById('tb-vlibras')?.classList.add('active'); }
+    // Dark mode — classe já aplicada antes de render, só sincroniza o botão
+    if (document.body.classList.contains('dark-mode')) {
+      document.getElementById('tb-dark')?.classList.add('active');
+    }
   }
 
   // ── API pública ───────────────────────────────────────────────────
@@ -166,6 +187,12 @@
       if (btn) btn.style.display = on ? '' : 'none';
       localStorage.setItem('ac-vlibras', on ? '1' : '0');
       document.getElementById('tb-vlibras')?.classList.toggle('active', on);
+    },
+    toggleDark() {
+      const on = !document.body.classList.contains('dark-mode');
+      document.body.classList.toggle('dark-mode', on);
+      localStorage.setItem('dm-theme', on ? 'dark' : 'light');
+      document.getElementById('tb-dark')?.classList.toggle('active', on);
     },
     toggleNotif() {
       const p = document.getElementById('tb-notif-panel');

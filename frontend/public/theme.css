@@ -1,0 +1,179 @@
+/* ── INCLUI+ DARK MODE ──────────────────────────────────────────────────── */
+/* Applied when <body class="dark-mode">. All rules use !important to       */
+/* override inline <style> blocks in individual pages.                      */
+
+/* Body */
+body.dark-mode {
+  background: #0f1117 !important;
+  color: #e2e8f4 !important;
+}
+
+/* ── Topbar (topbar.js) ─────────────────────────────────────────────────── */
+body.dark-mode #topbar-global {
+  background: #141928 !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.4) !important;
+}
+body.dark-mode .tb-btn { color: #c8d4e8 !important; border-color: rgba(255,255,255,0.12) !important; }
+body.dark-mode .tb-btn:hover { background: rgba(255,255,255,0.07) !important; }
+body.dark-mode #topbar-left .tb-logo span { color: #e2e8f4 !important; }
+
+/* Topbar própria de páginas RH */
+body.dark-mode .topbar {
+  background: #141928 !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.4) !important;
+}
+body.dark-mode .logo span { color: #e2e8f4 !important; }
+
+/* ── Painel de notificações ─────────────────────────────────────────────── */
+body.dark-mode #tb-notif-panel,
+body.dark-mode #painel-notif {
+  background: #1a2035 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45) !important;
+}
+body.dark-mode .notif-item { color: #e2e8f4 !important; border-bottom-color: rgba(255,255,255,0.05) !important; }
+body.dark-mode .notif-item:hover { background: rgba(255,255,255,0.04) !important; }
+body.dark-mode .notif-empty { color: #8896b3 !important; }
+body.dark-mode #tb-notif-panel .panel-header { border-bottom-color: rgba(255,255,255,0.06) !important; }
+body.dark-mode #tb-notif-panel .panel-header span { color: #e2e8f4 !important; }
+body.dark-mode #tb-notif-panel .panel-header button { color: #8896b3 !important; }
+
+/* ── Painéis, cards ─────────────────────────────────────────────────────── */
+body.dark-mode .panel,
+body.dark-mode .nav-card,
+body.dark-mode .metric-card,
+body.dark-mode .vaga-card,
+body.dark-mode .modal-box,
+body.dark-mode .laudo-atual,
+body.dark-mode .curriculo-atual,
+body.dark-mode .search-wrap {
+  background: #1a2035 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+body.dark-mode .nav-card { color: #e2e8f4 !important; }
+body.dark-mode .nav-card:hover,
+body.dark-mode .vaga-card:hover { background: #222b42 !important; }
+body.dark-mode .laudo-atual,
+body.dark-mode .curriculo-atual { background: rgba(34,197,94,0.07) !important; border-color: rgba(34,197,94,0.15) !important; }
+
+/* ── Área de upload (pontilhado) ─────────────────────────────────────────── */
+body.dark-mode .file-area { border-color: rgba(255,255,255,0.12) !important; }
+
+/* ── Textos ─────────────────────────────────────────────────────────────── */
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 { color: #e2e8f4 !important; }
+body.dark-mode .panel-title,
+body.dark-mode .sub,
+body.dark-mode .vaga-empresa,
+body.dark-mode .vaga-desc,
+body.dark-mode .empty,
+body.dark-mode .sidebar-title { color: #8896b3 !important; }
+body.dark-mode .metric-num { color: #f47c20 !important; }
+
+/* ── Inputs, textareas, selects ─────────────────────────────────────────── */
+body.dark-mode input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #252d3f !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: #e2e8f4 !important;
+}
+body.dark-mode input:not([type="file"])::placeholder,
+body.dark-mode textarea::placeholder { color: rgba(226,232,244,0.35) !important; }
+body.dark-mode input:not([type="file"]):focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus {
+  background: #2d374f !important;
+  border-color: #1e74df !important;
+}
+body.dark-mode .field select option,
+body.dark-mode select option { background: #1a2035 !important; color: #e2e8f4 !important; }
+
+/* Input transparente dentro de search-wrap */
+body.dark-mode .search-wrap input { background: transparent !important; color: #e2e8f4 !important; }
+body.dark-mode .search-wrap svg { stroke: #8896b3 !important; }
+
+/* ── Botões ──────────────────────────────────────────────────────────────── */
+body.dark-mode .btn-ghost,
+body.dark-mode .btn-sm-ghost {
+  color: #c8d4e8 !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+body.dark-mode .btn-ghost:hover,
+body.dark-mode .btn-sm-ghost:hover { background: rgba(255,255,255,0.06) !important; }
+
+/* ── Tags / chips ────────────────────────────────────────────────────────── */
+body.dark-mode .tag {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: #c8d4e8 !important;
+}
+
+/* ── Badge (tipo deficiência) ────────────────────────────────────────────── */
+body.dark-mode .badge {
+  background: rgba(244,124,32,0.15) !important;
+  border-color: rgba(244,124,32,0.25) !important;
+  color: #f47c20 !important;
+}
+
+/* ── Links de documentos ─────────────────────────────────────────────────── */
+body.dark-mode .doc-link {
+  background: rgba(244,124,32,0.1) !important;
+  border-color: rgba(244,124,32,0.25) !important;
+  color: #f47c20 !important;
+}
+body.dark-mode .doc-link.blue {
+  background: rgba(30,116,223,0.1) !important;
+  border-color: rgba(30,116,223,0.25) !important;
+  color: #60a5fa !important;
+}
+
+/* ── Links de navegação ──────────────────────────────────────────────────── */
+body.dark-mode .back,
+body.dark-mode .logout { color: #8896b3 !important; }
+body.dark-mode .back:hover,
+body.dark-mode .logout:hover { color: #e2e8f4 !important; }
+
+/* ── Rodapé ──────────────────────────────────────────────────────────────── */
+body.dark-mode .footer { border-top-color: rgba(255,255,255,0.06) !important; }
+
+/* ── Linhas de info (perfil RH) ──────────────────────────────────────────── */
+body.dark-mode .info-label { color: #8896b3 !important; }
+body.dark-mode .info-value { color: #e2e8f4 !important; }
+
+/* ── Chat ────────────────────────────────────────────────────────────────── */
+body.dark-mode .sidebar,
+body.dark-mode .chat-input { background: #141928 !important; border-color: rgba(255,255,255,0.06) !important; }
+body.dark-mode .chat-header {
+  background: #1a2035 !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
+}
+body.dark-mode .chat-header h3 { color: #e2e8f4 !important; }
+body.dark-mode .chat-header p { color: #8896b3 !important; }
+body.dark-mode .mensagens { background: #0f1117 !important; }
+body.dark-mode .conversa-item { border-bottom-color: rgba(255,255,255,0.04) !important; }
+body.dark-mode .conversa-item:hover { background: rgba(255,255,255,0.05) !important; }
+body.dark-mode .conversa-item.active { background: rgba(244,124,32,0.1) !important; }
+body.dark-mode .conversa-item h4 { color: #e2e8f4 !important; }
+body.dark-mode .msg.recebida {
+  background: #1e2535 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: #e2e8f4 !important;
+}
+body.dark-mode .chat-input input {
+  background: #252d3f !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: #e2e8f4 !important;
+}
+body.dark-mode .msg-hora { color: #8896b3 !important; }
+body.dark-mode .empty-chat { color: #8896b3 !important; }
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+body.dark-mode .modal-overlay { background: rgba(0,0,0,0.72) !important; }
+
+/* ── Scrollbar (Webkit) ──────────────────────────────────────────────────── */
+body.dark-mode ::-webkit-scrollbar { width: 6px; height: 6px; }
+body.dark-mode ::-webkit-scrollbar-track { background: #141928; }
+body.dark-mode ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+body.dark-mode ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
