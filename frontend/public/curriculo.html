@@ -106,7 +106,7 @@
         <p>Selecione o arquivo do seu currículo</p>
         <input type="file" id="arquivo-curriculo" accept=".pdf">
       </div>
-      <div class="actions" style="margin-top:16px">
+      <div id="upload-actions" class="actions" style="margin-top:16px">
         <button class="btn-primary" onclick="salvarCurriculo()">Enviar currículo</button>
       </div>
     </div>
@@ -146,10 +146,14 @@
       if (d.curriculo_url) {
         document.getElementById('curriculo-atual').style.display = 'flex';
         document.getElementById('upload-area').style.display = 'none';
+        document.getElementById('upload-actions').style.display = 'none';
         document.getElementById('link-curriculo').href = fileUrl(d.curriculo_url);
+      } else {
+        document.getElementById('curriculo-atual').style.display = 'none';
+        document.getElementById('upload-area').style.display = 'block';
+        document.getElementById('upload-actions').style.display = 'flex';
       }
-        }
-       catch(e) {}
+      } catch(e) {}
     }
 
     async function enviarFoto(input) {
@@ -203,6 +207,25 @@
     async function salvarCurriculo() {
       const arquivo = document.getElementById('arquivo-curriculo').files[0];
       if (!arquivo) { Toast.show('Selecione um arquivo PDF.', 'warning'); return; }
+
+      const btn = document.querySelector('#upload-actions .btn-primary');
+      btn.disabled = true;
+      btn.textContent = 'Conectando…';
+
+      // Acorda o servidor Render (free tier dorme após inatividade)
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 50000);
+        await fetch(API_URL + '/health', { signal: ctrl.signal });
+        clearTimeout(timer);
+      } catch(e) {
+        btn.disabled = false;
+        btn.textContent = 'Enviar currículo';
+        Toast.show('Servidor indisponível. Aguarde alguns segundos e tente novamente.', 'error');
+        return;
+      }
+
+      btn.textContent = 'Enviando…';
       const nome = document.getElementById('nome').value;
       const sobre = document.getElementById('sobre').value;
       const telefone = document.getElementById('telefone').value;
@@ -212,13 +235,18 @@
       if (sobre) formData.append('sobre', sobre);
       if (telefone) formData.append('telefone', telefone);
       try {
-        const r = await fetch(API_URL + "/perfil/curriculo", { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
+        const r = await fetch(API_URL + '/perfil/curriculo', { method: 'PATCH', headers: {'Authorization':'Bearer '+token}, body: formData });
         const d = await r.json();
         if (r.ok) {
           Toast.show('Currículo enviado com sucesso!', 'success');
           carregarPerfil();
         } else Toast.show(d.mensagem || 'Erro ao enviar.', 'error');
-      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
+      } catch(e) {
+        Toast.show('Não foi possível conectar ao servidor.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar currículo';
+      }
     }
 
     async function removerCurriculo() {
@@ -229,6 +257,7 @@
           Toast.show('Currículo removido.', 'info');
           document.getElementById('curriculo-atual').style.display = 'none';
           document.getElementById('upload-area').style.display = 'block';
+          document.getElementById('upload-actions').style.display = 'flex';
           document.getElementById('arquivo-curriculo').value = '';
         }
       } catch(e) { Toast.show('Erro ao remover.', 'error'); }
