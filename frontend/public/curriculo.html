@@ -143,10 +143,11 @@
       if (d.experiencias) document.getElementById('experiencias').value = d.experiencias;
       if (d.habilidades) document.getElementById('habilidades').value = d.habilidades;
       
-      // Estes comandos devem ficar FORA do IF da foto para funcionarem sempre
-      document.getElementById('curriculo-atual').style.display = 'flex';
-      document.getElementById('upload-area').style.display = 'none';
-      document.getElementById('link-curriculo').href = fileUrl(d.curriculo_url);
+      if (d.curriculo_url) {
+        document.getElementById('curriculo-atual').style.display = 'flex';
+        document.getElementById('upload-area').style.display = 'none';
+        document.getElementById('link-curriculo').href = fileUrl(d.curriculo_url);
+      }
         }
        catch(e) {}
     }
