@@ -192,6 +192,28 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+// Migration: amplia colunas de URL de VARCHAR(255) para TEXT
+async function runMigrations() {
+  try {
+    await db.query(`
+      DO $$
+      BEGIN
+        IF (SELECT data_type FROM information_schema.columns
+            WHERE table_name = 'candidatos' AND column_name = 'laudo_medico_url') = 'character varying' THEN
+          ALTER TABLE candidatos
+            ALTER COLUMN laudo_medico_url TYPE TEXT,
+            ALTER COLUMN curriculo_url    TYPE TEXT,
+            ALTER COLUMN foto_url         TYPE TEXT;
+        END IF;
+      END $$;
+    `);
+  } catch (e) {
+    console.error('Erro na migration de colunas URL:', e.message);
+  }
+}
+
+runMigrations().then(() => {
+  server.listen(PORT, () => {
+    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+  });
 });
