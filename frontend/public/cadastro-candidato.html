@@ -149,7 +149,7 @@
 
   <script>
   // Inicializa o VLibras
-  new window.VLibras.Widget('https://vlibras.gov.br/app');
+  if (window.VLibras) new window.VLibras.Widget('https://vlibras.gov.br/app');
 
   function toggleContrast(){
     document.body.classList.toggle("high-contrast");

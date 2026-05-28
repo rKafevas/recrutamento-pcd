@@ -72,18 +72,21 @@
   <script src="config.js"></script>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script>
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
+    if (window.VLibras) new window.VLibras.Widget('https://vlibras.gov.br/app');
     function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
     async function executarLogin() {
       const email = document.getElementById('email').value;
       const senha = document.getElementById('senha').value;
       if (!email || !senha) { alert('Preencha o email e a senha.'); return; }
+      const btn = document.querySelector('.btn-primary');
+      btn.disabled = true;
+      btn.textContent = 'Entrando...';
       try {
         const r = await fetch(API_URL + "/login", { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, senha}) });
         const d = await r.json();
         if (r.ok) { localStorage.setItem('token', d.token); localStorage.setItem('tipo', d.usuario?.tipo||''); localStorage.setItem('nome', d.usuario?.email||''); window.location.href = (d.usuario?.tipo === 'RH') ? 'rh-dashboard.html' : 'home.html'; }
-        else { alert('Erro: ' + (d.mensagem || 'Credenciais inválidas.')); }
-      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+        else { alert('Erro: ' + (d.mensagem || 'Credenciais inválidas.')); btn.disabled = false; btn.textContent = 'Entrar'; }
+      } catch(e) { alert('Não foi possível conectar ao servidor.'); btn.disabled = false; btn.textContent = 'Entrar'; }
     }
   </script>
 </body>

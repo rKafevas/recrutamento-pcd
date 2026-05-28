@@ -105,7 +105,7 @@
   <script src="config.js"></script>
   <script src="toast.js"></script>
   <script>
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
+    if (window.VLibras) new window.VLibras.Widget('https://vlibras.gov.br/app');
     function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
 
     let paginaAtual = 1;
