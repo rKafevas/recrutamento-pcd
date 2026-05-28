@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
     const allowed = [
       process.env.CORS_ORIGIN,
@@ -27,8 +27,14 @@ app.use(cors({
     } else {
       callback(new Error('Not allowed by CORS'));
     }
-  }
-}));
+  },
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Authorization', 'Content-Type'],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.set('trust proxy', 1);
 
