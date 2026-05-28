@@ -94,6 +94,25 @@
     async function enviarLaudo() {
       const arquivo = document.getElementById('arquivo-laudo').files[0];
       if (!arquivo) { Toast.show('Selecione um arquivo PDF.', 'warning'); return; }
+
+      const btn = document.querySelector('#upload-panel .btn-primary');
+      btn.disabled = true;
+      btn.textContent = 'Conectando…';
+
+      // Acorda o servidor Render (free tier dorme após inatividade)
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 50000);
+        await fetch(API_URL + '/health', { signal: ctrl.signal });
+        clearTimeout(timer);
+      } catch(e) {
+        btn.disabled = false;
+        btn.textContent = 'Enviar laudo';
+        Toast.show('Servidor indisponível. Aguarde alguns segundos e tente novamente.', 'error');
+        return;
+      }
+
+      btn.textContent = 'Enviando…';
       const formData = new FormData();
       formData.append('laudo', arquivo);
       try {
@@ -101,7 +120,12 @@
         const d = await r.json();
         if (r.ok) { Toast.show('Laudo enviado com sucesso!', 'success'); carregarPerfil(); }
         else Toast.show(d.mensagem || 'Erro ao enviar.', 'error');
-      } catch(e) { Toast.show('Não foi possível conectar ao servidor.', 'error'); }
+      } catch(e) {
+        Toast.show('Não foi possível conectar ao servidor.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar laudo';
+      }
     }
 
     async function removerLaudo() {
