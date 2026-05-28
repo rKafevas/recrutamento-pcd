@@ -56,11 +56,6 @@
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
-    <a id="btn-voltar" href="home.html" class="btn-ghost">← Voltar</a>
-  </div>
-
   <div class="chat-layout">
     <div class="sidebar">
       <div class="sidebar-title">Conversas</div>
@@ -85,8 +80,6 @@
     const payload = JSON.parse(atob(token.split('.')[1]));
     const meuId = payload.id;
     const meuTipo = payload.tipo;
-
-    document.getElementById('btn-voltar').href = meuTipo === 'RH' ? 'rh-dashboard.html' : 'home.html';
 
     let inscricaoAtual = null;
     let destinatarioAtual = null;
