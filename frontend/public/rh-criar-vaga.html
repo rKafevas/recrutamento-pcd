@@ -211,7 +211,8 @@ async function criarVaga() {
         alert('Vaga publicada com sucesso!');
         window.location.href = 'rh-dashboard.html';
       } else {
-        alert('Erro: ' + (data.mensagem || 'Verifique os campos e tente novamente.'));
+        const msg = data.erros ? data.erros.join('\n') : (data.mensagem || 'Verifique os campos e tente novamente.');
+        alert('Erro:\n' + msg);
       }
     } catch (e) {
       console.error(e);
