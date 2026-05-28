@@ -20,7 +20,14 @@ class AuthController {
       // Sempre retorna sucesso para não revelar se e-mail existe
       if (!usuario) return res.json({ mensagem: 'Se este e-mail estiver cadastrado, você receberá um código.' });
       const token = await TokenRepository.criar(usuario.id, 'recuperacao');
-      await EmailService.enviarRecuperacaoSenha(email, usuario.nome_completo || 'Usuário', token);
+      try {
+        await EmailService.enviarRecuperacaoSenha(email, usuario.nome_completo || 'Usuário', token);
+      } catch (emailErr) {
+        console.error('[EMAIL] Falha ao enviar recuperação de senha para', email, ':', emailErr.message);
+        const e = new Error('Falha ao enviar e-mail. Verifique as configurações de e-mail no servidor.');
+        e.status = 500;
+        throw e;
+      }
       return res.json({ mensagem: 'Código enviado para seu e-mail.', usuario_id: usuario.id });
     } catch(err) { next(err); }
   }

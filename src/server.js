@@ -16,7 +16,19 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'https://project-2o4gv.vercel.app' }));
+app.use(cors({
+  origin: (origin, callback) => {
+    const allowed = [
+      process.env.CORS_ORIGIN,
+      'https://project-2o4gv.vercel.app',
+    ].filter(Boolean);
+    if (!origin || allowed.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 app.use(express.json());
 app.set('trust proxy', 1);
 
