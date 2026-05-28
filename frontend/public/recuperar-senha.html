@@ -75,21 +75,36 @@
     async function solicitarCodigo() {
       const email = document.getElementById('email').value.trim();
       if (!email) { alert('Digite seu e-mail.'); return; }
+      const btn = document.querySelector('#step1 .btn');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
       try {
         const r = await fetch(API_URL + '/recuperar-senha', {
           method: 'POST', headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ email })
         });
         const d = await r.json();
+        if (!r.ok) {
+          alert(d.mensagem || 'Erro ao enviar código. Tente novamente.');
+          return;
+        }
         usuarioId = d.usuario_id;
         document.getElementById('sub-step2').textContent = `Enviamos um código para ${email}. Digite-o abaixo.`;
         voltarStep(2);
-      } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+      } catch(e) {
+        alert('Não foi possível conectar ao servidor. Verifique sua conexão.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar código';
+      }
     }
 
     async function verificarCodigo() {
       const codigo = document.getElementById('codigo').value.trim();
       if (codigo.length !== 6) { alert('Digite o código de 6 dígitos.'); return; }
+      const btn = document.querySelector('#step2 .btn');
+      btn.disabled = true;
+      btn.textContent = 'Verificando...';
       try {
         const r = await fetch(API_URL + '/recuperar-senha/verificar', {
           method: 'POST', headers: {'Content-Type':'application/json'},
@@ -97,8 +112,12 @@
         });
         const d = await r.json();
         if (r.ok) { codigoValido = codigo; voltarStep(3); }
-        else alert('Erro: ' + (d.mensagem || 'Código inválido.'));
+        else alert(d.mensagem || 'Código inválido ou expirado.');
       } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+      finally {
+        btn.disabled = false;
+        btn.textContent = 'Verificar código';
+      }
     }
 
     async function redefinirSenha() {
@@ -106,6 +125,9 @@
       const confirmar = document.getElementById('confirmar-senha').value;
       if (nova.length < 6) { alert('A senha deve ter no mínimo 6 caracteres.'); return; }
       if (nova !== confirmar) { alert('As senhas não coincidem.'); return; }
+      const btn = document.querySelector('#step3 .btn');
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
       try {
         const r = await fetch(API_URL + '/recuperar-senha/redefinir', {
           method: 'POST', headers: {'Content-Type':'application/json'},
@@ -113,8 +135,12 @@
         });
         const d = await r.json();
         if (r.ok) { alert('Senha redefinida com sucesso!'); window.location.href = 'login.html'; }
-        else alert('Erro: ' + (d.mensagem || 'Tente novamente.'));
+        else alert(d.mensagem || 'Tente novamente.');
       } catch(e) { alert('Não foi possível conectar ao servidor.'); }
+      finally {
+        btn.disabled = false;
+        btn.textContent = 'Salvar nova senha';
+      }
     }
   </script>
 </body>
