@@ -135,10 +135,9 @@
     async function carregarVaga() {
       if (!vagaId) { alert('Vaga não identificada.'); window.location.href = 'rh-dashboard.html'; return; }
       try {
-        const r = await fetch(`${API_URL}/vagas`);
-        const d = await r.json();
-        const vaga = d.find(v => v.id == vagaId);
-        if (vaga) preencher(vaga);
+        const r = await fetch(`${API_URL}/vagas/${vagaId}`);
+        const vaga = await r.json();
+        if (r.ok) preencher(vaga);
         else { alert('Vaga não encontrada.'); window.location.href = 'rh-dashboard.html'; }
       } catch(e) { alert('Erro ao carregar vaga.'); }
     }
