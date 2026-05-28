@@ -164,7 +164,7 @@
       if (!token) { window.location.href = 'login.html'; return; }
       const lista = document.getElementById('lista-vagas');
       try {
-        const r = await fetch(API_URL + "/vagas/minhas', { headers: { 'Authorization': 'Bearer ' + token } });
+        const r = await fetch(API_URL + '/vagas/minhas', { headers: { 'Authorization': 'Bearer ' + token } });
         const d = await r.json();
         if (!d.length) { lista.innerHTML = '<p class="empty">Nenhuma vaga publicada ainda. Crie a primeira!</p>'; return; }
         lista.innerHTML = d.map(v => `
@@ -201,7 +201,7 @@
       }
 
       try {
-        const r = await fetch(API_URL + "/vagas', {
+        const r = await fetch(API_URL + '/vagas', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({ titulo, descricao, requisitos, beneficios, modelo_trabalho, localizacao, salario, tipo_deficiencia_foco, acessibilidade_local, tecnologias_assistivas })
@@ -228,7 +228,7 @@
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const r = await fetch(API_URL + "/notificacoes', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + '/notificacoes', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         const badge = document.getElementById('badge-notif');
         const lista = document.getElementById('lista-notif');
@@ -254,7 +254,7 @@
 
     async function marcarLidas() {
       const token = localStorage.getItem('token');
-      await fetch(API_URL + "/notificacoes/lidas', { method: 'PATCH', headers: {'Authorization':'Bearer '+token} });
+      await fetch(API_URL + '/notificacoes/lidas', { method: 'PATCH', headers: {'Authorization':'Bearer '+token} });
       document.getElementById('badge-notif').style.display = 'none';
       document.getElementById('lista-notif').innerHTML = '<div style="padding:24px;text-align:center;font-size:13px;color:rgba(255,255,255,0.4)">Nenhuma notificação.</div>';
     }

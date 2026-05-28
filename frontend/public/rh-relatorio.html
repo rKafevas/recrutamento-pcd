@@ -98,7 +98,7 @@
       const token = localStorage.getItem('token');
       if (!token) { window.location.href = 'login.html'; return; }
       try {
-        const r = await fetch(API_URL + "/relatorio/cotas', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + '/relatorio/cotas', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (!r.ok) { alert('Erro ao carregar relatório.'); return; }
 
@@ -134,7 +134,7 @@
       const a = document.createElement('a');
       a.href = `${API_URL}/relatorio/cotas/pdf`;
       // Fetch with auth header and trigger download
-      fetch(API_URL + "/relatorio/cotas/pdf', { headers: {'Authorization':'Bearer '+token} })
+      fetch(API_URL + '/relatorio/cotas/pdf', { headers: {'Authorization':'Bearer '+token} })
         .then(r => r.blob())
         .then(blob => { const url = URL.createObjectURL(blob); a.href = url; a.download = 'relatorio-cotas.pdf'; a.click(); });
     }

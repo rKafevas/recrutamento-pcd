@@ -105,7 +105,7 @@
       const token = localStorage.getItem('token');
       if (!token) { Toast.show('Você precisa estar logado.', 'warning'); window.location.href = 'login.html'; return; }
       try {
-        const r = await fetch(API_URL + "/inscricoes', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({vaga_id: vagaId}) });
+        const r = await fetch(API_URL + '/inscricoes', { method: 'POST', headers: {'Content-Type':'application/json','Authorization':'Bearer '+token}, body: JSON.stringify({vaga_id: vagaId}) });
         const d = await r.json();
         if (r.ok) { Toast.show('Candidatura realizada com sucesso!', 'success'); setTimeout(() => window.location.href = 'candidaturas.html', 1500); }
         else Toast.show(d.mensagem || 'Erro ao candidatar-se.', 'error');
