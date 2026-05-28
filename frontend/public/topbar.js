@@ -10,41 +10,41 @@
     #topbar-global {
       display: flex; justify-content: space-between; align-items: center;
       padding: 0 28px; height: 62px;
-      background: rgba(13,59,142,0.7); backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.15);
+      background: #ffffff; box-shadow: 0 1px 6px rgba(26,39,68,0.08);
+      border-bottom: 1px solid rgba(26,39,68,0.1);
       position: sticky; top: 0; z-index: 999; gap: 16px;
     }
     #topbar-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     #topbar-left .tb-logo img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; }
-    #topbar-left .tb-logo span { font-family: 'Sora',sans-serif; font-size: 17px; font-weight: 700; color: #fff; margin-left: 8px; }
+    #topbar-left .tb-logo span { font-family: 'Sora',sans-serif; font-size: 17px; font-weight: 700; color: #1a2744; margin-left: 8px; }
     #topbar-center { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .tb-btn {
-      background: transparent; border: 1px solid rgba(255,255,255,0.18);
-      color: #fff; padding: 6px 13px; border-radius: 7px;
+      background: transparent; border: 1px solid rgba(26,39,68,0.15);
+      color: #1a2744; padding: 6px 13px; border-radius: 7px;
       font-size: 12px; font-weight: 500; cursor: pointer;
       transition: 0.2s; display: flex; align-items: center; gap: 5px;
       font-family: 'Inter', sans-serif; white-space: nowrap;
     }
-    .tb-btn:hover { background: rgba(255,255,255,0.1); }
+    .tb-btn:hover { background: rgba(26,39,68,0.05); }
     .tb-btn.active { background: rgba(244,124,32,0.2); border-color: rgba(244,124,32,0.5); color: #f47c20; }
     #topbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; position: relative; }
     #tb-notif-panel {
       display: none; position: absolute; top: 52px; right: 0; width: 320px;
-      background: #0f3d99; border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+      background: #ffffff; border: 1px solid rgba(26,39,68,0.1);
+      border-radius: 14px; box-shadow: 0 8px 32px rgba(26,39,68,0.15);
       z-index: 9999; overflow: hidden;
     }
     #tb-notif-panel .panel-header {
-      padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 16px; border-bottom: 1px solid rgba(26,39,68,0.08);
       display: flex; justify-content: space-between; align-items: center;
     }
-    #tb-notif-panel .panel-header span { font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:#fff; }
-    #tb-notif-panel .panel-header button { background:transparent; border:none; color:rgba(255,255,255,0.5); font-size:11px; cursor:pointer; }
-    .notif-item { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); font-size:13px; color:#fff; line-height:1.5; transition:0.2s; }
-    .notif-item:hover { background: rgba(255,255,255,0.07); }
+    #tb-notif-panel .panel-header span { font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:#1a2744; }
+    #tb-notif-panel .panel-header button { background:transparent; border:none; color:#6b7a99; font-size:11px; cursor:pointer; }
+    .notif-item { padding: 12px 16px; border-bottom: 1px solid rgba(26,39,68,0.06); font-size:13px; color:#1a2744; line-height:1.5; transition:0.2s; }
+    .notif-item:hover { background: rgba(26,39,68,0.05); }
     .notif-item p { margin-bottom:3px; }
-    .notif-item small { font-size:11px; color:rgba(255,255,255,0.4); }
-    .notif-empty { padding:20px; text-align:center; font-size:13px; color:rgba(255,255,255,0.4); }
+    .notif-item small { font-size:11px; color:#6b7a99; }
+    .notif-empty { padding:20px; text-align:center; font-size:13px; color:#6b7a99; }
     #tb-badge { display:none; position:absolute; top:-6px; right:-6px; background:#ef4444; color:#fff; font-size:10px; font-weight:700; padding:2px 6px; border-radius:20px; min-width:18px; text-align:center; }
     /* CURSOR AMPLIADO */
     body.ac-cursor * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='8' cy='8' r='7' fill='white' stroke='black' stroke-width='2'/%3E%3C/svg%3E") 8 8, auto !important; }

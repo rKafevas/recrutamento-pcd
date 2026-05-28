@@ -7,18 +7,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(255,255,255,0.08); --white-med: rgba(255,255,255,0.10); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 60px; }
+    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(26,39,68,0.04); --white-med: #ffffff; --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1a2744; min-height: 100vh; padding-bottom: 60px; }
     body.high-contrast { background: #000 !important; color: #ff0 !important; }
     body.high-contrast .topbar, body.high-contrast .panel { background: #111 !important; border: 2px solid #ff0 !important; }
     body.high-contrast input, body.high-contrast textarea, body.high-contrast select { background: #fff !important; color: #000 !important; }
     body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
 
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: #ffffff; box-shadow: 0 1px 6px rgba(26,39,68,0.08); border-bottom: 1px solid rgba(26,39,68,0.1); position: sticky; top: 0; z-index: 99; }
     .logo { display: flex; align-items: center; gap: 10px; }
     .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
     .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
-    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; }
     .btn-ghost:hover { background: var(--white-soft); }
 
     .container { max-width: 760px; margin: 0 auto; padding: 40px 24px; }
@@ -35,14 +35,14 @@
     .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
     .field label span { color: var(--orange); margin-left: 2px; }
     .field input, .field textarea, .field select {
-      width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #fff;
+      width: 100%; background: #f8f9fd; border: 1px solid rgba(26,39,68,0.14);
+      border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #1a2744;
       font-family: 'Inter', sans-serif; transition: 0.2s;
     }
-    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.35); }
-    .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.12); }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(26,39,68,0.35); }
+    .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: #1e74df; background: #ffffff; }
     .field textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
-    .field select option { background: #1250b0; color: #fff; }
+    .field select option { background: #ffffff; color: #1a2744; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
@@ -53,7 +53,7 @@
     .btn-primary:hover { background: var(--orange-hover); }
 
     .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 28px; transition: 0.2s; }
-    .back:hover { color: #fff; }
+    .back:hover { color: #1a2744; }
 
     @media(max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } .topbar { padding: 14px 20px; } }
   </style>

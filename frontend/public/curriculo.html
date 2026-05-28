@@ -7,8 +7,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --orange: #f47c20; --white-med: rgba(255,255,255,0.10); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 48px; }
+    :root { --orange: #f47c20; --white-med: #ffffff; --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1a2744; min-height: 100vh; padding-bottom: 48px; }
     .container { max-width: 640px; margin: 0 auto; padding: 40px 24px; }
     .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
     h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
@@ -18,23 +18,23 @@
     .field { margin-bottom: 16px; }
     .field:last-child { margin-bottom: 0; }
     .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-    .field input, .field textarea { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; transition: 0.2s; }
-    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.35); }
-    .field input:focus, .field textarea:focus { outline: none; border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.14); }
+    .field input, .field textarea { width: 100%; background: #f8f9fd; border: 1px solid rgba(26,39,68,0.14); border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #1a2744; font-family: 'Inter', sans-serif; transition: 0.2s; }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(26,39,68,0.35); }
+    .field input:focus, .field textarea:focus { outline: none; border-color: #1e74df; background: #ffffff; }
     .field textarea { min-height: 100px; resize: vertical; }
     .btn-primary { background: var(--orange); border: none; color: #fff; padding: 12px 24px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-primary:hover { background: #e06b10; }
     .btn-danger { background: transparent; border: 1px solid rgba(248,113,113,0.4); color: #f87171; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
     .btn-danger:hover { background: rgba(248,113,113,0.1); }
     .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 20px; }
-    .back:hover { color: #fff; }
+    .back:hover { color: #1a2744; }
     .curriculo-atual { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .curriculo-atual p { font-size: 13px; color: rgba(255,255,255,0.85); }
+    .curriculo-atual p { font-size: 13px; color: #1a2744; }
     .curriculo-atual a { font-size: 12px; font-weight: 600; color: #4ade80; text-decoration: none; }
     .curriculo-atual a:hover { text-decoration: underline; }
-    .file-area { border: 1px dashed rgba(255,255,255,0.25); border-radius: 10px; padding: 24px; text-align: center; }
+    .file-area { border: 1px dashed rgba(26,39,68,0.2); border-radius: 10px; padding: 24px; text-align: center; }
     .file-area p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
-    .file-area input { color: rgba(255,255,255,0.7); font-size: 13px; }
+    .file-area input { color: #6b7a99; font-size: 13px; }
     .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
   </style>
 </head>
@@ -47,8 +47,8 @@
 
     <div class="panel" style="display:flex;align-items:center;gap:20px">
       <div style="flex-shrink:0">
-        <div id="foto-preview" style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div id="foto-preview" style="width:80px;height:80px;border-radius:50%;background:rgba(26,39,68,0.06);border:2px solid rgba(26,39,68,0.12);display:flex;align-items:center;justify-content:center;overflow:hidden">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(26,39,68,0.3)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
       </div>
       <div style="flex:1">
@@ -175,7 +175,7 @@
         const r = await fetch(API_URL + "/perfil/foto", { method: 'DELETE', headers: {'Authorization':'Bearer '+token} });
         if (r.ok) {
           Toast.show('Foto removida.', 'info');
-          document.getElementById('foto-preview').innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+          document.getElementById('foto-preview').innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(26,39,68,0.3)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
           document.getElementById('btn-remover-foto').style.display = 'none';
         }
       } catch(e) { Toast.show('Erro ao remover.', 'error'); }

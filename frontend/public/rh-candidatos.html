@@ -7,17 +7,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(255,255,255,0.08); --white-med: rgba(255,255,255,0.10); --white-hover: rgba(255,255,255,0.16); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 48px; }
+    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(26,39,68,0.04); --white-med: #ffffff; --white-hover: rgba(26,39,68,0.06); --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1a2744; min-height: 100vh; padding-bottom: 48px; }
     body.high-contrast { background: #000 !important; color: #ff0 !important; }
     body.high-contrast .topbar, body.high-contrast .cand-card { background: #111 !important; border: 2px solid #ff0 !important; }
     body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
 
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: #ffffff; box-shadow: 0 1px 6px rgba(26,39,68,0.08); border-bottom: 1px solid rgba(26,39,68,0.1); position: sticky; top: 0; z-index: 99; }
     .logo { display: flex; align-items: center; gap: 10px; }
     .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
     .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
-    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
     .btn-ghost:hover { background: var(--white-soft); }
 
     .container { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
@@ -27,7 +27,7 @@
 
     /* PIPELINE */
     .pipeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
-    .pipeline-col { background: var(--white-soft); border: 1px solid var(--white-border); border-radius: 12px; padding: 14px; min-height: 80px; }
+    .pipeline-col { background: #ffffff; border: 1px solid var(--white-border); border-radius: 12px; padding: 14px; min-height: 80px; }
     .pipeline-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
     .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .dot-pendente { background: #94a3b8; }
@@ -48,9 +48,9 @@
 
     .cand-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
-    .status-select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 7px; color: #fff; font-size: 13px; font-weight: 500; padding: 7px 12px; cursor: pointer; font-family: 'Inter', sans-serif; transition: 0.2s; }
-    .status-select:focus { outline: none; border-color: rgba(255,255,255,0.4); }
-    .status-select option { background: #1250b0; }
+    .status-select { background: #f8f9fd; border: 1px solid rgba(26,39,68,0.14); border-radius: 7px; color: #1a2744; font-size: 13px; font-weight: 500; padding: 7px 12px; cursor: pointer; font-family: 'Inter', sans-serif; transition: 0.2s; }
+    .status-select:focus { outline: none; border-color: #1e74df; }
+    .status-select option { background: #ffffff; color: #1a2744; }
 
     .btn-save { background: var(--orange); border: none; color: #fff; padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-save:hover { background: var(--orange-hover); }
@@ -63,7 +63,7 @@
     .badge-Reprovado { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
 
     .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 28px; }
-    .back:hover { color: #fff; }
+    .back:hover { color: #1a2744; }
 
     .empty { text-align: center; padding: 48px; color: var(--text-muted); font-size: 14px; }
 
@@ -167,10 +167,10 @@
         lista.innerHTML = d.map(c => `
           <div class="cand-card">
             <div style="display:flex;align-items:flex-start;gap:14px;flex:1">
-              <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+              <div style="width:48px;height:48px;border-radius:50%;background:rgba(26,39,68,0.06);border:1px solid rgba(26,39,68,0.12);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center">
                 ${c.foto_url
                   ? `<img src="${fileUrl(c.foto_url)}" style="width:100%;height:100%;object-fit:cover">`
-                  : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
+                  : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(26,39,68,0.3)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
               </div>
               <div class="cand-info">
                 <h3>${c.nome_completo || 'Candidato'}</h3>
@@ -178,10 +178,10 @@
                 ${c.necessidades_acessibilidade ? `<p style="margin-top:3px;font-size:12px">Necessidades: ${c.necessidades_acessibilidade}</p>` : ''}
                 ${c.curriculo_url ? `<a href="${fileUrl(c.curriculo_url)}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:600;color:#f47c20;text-decoration:none">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  Ver currículo</a>` : '<p style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.4)">Currículo não enviado</p>'}
-                ${c.laudo_medico_url ? `<a href="${fileUrl(c.laudo_medico_url)}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;font-weight:600;color:#60a5fa;text-decoration:none">
+                  Ver currículo</a>` : '<p style="margin-top:6px;font-size:12px;color:#6b7a99">Currículo não enviado</p>'}
+                ${c.laudo_medico_url ? `<a href="${fileUrl(c.laudo_medico_url)}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;font-weight:600;color:#1e74df;text-decoration:none">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                  Ver laudo</a>` : '<p style="margin-top:4px;font-size:12px;color:rgba(255,255,255,0.4)">Laudo não enviado</p>'}
+                  Ver laudo</a>` : '<p style="margin-top:4px;font-size:12px;color:#6b7a99">Laudo não enviado</p>'}
               </div>
             </div>
             <div class="cand-right">
@@ -189,8 +189,8 @@
                 ${STATUS.map(s => `<option value="${s}" ${c.status === s ? 'selected' : ''}>${s}</option>`).join('')}
               </select>
               <button class="btn-save" onclick="atualizarStatus(${c.inscricao_id}, document.getElementById('sel-${c.inscricao_id}').value, this)">Salvar</button>
-              <button class="btn-save" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2)" onclick="window.location.href='rh-perfil-candidato.html?inscricao=${c.inscricao_id}&vaga=${vagaId}'">Perfil</button>
-              <button class="btn-save" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2)" onclick="window.location.href='chat.html?inscricao=${c.inscricao_id}'">Chat</button>
+              <button class="btn-save" style="background:rgba(26,39,68,0.06);border:1px solid rgba(26,39,68,0.14);color:#1a2744" onclick="window.location.href='rh-perfil-candidato.html?inscricao=${c.inscricao_id}&vaga=${vagaId}'">Perfil</button>
+              <button class="btn-save" style="background:rgba(26,39,68,0.06);border:1px solid rgba(26,39,68,0.14);color:#1a2744" onclick="window.location.href='chat.html?inscricao=${c.inscricao_id}'">Chat</button>
             </div>
           </div>`).join('');
       } catch(e) { lista.innerHTML = '<p class="empty">Não foi possível conectar ao servidor.</p>'; }

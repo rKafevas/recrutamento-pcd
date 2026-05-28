@@ -7,29 +7,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --orange: #f47c20; --white-med: rgba(255,255,255,0.10); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    :root { --orange: #f47c20; --white-med: #ffffff; --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1a2744; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: rgba(13,59,142,0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); flex-shrink: 0; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: #ffffff; box-shadow: 0 1px 6px rgba(26,39,68,0.08); border-bottom: 1px solid rgba(26,39,68,0.1); flex-shrink: 0; }
     .logo { display: flex; align-items: center; gap: 10px; }
     .logo img { width: 32px; height: 32px; border-radius: 7px; object-fit: cover; }
     .logo span { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; }
-    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 7px 14px; border-radius: 7px; font-size: 13px; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; padding: 7px 14px; border-radius: 7px; font-size: 13px; cursor: pointer; text-decoration: none; display: inline-block; }
 
     .chat-layout { display: flex; flex: 1; overflow: hidden; }
 
-    .sidebar { width: 300px; border-right: 1px solid var(--white-border); display: flex; flex-direction: column; flex-shrink: 0; background: rgba(0,0,0,0.1); }
+    .sidebar { width: 300px; border-right: 1px solid var(--white-border); display: flex; flex-direction: column; flex-shrink: 0; background: #f0f2f8; }
     .sidebar-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 16px 18px 12px; border-bottom: 1px solid var(--white-border); }
     .conversas { overflow-y: auto; flex: 1; }
-    .conversa-item { padding: 14px 18px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.06); transition: 0.2s; }
-    .conversa-item:hover { background: rgba(255,255,255,0.08); }
-    .conversa-item.active { background: rgba(255,255,255,0.13); border-left: 3px solid var(--orange); }
+    .conversa-item { padding: 14px 18px; cursor: pointer; border-bottom: 1px solid rgba(26,39,68,0.06); transition: 0.2s; }
+    .conversa-item:hover { background: rgba(26,39,68,0.06); }
+    .conversa-item.active { background: rgba(244,124,32,0.08); border-left: 3px solid var(--orange); }
     .conversa-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 3px; display: flex; align-items: center; justify-content: space-between; }
     .conversa-item p { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .badge-nao-lida { background: var(--orange); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
 
     .chat-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    .chat-header { padding: 16px 22px; border-bottom: 1px solid var(--white-border); background: rgba(255,255,255,0.05); flex-shrink: 0; }
+    .chat-header { padding: 16px 22px; border-bottom: 1px solid var(--white-border); background: #ffffff; flex-shrink: 0; }
     .chat-header h3 { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; }
     .chat-header p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
 
@@ -40,13 +40,13 @@
     .msg-remetente { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; padding: 0 4px; }
     .msg { max-width: 65%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; word-break: break-word; }
     .msg.enviada { background: var(--orange); border-bottom-right-radius: 4px; }
-    .msg.recebida { background: rgba(255,255,255,0.13); border: 1px solid var(--white-border); border-bottom-left-radius: 4px; }
-    .msg-hora { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 4px; padding: 0 4px; }
+    .msg.recebida { background: #ffffff; border: 1px solid var(--white-border); border-bottom-left-radius: 4px; color: #1a2744; }
+    .msg-hora { font-size: 10px; color: #6b7a99; margin-top: 4px; padding: 0 4px; }
 
-    .chat-input { padding: 14px 20px; border-top: 1px solid var(--white-border); display: flex; gap: 10px; flex-shrink: 0; background: rgba(0,0,0,0.1); }
-    .chat-input input { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 9px; padding: 11px 16px; font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; }
-    .chat-input input::placeholder { color: rgba(255,255,255,0.35); }
-    .chat-input input:focus { outline: none; border-color: rgba(255,255,255,0.4); }
+    .chat-input { padding: 14px 20px; border-top: 1px solid var(--white-border); display: flex; gap: 10px; flex-shrink: 0; background: #f0f2f8; }
+    .chat-input input { flex: 1; background: #f8f9fd; border: 1px solid rgba(26,39,68,0.14); border-radius: 9px; padding: 11px 16px; font-size: 14px; color: #1a2744; font-family: 'Inter', sans-serif; }
+    .chat-input input::placeholder { color: rgba(26,39,68,0.35); }
+    .chat-input input:focus { outline: none; border-color: #1e74df; }
     .btn-enviar { background: var(--orange); border: none; color: #fff; padding: 11px 22px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap; }
     .btn-enviar:hover { background: #e06b10; }
 
@@ -70,7 +70,7 @@
     </div>
     <div class="chat-area" id="chat-area">
       <div class="empty-chat">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(26,39,68,0.2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <p>Selecione uma conversa para começar</p>
       </div>
     </div>
@@ -157,7 +157,7 @@
           <p>${nomeOutro}</p>
         </div>
         <div class="mensagens" id="msgs-container">
-          ${msgs.length ? msgs.map(m => buildMsg(m)).join('') : '<div style="text-align:center;color:rgba(255,255,255,0.4);font-size:13px;margin-top:20px">Nenhuma mensagem ainda. Seja o primeiro a enviar!</div>'}
+          ${msgs.length ? msgs.map(m => buildMsg(m)).join('') : '<div style="text-align:center;color:#6b7a99;font-size:13px;margin-top:20px">Nenhuma mensagem ainda. Seja o primeiro a enviar!</div>'}
         </div>
         <div class="chat-input">
           <input type="text" id="input-msg" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter') enviarMsg()">

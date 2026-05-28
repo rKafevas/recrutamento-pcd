@@ -7,19 +7,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(255,255,255,0.08); --white-med: rgba(255,255,255,0.10); --white-hover: rgba(255,255,255,0.16); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 48px; }
+    :root { --orange: #f47c20; --orange-hover: #e06b10; --white-soft: rgba(26,39,68,0.04); --white-med: #ffffff; --white-hover: rgba(26,39,68,0.06); --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1a2744; min-height: 100vh; padding-bottom: 48px; }
     body.high-contrast { background: #000 !important; color: #ff0 !important; }
     body.high-contrast .topbar, body.high-contrast .vaga-card, body.high-contrast .modal-box { background: #111 !important; border: 2px solid #ff0 !important; }
     body.high-contrast input, body.high-contrast textarea { background: #fff !important; color: #000 !important; }
     body.high-contrast .btn-primary { background: #ff0 !important; color: #000 !important; }
 
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: #ffffff; box-shadow: 0 1px 6px rgba(26,39,68,0.08); border-bottom: 1px solid rgba(26,39,68,0.1); position: sticky; top: 0; z-index: 99; }
     .logo { display: flex; align-items: center; gap: 10px; }
     .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
     .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
     .topbar-right { display: flex; gap: 10px; align-items: center; }
-    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; }
     .btn-ghost:hover { background: var(--white-soft); }
     .btn-primary { background: var(--orange); border: none; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-primary:hover { background: var(--orange-hover); }
@@ -40,35 +40,35 @@
     .btn-sm { padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
     .btn-sm-primary { background: var(--orange); color: #fff; }
     .btn-sm-primary:hover { background: var(--orange-hover); }
-    .btn-sm-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; }
+    .btn-sm-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; }
     .btn-sm-ghost:hover { background: var(--white-soft); }
 
     /* MODAL */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; padding: 24px; }
     .modal-overlay.active { display: flex; }
-    .modal-box { background: #1250b0; border: 1px solid var(--white-border); border-radius: 18px; padding: 32px; width: 100%; max-width: 520px; }
+    .modal-box { background: #ffffff; border: 1px solid rgba(26,39,68,0.1); border-radius: 18px; padding: 32px; width: 100%; max-width: 520px; box-shadow: 0 8px 32px rgba(26,39,68,0.12); }
     .modal-box h2 { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
     .modal-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
     .field { margin-bottom: 16px; }
     .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-    .field input, .field textarea, .field select { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; transition: 0.2s; }
-    .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.35); }
-    .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: rgba(255,255,255,0.45); }
+    .field input, .field textarea, .field select { width: 100%; background: #f8f9fd; border: 1px solid rgba(26,39,68,0.14); border-radius: 9px; padding: 11px 14px; font-size: 14px; color: #1a2744; font-family: 'Inter', sans-serif; transition: 0.2s; }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(26,39,68,0.35); }
+    .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: #1e74df; background: #ffffff; }
     .field textarea { min-height: 90px; resize: vertical; }
-    .field select option { background: #1250b0; color: #fff; }
+    .field select option { background: #ffffff; color: #1a2744; }
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
 
     .empty { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
 
     .logout { color: var(--text-muted); font-size: 14px; text-decoration: none; }
-    .logout:hover { color: #fff; }
+    .logout:hover { color: #1a2744; }
   </style>
 </head>
 <body>
   <div class="topbar">
     <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
     <div class="topbar-right" style="position:relative">
-      <button id="btn-notif" onclick="toggleNotificacoes()" style="background:transparent;border:1px solid var(--white-border);color:#fff;padding:8px 14px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;position:relative">
+      <button id="btn-notif" onclick="toggleNotificacoes()" style="background:transparent;border:1px solid var(--white-border);color:#1a2744;padding:8px 14px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;position:relative">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         Notificações
         <span id="badge-notif" style="display:none;position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;min-width:20px;text-align:center">0</span>
@@ -76,10 +76,10 @@
       <button class="btn-ghost" onclick="toggleContrast()">Alto Contraste</button>
       <a href="login.html" class="btn-ghost">Sair</a>
 
-      <div id="painel-notif" style="display:none;position:absolute;top:52px;right:0;width:340px;background:#0f3d99;border:1px solid rgba(255,255,255,0.18);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,0.35);z-index:200;overflow:hidden">
-        <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center">
-          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700">Notificações</span>
-          <button onclick="marcarLidas()" style="background:transparent;border:none;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;padding:0">Marcar como lidas</button>
+      <div id="painel-notif" style="display:none;position:absolute;top:52px;right:0;width:340px;background:#ffffff;border:1px solid rgba(26,39,68,0.1);border-radius:14px;box-shadow:0 8px 32px rgba(26,39,68,0.15);z-index:200;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid rgba(26,39,68,0.08);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#1a2744">Notificações</span>
+          <button onclick="marcarLidas()" style="background:transparent;border:none;color:#6b7a99;font-size:12px;cursor:pointer;padding:0">Marcar como lidas</button>
         </div>
         <div id="lista-notif" style="max-height:360px;overflow-y:auto"></div>
       </div>
@@ -110,7 +110,7 @@
       <h2>Nova vaga</h2>
       <p>Preencha os dados da vaga para publicar</p>
 
-      <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin:16px 0 10px">Informações básicas</div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#6b7a99;margin:16px 0 10px">Informações básicas</div>
       <div class="field"><label>Título da vaga *</label><input type="text" id="titulo" placeholder="Ex: Desenvolvedor Front-End"></div>
       <div class="field"><label>Descrição *</label><textarea id="descricao" placeholder="Responsabilidades e atividades do dia a dia"></textarea></div>
       <div class="field"><label>Requisitos *</label><textarea id="requisitos" placeholder="Formação, conhecimentos e experiências necessárias"></textarea></div>
@@ -128,7 +128,7 @@
       </div>
       <div class="field"><label>Salário</label><input type="text" id="salario" placeholder="Ex: R$ 3.000 ou A combinar"></div>
 
-      <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin:16px 0 10px">Inclusão e acessibilidade</div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#6b7a99;margin:16px 0 10px">Inclusão e acessibilidade</div>
       <div class="field"><label>Foco de deficiência *</label>
         <select id="tipo_deficiencia_foco">
           <option value="">Selecione</option>
@@ -238,13 +238,13 @@
         lista.innerHTML = d.notificacoes.length
           ? d.notificacoes.map(n => `
             <div onclick="${n.link ? `window.location.href='${n.link}'` : ''}"
-              style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.07);font-size:13px;line-height:1.5;${n.link?'cursor:pointer;':''}transition:0.2s"
-              onmouseover="this.style.background='rgba(255,255,255,0.07)'"
+              style="padding:14px 18px;border-bottom:1px solid rgba(26,39,68,0.06);font-size:13px;line-height:1.5;${n.link?'cursor:pointer;':''}transition:0.2s;color:#1a2744"
+              onmouseover="this.style.background='rgba(26,39,68,0.05)'"
               onmouseout="this.style.background='transparent'">
               <p style="margin-bottom:4px">${n.mensagem}</p>
-              <p style="font-size:11px;color:rgba(255,255,255,0.4)">${new Date(n.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</p>
+              <p style="font-size:11px;color:#6b7a99">${new Date(n.criado_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</p>
             </div>`).join('')
-          : '<div style="padding:24px;text-align:center;font-size:13px;color:rgba(255,255,255,0.4)">Nenhuma notificação.</div>';
+          : '<div style="padding:24px;text-align:center;font-size:13px;color:#6b7a99">Nenhuma notificação.</div>';
       } catch(e) {}
     }
 
@@ -257,7 +257,7 @@
       const token = localStorage.getItem('token');
       await fetch(API_URL + '/notificacoes/lidas', { method: 'PATCH', headers: {'Authorization':'Bearer '+token} });
       document.getElementById('badge-notif').style.display = 'none';
-      document.getElementById('lista-notif').innerHTML = '<div style="padding:24px;text-align:center;font-size:13px;color:rgba(255,255,255,0.4)">Nenhuma notificação.</div>';
+      document.getElementById('lista-notif').innerHTML = '<div style="padding:24px;text-align:center;font-size:13px;color:#6b7a99">Nenhuma notificação.</div>';
     }
 
     document.addEventListener('click', e => {

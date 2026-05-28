@@ -15,17 +15,17 @@
       --orange: #f47c20;
       --orange-hover: #e06b10;
       --white: #ffffff;
-      --white-soft: rgba(255,255,255,0.08);
-      --white-border: rgba(255,255,255,0.15);
-      --text-muted: rgba(255,255,255,0.7);
+      --white-soft: rgba(26,39,68,0.04);
+      --white-border: rgba(26,39,68,0.1);
+      --text-muted: #6b7a99;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(160deg, var(--blue-deep) 0%, var(--blue-light) 100%);
-      color: var(--white);
+      background: #f5f7fc;
+      color: #1a2744;
       min-height: 100vh;
     }
 
@@ -42,9 +42,9 @@
       position: sticky; top: 0; z-index: 999;
       display: flex; justify-content: space-between; align-items: center;
       padding: 16px 48px;
-      background: rgba(13,59,142,0.7);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--white-border);
+      background: #ffffff;
+      box-shadow: 0 1px 6px rgba(26,39,68,0.08);
+      border-bottom: 1px solid rgba(26,39,68,0.1);
     }
 
     .logo { display: flex; align-items: center; gap: 10px; }
@@ -56,7 +56,7 @@
     .btn-ghost {
       background: transparent;
       border: 1px solid var(--white-border);
-      color: var(--white);
+      color: #1a2744;
       padding: 9px 18px;
       border-radius: 8px;
       font-size: 14px;
@@ -131,7 +131,7 @@
     .btn-outline {
       background: transparent;
       border: 1px solid var(--white-border);
-      color: var(--white);
+      color: #1a2744;
       padding: 12px 24px;
       border-radius: 8px;
       font-size: 15px;
@@ -196,7 +196,7 @@
     }
 
     .perfil-card {
-      background: var(--white-soft);
+      background: #ffffff;
       border: 1px solid var(--white-border);
       border-radius: 16px;
       padding: 36px;
@@ -205,8 +205,8 @@
     }
 
     .perfil-card:hover {
-      background: rgba(255,255,255,0.13);
-      border-color: rgba(255,255,255,0.3);
+      background: #f0f4ff;
+      border-color: rgba(26,39,68,0.2);
       transform: translateY(-3px);
     }
 
@@ -222,7 +222,7 @@
     }
 
     .perfil-tag.candidato { background: rgba(244,124,32,0.15); color: #f47c20; border: 1px solid rgba(244,124,32,0.3); }
-    .perfil-tag.rh { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+    .perfil-tag.rh { background: rgba(26,39,68,0.06); color: #1a2744; border: 1px solid rgba(26,39,68,0.15); }
 
     .perfil-card h3 {
       font-family: 'Sora', sans-serif;
@@ -239,8 +239,8 @@
     }
 
     .perfil-card .btn-primary { font-size: 14px; padding: 10px 20px; pointer-events: none; }
-    .perfil-card.rh-card .btn-primary { background: white; color: var(--blue-deep); }
-    .perfil-card.rh-card .btn-primary:hover { background: #e8eef8; }
+    .perfil-card.rh-card .btn-primary { background: #1a2744; color: #ffffff; }
+    .perfil-card.rh-card .btn-primary:hover { background: #0d1f3c; }
 
     /* FEATURES GRID */
     .features-grid {
@@ -250,14 +250,14 @@
     }
 
     .feature-card {
-      background: var(--white-soft);
+      background: #ffffff;
       border: 1px solid var(--white-border);
       border-radius: 14px;
       padding: 28px 24px;
       transition: 0.2s;
     }
 
-    .feature-card:hover { background: rgba(255,255,255,0.12); }
+    .feature-card:hover { background: #f0f4ff; }
 
     .feature-icon {
       width: 40px; height: 40px;
@@ -286,7 +286,7 @@
     }
 
     .stat-card {
-      background: var(--white-soft);
+      background: #ffffff;
       border: 1px solid var(--white-border);
       border-radius: 14px;
       padding: 32px;
@@ -311,14 +311,14 @@
     }
 
     .info-box {
-      background: var(--white-soft);
+      background: #ffffff;
       border: 1px solid var(--white-border);
       border-radius: 14px;
       padding: 28px;
       transition: 0.2s;
     }
 
-    .info-box:hover { background: rgba(255,255,255,0.12); }
+    .info-box:hover { background: #f0f4ff; }
 
     .info-box h4 {
       font-family: 'Sora', sans-serif;
@@ -337,14 +337,14 @@
     }
 
     .card {
-      background: var(--white-soft);
+      background: #ffffff;
       border: 1px solid var(--white-border);
       border-radius: 16px;
       overflow: hidden;
       transition: 0.2s;
     }
 
-    .card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.12); }
+    .card:hover { transform: translateY(-4px); background: #f0f4ff; }
 
     .card img { width: 100%; height: 160px; object-fit: cover; display: block; filter: brightness(0.85); }
 
@@ -356,7 +356,7 @@
 
     /* FOOTER */
     .footer {
-      border-top: 1px solid var(--white-border);
+      border-top: 1px solid rgba(26,39,68,0.1);
       padding: 32px 48px;
       display: flex;
       justify-content: space-between;

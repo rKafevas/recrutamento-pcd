@@ -7,19 +7,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --orange: #f47c20; --white-med: rgba(255,255,255,0.10); --white-border: rgba(255,255,255,0.15); --text-muted: rgba(255,255,255,0.65); }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(160deg, #0d3b8e 0%, #1e74df 100%); color: #fff; min-height: 100vh; padding-bottom: 60px; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: rgba(13,59,142,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    :root { --orange: #f47c20; --white-med: #ffffff; --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1a2744; min-height: 100vh; padding-bottom: 60px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: #ffffff; box-shadow: 0 1px 6px rgba(26,39,68,0.08); border-bottom: 1px solid rgba(26,39,68,0.1); position: sticky; top: 0; z-index: 99; }
     .logo { display: flex; align-items: center; gap: 10px; }
     .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
     .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
-    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #fff; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; }
     .btn-primary { background: var(--orange); border: none; color: #fff; padding: 12px 28px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-primary:hover { background: #e06b10; }
 
     .container { max-width: 760px; margin: 0 auto; padding: 40px 24px; }
     .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 28px; }
-    .back:hover { color: #fff; }
+    .back:hover { color: #1a2744; }
 
     .vaga-header { margin-bottom: 28px; }
     .badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
@@ -32,7 +32,7 @@
 
     .panel { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
     .panel-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
-    .panel p { font-size: 14px; line-height: 1.8; color: rgba(255,255,255,0.85); white-space: pre-wrap; }
+    .panel p { font-size: 14px; line-height: 1.8; color: #6b7a99; white-space: pre-wrap; }
 
     .salario-box { background: rgba(244,124,32,0.1); border: 1px solid rgba(244,124,32,0.25); border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .salario-box span { font-size: 12px; color: var(--text-muted); }
@@ -46,7 +46,7 @@
 
   <div class="container">
     <a href="vagas.html" class="back">← Voltar às vagas</a>
-    <div id="conteudo"><p style="color:rgba(255,255,255,0.5);font-size:14px">Carregando...</p></div>
+    <div id="conteudo"><p style="color:#6b7a99;font-size:14px">Carregando...</p></div>
   </div>
 
   <script src="config.js"></script>
