@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-app.use(cors({ origin: 'https://project-2o4gv.vercel.app' }));
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'https://project-2o4gv.vercel.app' }));
 app.use(express.json());
 app.set('trust proxy', 1);
 

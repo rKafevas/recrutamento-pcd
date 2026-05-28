@@ -135,7 +135,7 @@
         if (d.sobre) document.getElementById('sobre').value = d.sobre;
         if (d.foto_url) {
         const preview = document.getElementById('foto-preview');
-        preview.innerHTML = `<img src="${API_URL}/${d.foto_url.replace(/\\/g,'/')}" style="width:100%;height:100%;object-fit:cover">`;
+        preview.innerHTML = `<img src="${fileUrl(d.foto_url)}" style="width:100%;height:100%;object-fit:cover">`;
         document.getElementById('btn-remover-foto').style.display = 'block';
       } // O IF da foto fecha AQUI
 
@@ -146,7 +146,7 @@
       // Estes comandos devem ficar FORA do IF da foto para funcionarem sempre
       document.getElementById('curriculo-atual').style.display = 'flex';
       document.getElementById('upload-area').style.display = 'none';
-      document.getElementById('link-curriculo').href = API_URL + '/' + d.curriculo_url.replace(/\\/g, '/');
+      document.getElementById('link-curriculo').href = fileUrl(d.curriculo_url);
         }
        catch(e) {}
     }
@@ -162,7 +162,7 @@
         if (r.ok) {
           Toast.show('Foto atualizada!', 'success');
           const preview = document.getElementById('foto-preview');
-          preview.innerHTML = `<img src="" + API_URL + "/${d.dados.foto_url.replace(/\\/g,'/')}" style="width:100%;height:100%;object-fit:cover">`;
+          preview.innerHTML = `<img src="${fileUrl(d.dados.foto_url)}" style="width:100%;height:100%;object-fit:cover">`;
           document.getElementById('btn-remover-foto').style.display = 'block';
         } else Toast.show(d.mensagem || 'Erro ao enviar foto.', 'error');
       } catch(e) { Toast.show('Erro de conexão.', 'error'); }

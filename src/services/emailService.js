@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 async function enviarConfirmacaoCadastro(destinatario, nome, token) {
   await transporter.sendMail({
-    from: '"Inclui+ 🤝" <kauefelipe1313@gmail.com>',
+    from: `"Inclui+ 🤝" <${process.env.EMAIL_USER}>`,
     to: destinatario,
     subject: 'Confirme seu cadastro — Inclui+',
     html: `
@@ -37,7 +37,7 @@ async function enviarConfirmacaoCadastro(destinatario, nome, token) {
 
 async function enviarRecuperacaoSenha(destinatario, nome, token) {
   await transporter.sendMail({
-    from: '"Inclui+ 🤝" <kauefelipe1313@gmail.com>',
+    from: `"Inclui+ 🤝" <${process.env.EMAIL_USER}>`,
     to: destinatario,
     subject: 'Recuperação de senha — Inclui+',
     html: `

@@ -76,13 +76,13 @@
 
     async function carregarPerfil() {
       try {
-        const r = await fetch(API_URL + "/perfil', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + '/perfil', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (d.laudo_medico_url) {
           document.getElementById('laudo-atual').style.display = 'flex';
           document.getElementById('sem-laudo').style.display = 'none';
           document.getElementById('upload-panel').style.display = 'none';
-          document.getElementById('link-laudo').href = '" + API_URL + "/' + d.laudo_medico_url.replace(/\\/g, '/');
+          document.getElementById('link-laudo').href = fileUrl(d.laudo_medico_url);
         } else {
           document.getElementById('laudo-atual').style.display = 'none';
           document.getElementById('sem-laudo').style.display = 'block';

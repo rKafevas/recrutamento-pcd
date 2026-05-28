@@ -6,6 +6,7 @@ const authMiddleware = require('./middlewares/authMiddleware');
 const authorize = require('./middlewares/roleMiddleware');
 const validate = require('./middlewares/validateMiddleware');
 const upload = require('./middlewares/uploadMiddleware');
+const cloudinaryUpload = require('./middlewares/cloudinaryMiddleware');
 
 // 2. Importação dos Validators (Joi)
 const { usuarioSchema, loginSchema, rhSchema } = require('./validators/usuarioValidator');
@@ -52,14 +53,15 @@ routes.get('/perfil', authMiddleware, authorize(['Candidato']), CandidatoControl
 routes.patch('/perfil/infos', authMiddleware, authorize(['Candidato']), CandidatoController.atualizarInfos);
 routes.delete('/perfil/curriculo', authMiddleware, authorize(['Candidato']), CandidatoController.removerCurriculo);
 
-routes.patch('/perfil/foto', authMiddleware, authorize(['Candidato']), upload.single('foto'), CandidatoController.atualizarFoto);
+routes.patch('/perfil/foto', authMiddleware, authorize(['Candidato']), upload.single('foto'), cloudinaryUpload, CandidatoController.atualizarFoto);
 routes.delete('/perfil/foto', authMiddleware, authorize(['Candidato']), CandidatoController.removerFoto);
 
 routes.patch(
-  '/perfil/laudo', 
-  authMiddleware, 
-  authorize(['Candidato']), 
-  upload.single('laudo'), 
+  '/perfil/laudo',
+  authMiddleware,
+  authorize(['Candidato']),
+  upload.single('laudo'),
+  cloudinaryUpload,
   CandidatoController.atualizarLaudo
 );
 
@@ -70,6 +72,7 @@ routes.patch(
   authMiddleware,
   authorize(['Candidato']),
   upload.single('curriculo'),
+  cloudinaryUpload,
   CandidatoController.atualizarCurriculo
 );
 

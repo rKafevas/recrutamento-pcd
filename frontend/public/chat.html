@@ -76,7 +76,8 @@
     </div>
   </div>
 
-  <script src="" + API_URL + "/socket.io/socket.io.js"></script>
+  <script src="config.js"></script>
+  <script>document.write('<script src="' + API_URL + '/socket.io/socket.io.js"><\/script>');</script>
   <script>
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = 'login.html'; }
@@ -89,7 +90,7 @@
     // Ajusta botão voltar por tipo
     document.getElementById('btn-voltar').href = meuTipo === 'RH' ? 'rh-dashboard.html' : 'home.html';
 
-    const socket = io('" + API_URL + "', { auth: { token } });
+    const socket = io(API_URL, { auth: { token } });
     let inscricaoAtual = null;
     let destinatarioAtual = null;
 
@@ -107,7 +108,7 @@
 
     // Carrega lista de conversas
     async function carregarConversas() {
-      const r = await fetch(API_URL + "/mensagens/conversas', { headers: {'Authorization':'Bearer '+token} });
+      const r = await fetch(API_URL + '/mensagens/conversas', { headers: {'Authorization':'Bearer '+token} });
       const d = await r.json();
       const lista = document.getElementById('lista-conversas');
 

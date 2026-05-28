@@ -5,3 +5,8 @@ const API_URL =
     : 'https://inclui-plus-api.onrender.com';
 
 window.API_URL = API_URL;
+
+window.fileUrl = function(url) {
+  if (!url) return '';
+  return url.startsWith('http') ? url : API_URL + '/' + url.replace(/\\/g, '/');
+};

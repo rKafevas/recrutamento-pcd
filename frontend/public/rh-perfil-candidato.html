@@ -50,6 +50,7 @@
     <div id="conteudo"><p style="color:var(--text-muted);font-size:14px">Carregando perfil...</p></div>
   </div>
 
+  <script src="config.js"></script>
   <script>
     const token = localStorage.getItem('token');
     if (!token) window.location.href = 'login.html';
@@ -72,7 +73,7 @@
           <div class="perfil-header">
             <div class="avatar">
               ${c.foto_url
-                ? `<img src="" + API_URL + "/${c.foto_url.replace(/\\/g,'/')}" alt="Foto">`
+                ? `<img src="${fileUrl(c.foto_url)}" alt="Foto">`
                 : `<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
             </div>
             <div class="perfil-header-info">
@@ -103,12 +104,12 @@
             <div class="panel-title">Documentos</div>
             <div class="docs">
               ${c.curriculo_url
-                ? `<a href="" + API_URL + "/${c.curriculo_url.replace(/\\/g,'/')}" target="_blank" class="doc-link">
+                ? `<a href="${fileUrl(c.curriculo_url)}" target="_blank" class="doc-link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     Ver currículo</a>`
                 : '<p style="font-size:13px;color:rgba(255,255,255,0.4)">Currículo não enviado</p>'}
               ${c.laudo_medico_url
-                ? `<a href="" + API_URL + "/${c.laudo_medico_url.replace(/\\/g,'/')}" target="_blank" class="doc-link blue">
+                ? `<a href="${fileUrl(c.laudo_medico_url)}" target="_blank" class="doc-link blue">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     Ver laudo médico</a>`
                 : '<p style="font-size:13px;color:rgba(255,255,255,0.4)">Laudo não enviado</p>'}

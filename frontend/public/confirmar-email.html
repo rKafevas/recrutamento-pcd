@@ -44,6 +44,7 @@
     </div>
   </div>
 
+  <script src="config.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
     const usuarioId = params.get('id');
@@ -54,7 +55,7 @@
       const codigo = document.getElementById('codigo').value.trim();
       if (codigo.length !== 6) { alert('Digite o código de 6 dígitos.'); return; }
       try {
-        const r = await fetch(API_URL + "/confirmar-email', {
+        const r = await fetch(API_URL + '/confirmar-email', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ usuario_id: usuarioId, token: codigo })

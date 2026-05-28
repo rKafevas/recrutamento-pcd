@@ -192,7 +192,8 @@
     },
     async marcarLidas() {
       const token = localStorage.getItem('token');
-      await fetch('http://localhost:3000/notificacoes/lidas', { method:'PATCH', headers:{'Authorization':'Bearer '+token} });
+      const base = window.API_URL || 'http://localhost:3000';
+      await fetch(`${base}/notificacoes/lidas`, { method:'PATCH', headers:{'Authorization':'Bearer '+token} });
       document.getElementById('tb-badge').style.display = 'none';
       document.getElementById('tb-notif-lista').innerHTML = '<div class="notif-empty">Nenhuma notificação.</div>';
     }

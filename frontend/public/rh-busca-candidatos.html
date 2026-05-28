@@ -72,6 +72,7 @@
     <a href="rh-dashboard.html" class="back">← Voltar ao Painel</a>
   </div>
 
+  <script src="config.js"></script>
   <script>
     const token = localStorage.getItem('token');
     if (!token) window.location.href = 'login.html';
@@ -85,14 +86,14 @@
       const lista = document.getElementById('lista');
       lista.innerHTML = '<div class="empty">Buscando...</div>';
       try {
-        const r = await fetch(API_URL + "/candidatos/busca?' + params, { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch(API_URL + '/candidatos/busca?' + params, { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         if (!d.length) { lista.innerHTML = '<div class="empty">Nenhum candidato encontrado.</div>'; return; }
         lista.innerHTML = d.map(c => `
           <div class="cand-card">
             <div class="avatar">
               ${c.foto_url
-                ? `<img src="" + API_URL + "/${c.foto_url.replace(/\\/g,'/')}">`
+                ? `<img src="${fileUrl(c.foto_url)}">`
                 : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
             </div>
             <div class="info">
@@ -102,7 +103,7 @@
               ${c.habilidades ? `<p style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.5)">${c.habilidades.substring(0,80)}${c.habilidades.length>80?'...':''}</p>` : ''}
             </div>
             <div class="actions">
-              ${c.curriculo_url ? `<a href="" + API_URL + "/${c.curriculo_url.replace(/\\/g,'/')}" target="_blank" class="btn-sm">Currículo</a>` : ''}
+              ${c.curriculo_url ? `<a href="${fileUrl(c.curriculo_url)}" target="_blank" class="btn-sm">Currículo</a>` : ''}
             </div>
           </div>`).join('');
       } catch(e) { lista.innerHTML = '<div class="empty">Erro de conexão.</div>'; }
