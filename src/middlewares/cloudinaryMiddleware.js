@@ -24,7 +24,16 @@ async function uploadToCloudinary(req, res, next) {
       ).end(req.file.buffer);
     });
 
-    req.file.path = result.secure_url;
+    // URL assinada sem expiração — contorna restrições de acesso da conta Cloudinary
+    const signedUrl = cloudinary.url(result.public_id, {
+      resource_type: 'image',
+      secure: true,
+      sign_url: true,
+      type: 'upload',
+      format: result.format,
+    });
+
+    req.file.path = signedUrl;
     req.file.filename = result.public_id;
     next();
   } catch (err) {
