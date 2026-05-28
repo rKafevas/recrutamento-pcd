@@ -78,56 +78,75 @@
 
   <script src="config.js"></script>
   <script src="topbar.js"></script>
-  <script>document.write('<script src="' + API_URL + '/socket.io/socket.io.js"><\/script>');</script>
   <script>
     const token = localStorage.getItem('token');
     if (!token) { window.location.href = 'login.html'; }
 
-    // Decodifica o token para pegar id e tipo
     const payload = JSON.parse(atob(token.split('.')[1]));
     const meuId = payload.id;
     const meuTipo = payload.tipo;
 
-    // Ajusta botão voltar por tipo
     document.getElementById('btn-voltar').href = meuTipo === 'RH' ? 'rh-dashboard.html' : 'home.html';
 
-    const socket = io(API_URL, { auth: { token } });
     let inscricaoAtual = null;
     let destinatarioAtual = null;
-
-    // Recebe nova mensagem em tempo real
-    socket.on('nova_mensagem', (msg) => {
-      if (String(msg.inscricao_id) === String(inscricaoAtual)) {
-        // Só renderiza se não for do próprio usuário (evita duplicata)
-        if (msg.remetente_id != meuId) {
-          renderMensagem(msg);
-          scrollBottom();
-        }
-      }
-      carregarConversas();
-    });
+    let socket = null;
 
     // Carrega lista de conversas
     async function carregarConversas() {
-      const r = await fetch(API_URL + '/mensagens/conversas', { headers: {'Authorization':'Bearer '+token} });
-      const d = await r.json();
-      const lista = document.getElementById('lista-conversas');
+      try {
+        const r = await fetch(API_URL + '/mensagens/conversas', { headers: {'Authorization':'Bearer '+token} });
+        const lista = document.getElementById('lista-conversas');
+        if (!r.ok) {
+          lista.innerHTML = '<div class="empty-sidebar">Erro ao carregar conversas.</div>';
+          return;
+        }
+        const d = await r.json();
 
-      if (!d.length) {
-        lista.innerHTML = '<div class="empty-sidebar">Nenhuma conversa ainda.</div>';
-        return;
+        if (!Array.isArray(d) || !d.length) {
+          lista.innerHTML = '<div class="empty-sidebar">Nenhuma conversa ainda.</div>';
+          return;
+        }
+
+        lista.innerHTML = d.map(c => `
+          <div class="conversa-item ${String(c.inscricao_id) === String(inscricaoAtual) ? 'active' : ''}"
+            onclick="abrirConversa(${c.inscricao_id})">
+            <h4>
+              ${meuTipo === 'RH' ? c.candidato_nome : c.vaga_titulo}
+              ${c.nao_lidas > 0 ? `<span class="badge-nao-lida">${c.nao_lidas}</span>` : ''}
+            </h4>
+            <p>${meuTipo === 'RH' ? c.vaga_titulo : c.candidato_nome} · ${c.ultima_mensagem || ''}</p>
+          </div>`).join('');
+      } catch(e) {
+        document.getElementById('lista-conversas').innerHTML = '<div class="empty-sidebar">Não foi possível carregar conversas.</div>';
       }
-
-      lista.innerHTML = d.map(c => `
-        <div class="conversa-item ${String(c.inscricao_id) === String(inscricaoAtual) ? 'active' : ''}"
-          onclick="abrirConversa(${c.inscricao_id})">
-          <h4>
-            ${meuTipo === 'RH' ? c.candidato_nome : c.vaga_titulo}
-            ${c.nao_lidas > 0 ? `<span class="badge-nao-lida">${c.nao_lidas}</span>` : ''}
-          </h4>
-          <p>${meuTipo === 'RH' ? c.vaga_titulo : c.candidato_nome} · ${c.ultima_mensagem || ''}</p>
-        </div>`).join('');
     }
+
+    function iniciarSocket() {
+      try {
+        socket = io(API_URL, { auth: { token } });
+        socket.on('nova_mensagem', (msg) => {
+          if (String(msg.inscricao_id) === String(inscricaoAtual)) {
+            if (msg.remetente_id != meuId) {
+              renderMensagem(msg);
+              scrollBottom();
+            }
+          }
+          carregarConversas();
+        });
+      } catch(e) {
+        console.warn('Socket.io indisponível, chat em modo somente REST:', e.message);
+      }
+    }
+
+    // Carrega socket.io do servidor e inicia conexão
+    (function() {
+      const s = document.createElement('script');
+      s.src = API_URL + '/socket.io/socket.io.js';
+      s.onload = iniciarSocket;
+      s.onerror = () => console.warn('socket.io.js não carregou — mensagens em tempo real desativadas');
+      document.head.appendChild(s);
+    })();
 
     // Abre uma conversa
     async function abrirConversa(inscricaoId) {
@@ -137,7 +156,7 @@
       document.querySelectorAll('.conversa-item').forEach(el => el.classList.remove('active'));
       event?.currentTarget?.classList.add('active');
 
-      socket.emit('entrar_sala', inscricaoId);
+      if (socket) socket.emit('entrar_sala', inscricaoId);
 
       // Busca dados da inscrição (para saber quem é o destinatário)
       const rdados = await fetch(`${API_URL}/mensagens/inscricao/${inscricaoId}/dados`, { headers: {'Authorization':'Bearer '+token} });
@@ -195,7 +214,7 @@
       renderMensagem({ remetente_id: meuId, conteudo, criado_em: agora, inscricao_id: inscricaoAtual });
       scrollBottom();
 
-      socket.emit('enviar_mensagem', { inscricaoId: inscricaoAtual, destinatarioId: destinatarioAtual, conteudo });
+      if (socket) socket.emit('enviar_mensagem', { inscricaoId: inscricaoAtual, destinatarioId: destinatarioAtual, conteudo });
       input.value = '';
     }
 
