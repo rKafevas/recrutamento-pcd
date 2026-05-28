@@ -12,8 +12,10 @@ class VagaService {
       return await VagaRepository.criarVaga(empresa.id, dados);
     } catch (err) {
       if (err.status) throw err;
-      console.error("Erro no Service ao criar vaga:", err);
-      throw new Error("Não foi possível publicar a vaga. Tente novamente mais tarde.");
+      console.error("Erro ao criar vaga:", err);
+      const e = new Error(err.message || "Não foi possível publicar a vaga.");
+      e.status = 500;
+      throw e;
     }
   }
 
