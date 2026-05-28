@@ -65,11 +65,12 @@
 
   // ── Renderiza topbar ─────────────────────────────────────────────
   function render() {
+    const homeUrl = localStorage.getItem('tipo') === 'RH' ? 'rh-dashboard.html' : 'home.html';
     const topbar = document.createElement('div');
     topbar.id = 'topbar-global';
     topbar.innerHTML = `
       <div id="topbar-left">
-        <a href="home.html" class="tb-logo" style="display:flex;align-items:center;text-decoration:none">
+        <a href="${homeUrl}" class="tb-logo" style="display:flex;align-items:center;text-decoration:none">
           <img src="logo.png.jpeg" alt="Inclui+">
           <span>Inclui+</span>
         </a>
@@ -175,7 +176,7 @@
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const r = await fetch('https://inclui-plus-api.onrender.com/notificacoes', { headers: {'Authorization':'Bearer '+token} });
+        const r = await fetch((window.API_URL || 'https://inclui-plus-api.onrender.com') + '/notificacoes', { headers: {'Authorization':'Bearer '+token} });
         const d = await r.json();
         const badge = document.getElementById('tb-badge');
         const lista = document.getElementById('tb-notif-lista');
