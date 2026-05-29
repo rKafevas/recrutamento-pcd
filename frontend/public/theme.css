@@ -1,3 +1,31 @@
+/* ── INCLUI+ ALTO CONTRASTE (global) ────────────────────────────────────── */
+body.high-contrast { background: #000 !important; color: #ffff00 !important; }
+body.high-contrast #topbar-global { background: #000 !important; border-bottom-color: #ffff00 !important; box-shadow: none !important; }
+body.high-contrast .tb-btn { color: #ffff00 !important; border-color: #ffff00 !important; background: transparent !important; }
+body.high-contrast .tb-btn:hover { background: rgba(255,255,0,0.15) !important; }
+body.high-contrast .tb-btn.active { background: #ffff00 !important; color: #000 !important; border-color: #ffff00 !important; }
+body.high-contrast #topbar-left .tb-logo span { color: #ffff00 !important; }
+body.high-contrast .panel, body.high-contrast .vaga-card, body.high-contrast .cand-card,
+body.high-contrast .card, body.high-contrast .section, body.high-contrast .modal-box,
+body.high-contrast .register-card, body.high-contrast .nav-card, body.high-contrast .metric-card {
+  background: #111 !important; border: 2px solid #ffff00 !important;
+}
+body.high-contrast h1, body.high-contrast h2, body.high-contrast h3,
+body.high-contrast h4, body.high-contrast p, body.high-contrast label,
+body.high-contrast span, body.high-contrast div { color: #ffff00 !important; }
+body.high-contrast input, body.high-contrast select, body.high-contrast textarea {
+  background: #fff !important; color: #000 !important; border-color: #ffff00 !important;
+}
+body.high-contrast .btn-primary, body.high-contrast .btn-apply, body.high-contrast .register-btn, body.high-contrast .btn {
+  background: #ffff00 !important; color: #000 !important; border: none !important;
+}
+body.high-contrast .btn-ghost, body.high-contrast .btn-secondary,
+body.high-contrast .btn-outline, body.high-contrast .btn-limpar {
+  border-color: #ffff00 !important; color: #ffff00 !important; background: transparent !important;
+}
+body.high-contrast a { color: #ffff00 !important; }
+body.high-contrast .back, body.high-contrast .back:hover { color: #ffff00 !important; }
+
 /* ── INCLUI+ DARK MODE ──────────────────────────────────────────────────── */
 /* Applied when <body class="dark-mode">. All rules use !important to       */
 /* override inline <style> blocks in individual pages.                      */
