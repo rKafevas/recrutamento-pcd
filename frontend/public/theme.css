@@ -177,3 +177,103 @@ body.dark-mode ::-webkit-scrollbar { width: 6px; height: 6px; }
 body.dark-mode ::-webkit-scrollbar-track { background: #141928; }
 body.dark-mode ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
 body.dark-mode ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+/* ── Cards e superfícies (páginas RH) ────────────────────────────────────── */
+body.dark-mode .cand-card,
+body.dark-mode .pipeline-col,
+body.dark-mode .selector-wrap,
+body.dark-mode .card,
+body.dark-mode .section,
+body.dark-mode .stat-card {
+  background: #1a2035 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+body.dark-mode .cand-card:hover  { background: #222b42 !important; }
+body.dark-mode .card.highlight   { background: #1a2850 !important; border-color: rgba(21,88,192,0.3) !important; }
+body.dark-mode .stat-card.highlight { background: rgba(34,197,94,0.07) !important; border-color: rgba(34,197,94,0.2) !important; }
+body.dark-mode .section-header   { border-bottom-color: rgba(255,255,255,0.06) !important; }
+body.dark-mode .hint {
+  background: rgba(21,88,192,0.1) !important;
+  border-color: rgba(21,88,192,0.2) !important;
+  color: #93c5fd !important;
+}
+
+/* ── Avatar de candidato ─────────────────────────────────────────────────── */
+body.dark-mode .cand-avatar {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+body.dark-mode .cand-avatar svg { stroke: rgba(255,255,255,0.3) !important; }
+
+/* ── Texto dentro de cards / sections RH ────────────────────────────────── */
+body.dark-mode .card-value,
+body.dark-mode .stat-number,
+body.dark-mode .pipeline-count,
+body.dark-mode .section-title,
+body.dark-mode .cand-name,
+body.dark-mode .cand-info h3,
+body.dark-mode .vaga-titulo,
+body.dark-mode .funil-count,
+body.dark-mode .grafico-val,
+body.dark-mode .stats-bar strong { color: #e2e8f4 !important; }
+
+body.dark-mode .card-label,
+body.dark-mode .card-sub,
+body.dark-mode .stat-label,
+body.dark-mode .pipeline-sub,
+body.dark-mode .pipeline-label,
+body.dark-mode .section-sub,
+body.dark-mode .cand-email,
+body.dark-mode .cand-info p,
+body.dark-mode .cand-skills,
+body.dark-mode .selector-label,
+body.dark-mode .funil-label,
+body.dark-mode .funil-pct,
+body.dark-mode .grafico-mes,
+body.dark-mode .def-num-muted,
+body.dark-mode .vaga-meta,
+body.dark-mode .step-label,
+body.dark-mode .stats-bar { color: #8896b3 !important; }
+
+/* ── Chips de filtro (rh-compatibilidade) ────────────────────────────────── */
+body.dark-mode .chip {
+  background: #1a2035 !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: #c8d4e8 !important;
+}
+body.dark-mode .chip.active {
+  background: #e2e8f4 !important;
+  color: #141928 !important;
+  border-color: #e2e8f4 !important;
+}
+body.dark-mode .chip.chip-alto.active  { background: #16a34a !important; color: #fff !important; border-color: #16a34a !important; }
+body.dark-mode .chip.chip-medio.active { background: #d97706 !important; color: #fff !important; border-color: #d97706 !important; }
+body.dark-mode .chip.chip-baixo.active { background: #64748b !important; color: #fff !important; border-color: #64748b !important; }
+
+/* ── Métricas: funil e gráfico ───────────────────────────────────────────── */
+body.dark-mode .funil-bar-wrap { background: #252d3f !important; }
+body.dark-mode .score-bar-bg   { background: rgba(255,255,255,0.08) !important; }
+
+/* ── Relatório: lei box, tabela ──────────────────────────────────────────── */
+body.dark-mode .lei-box {
+  background: rgba(244,124,32,0.08) !important;
+  border-color: rgba(244,124,32,0.2) !important;
+  color: #e2e8f4 !important;
+}
+body.dark-mode .def-row.header { background: rgba(255,255,255,0.02) !important; }
+body.dark-mode .def-row,
+body.dark-mode .vaga-row { border-bottom-color: rgba(255,255,255,0.05) !important; }
+
+/* ── Candidaturas: indicadores de progresso ──────────────────────────────── */
+body.dark-mode .step-item:not(:last-child)::after { background: rgba(255,255,255,0.1) !important; }
+body.dark-mode .step-dot { background: rgba(255,255,255,0.1) !important; border-color: rgba(255,255,255,0.15) !important; }
+body.dark-mode .step-item.current .step-dot { background: #0f1117 !important; }
+body.dark-mode .step-item.done .step-label,
+body.dark-mode .step-item.current .step-label { color: #e2e8f4 !important; }
+
+/* ── Botão secundário RH (Perfil / Chat) ─────────────────────────────────── */
+body.dark-mode .btn-secondary {
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #c8d4e8 !important;
+}
