@@ -6,10 +6,10 @@ const jwt = require('jsonwebtoken');
 class AuthService {
   async login(email, senha) {
     const usuario = await UsuarioRepository.buscarPorEmail(email);
-    if (!usuario) { throw new Error('Usuário não encontrado'); }
+    if (!usuario) { const e = new Error('Usuário não encontrado'); e.status = 401; throw e; }
 
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
-    if (!senhaValida) { throw new Error('Senha incorreta'); }
+    if (!senhaValida) { const e = new Error('Senha incorreta'); e.status = 401; throw e; }
 
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email, tipo: usuario.tipo },

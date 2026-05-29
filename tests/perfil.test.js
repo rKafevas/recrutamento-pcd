@@ -41,12 +41,12 @@ describe('Perfil do candidato', () => {
       .patch('/perfil/infos')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        nome_completo: 'Perfil Atualizado',
+        nome: 'Perfil Atualizado',
         sobre: 'Texto sobre o candidato',
         habilidades: 'Node.js, PostgreSQL'
       });
     expect(res.status).toBe(200);
-    expect(res.body.nome_completo).toBe('Perfil Atualizado');
+    expect(res.body.dados.nome_completo).toBe('Perfil Atualizado');
   });
 
   test('GET /perfil — sem token retorna 401', async () => {

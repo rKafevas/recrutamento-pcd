@@ -35,12 +35,14 @@ beforeAll(async () => {
     .set('Authorization', `Bearer ${tokenRH}`)
     .send({
       titulo: 'Vaga Teste Integracao',
-      descricao: 'Descrição da vaga para teste',
+      descricao: 'Descrição da vaga para teste de integração',
+      requisitos: 'Ensino médio completo',
+      modelo_trabalho: 'Remoto',
+      localizacao: 'São Paulo',
       tipo_deficiencia_foco: 'Auditiva',
-      localizacao: 'Remoto',
       salario: '3000'
     });
-  vagaId = resVaga.body.id;
+  vagaId = resVaga.body.vaga.id;
 });
 
 afterAll(async () => {
@@ -67,8 +69,8 @@ describe('Inscrição em vaga', () => {
       .set('Authorization', `Bearer ${tokenCandidato}`)
       .send({ vaga_id: vagaId });
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('id');
-    expect(res.body.status).toBe('Pendente');
+    expect(res.body.dados).toHaveProperty('id');
+    expect(res.body.dados.status).toBe('Pendente');
   });
 
   test('POST /inscricoes — inscrição duplicada retorna erro', async () => {

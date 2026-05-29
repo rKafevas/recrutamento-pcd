@@ -26,7 +26,7 @@ describe('Autenticação', () => {
     const res = await request(app).post('/login').send({ email: EMAIL, senha: SENHA });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('token');
-    expect(res.body).toHaveProperty('tipo');
+    expect(res.body.usuario).toHaveProperty('tipo');
   });
 
   test('POST /login — senha errada retorna 401', async () => {
