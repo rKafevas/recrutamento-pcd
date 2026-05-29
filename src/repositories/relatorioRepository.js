@@ -5,12 +5,20 @@ class RelatorioRepository {
     const { rows } = await db.query(`
       SELECT
         COUNT(DISTINCT i.candidato_id) FILTER (WHERE i.status != 'Reprovado') AS total_candidatos,
-        COUNT(DISTINCT i.candidato_id) FILTER (WHERE i.status = 'Aprovado') AS total_contratados,
+        COUNT(DISTINCT i.candidato_id) FILTER (WHERE i.status = 'Aprovado')   AS total_contratados,
         COUNT(DISTINCT i.candidato_id) FILTER (WHERE i.status = 'Entrevista') AS em_entrevista,
-        COUNT(DISTINCT i.candidato_id) FILTER (WHERE i.status = 'Pendente') AS pendentes,
-        COUNT(DISTINCT v.id) AS total_vagas,
-        COUNT(DISTINCT v.id) FILTER (WHERE v.status = 'Aberta') AS vagas_abertas,
-        COUNT(DISTINCT v.id) FILTER (WHERE v.status = 'Encerrada') AS vagas_encerradas
+        COUNT(DISTINCT i.candidato_id) FILTER (WHERE i.status = 'Em análise') AS em_analise,
+        COUNT(DISTINCT i.candidato_id) FILTER (WHERE i.status = 'Pendente')   AS pendentes,
+        COUNT(i.id)                                                            AS total_inscricoes,
+        COUNT(DISTINCT v.id)                                                   AS total_vagas,
+        COUNT(DISTINCT v.id) FILTER (WHERE v.status = 'Aberta')               AS vagas_abertas,
+        COUNT(DISTINCT v.id) FILTER (WHERE v.status = 'Encerrada')            AS vagas_encerradas,
+        ROUND(
+          CASE WHEN COUNT(i.id) > 0
+            THEN COUNT(i.id) FILTER (WHERE i.status = 'Aprovado')::NUMERIC / COUNT(i.id) * 100
+            ELSE 0
+          END, 1
+        ) AS taxa_contratacao
       FROM vagas v
       LEFT JOIN inscricoes i ON i.vaga_id = v.id
       WHERE v.empresa_id = $1
@@ -20,13 +28,20 @@ class RelatorioRepository {
 
   async contatadosPorDeficiencia(empresaId) {
     const { rows } = await db.query(`
-      SELECT c.tipo_deficiencia, COUNT(*) AS total
+      SELECT
+        COALESCE(c.tipo_deficiencia, 'Não informado') AS tipo_deficiencia,
+        COUNT(*)                                                               AS total_inscricoes,
+        COUNT(*) FILTER (WHERE i.status = 'Aprovado')                        AS contratados,
+        COUNT(*) FILTER (WHERE i.status = 'Entrevista')                      AS em_entrevista,
+        COUNT(*) FILTER (WHERE i.status = 'Em análise')                      AS em_analise,
+        COUNT(*) FILTER (WHERE i.status = 'Pendente')                        AS pendentes,
+        COUNT(*) FILTER (WHERE i.status = 'Reprovado')                       AS reprovados
       FROM inscricoes i
       JOIN candidatos c ON i.candidato_id = c.id
       JOIN vagas v ON i.vaga_id = v.id
-      WHERE v.empresa_id = $1 AND i.status = 'Aprovado'
+      WHERE v.empresa_id = $1
       GROUP BY c.tipo_deficiencia
-      ORDER BY total DESC
+      ORDER BY total_inscricoes DESC
     `, [empresaId]);
     return rows;
   }
