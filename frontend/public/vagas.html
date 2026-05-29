@@ -53,6 +53,11 @@
 
     .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 28px; transition: 0.2s; }
     .back:hover { color: #1a2744; }
+    .vaga-salario { font-size: 13px; font-weight: 600; color: #1a2744; margin-bottom: 8px; }
+    .btn-limpar { background: transparent; border: 1px solid rgba(26,39,68,0.14); color: #1a2744; padding: 9px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+    .btn-limpar:hover { background: rgba(26,39,68,0.06); }
+    .btn-outline { background: transparent; border: 1px solid rgba(26,39,68,0.14); color: #1a2744; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-outline:hover { background: rgba(26,39,68,0.06); }
   </style>
 </head>
 <body>
@@ -87,7 +92,7 @@
         <option value="Remoto">Remoto</option>
       </select>
       <button onclick="aplicarFiltros()" style="background:#f47c20;border:none;color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Filtrar</button>
-      <button onclick="limparFiltros()" style="background:transparent;border:1px solid rgba(26,39,68,0.14);color:#1a2744;padding:9px 18px;border-radius:8px;font-size:13px;cursor:pointer">Limpar</button>
+      <button onclick="limparFiltros()" class="btn-limpar">Limpar</button>
     </div>
 
     <div class="vagas" id="lista-vagas">
@@ -160,11 +165,11 @@
             </div>
           </div>
           <p class="vaga-empresa">${v.localizacao || ''} ${v.nome_empresa ? '· ' + v.nome_empresa : ''}</p>
-          ${v.salario ? `<p style="font-size:13px;font-weight:600;color:#1a2744;margin-bottom:8px">💰 ${v.salario}</p>` : ''}
+          ${v.salario ? `<p class="vaga-salario">Salário: ${v.salario}</p>` : ''}
           <p class="vaga-desc">${v.descricao || ''}</p>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
             <button class="btn-apply" onclick="verDetalhes(${v.id})">Ver detalhes</button>
-            <button class="btn-apply" style="background:transparent;border:1px solid rgba(26,39,68,0.14);color:#1a2744" onclick="candidatar(${v.id})">Candidatar-se</button>
+            <button class="btn-outline" onclick="candidatar(${v.id})">Candidatar-se</button>
           </div>
         </div>`).join('');
       if (resultado.totalPaginas) renderPaginacao(resultado.totalPaginas, resultado.pagina);
