@@ -74,6 +74,15 @@ class RelatorioController {
     } catch(err) { next(err); }
   }
 
+  async metricas(req, res, next) {
+    try {
+      const empresa = await VagaRepository.buscarEmpresaPorUsuarioId(req.usuarioId);
+      if (!empresa) { const e = new Error('Empresa não encontrada.'); e.status = 404; throw e; }
+      const dados = await RelatorioRepository.metricas(empresa.id);
+      return res.json(dados);
+    } catch(err) { next(err); }
+  }
+
   async buscarCandidatos(req, res, next) {
     try {
       const { busca, deficiencia, page, limit } = req.query;

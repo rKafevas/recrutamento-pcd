@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Métricas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --orange: #f47c20; --orange-hover: #e06b10;
+      --blue: #1558c0; --blue-light: #1e74df;
+      --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99;
+      --bg: #f5f7fc;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: #1a2744; min-height: 100vh; padding-bottom: 48px; }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: #fff; box-shadow: 0 1px 6px rgba(26,39,68,0.08); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-ghost:hover { background: rgba(26,39,68,0.04); }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+    .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; }
+    .page-header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+    /* Cards */
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    @media (max-width: 700px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+    .card { background: #fff; border: 1px solid var(--white-border); border-radius: 14px; padding: 20px 22px; }
+    .card-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+    .card-value { font-family: 'Sora', sans-serif; font-size: 32px; font-weight: 700; color: #1a2744; line-height: 1; }
+    .card-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+    .card.highlight { border-color: rgba(21,88,192,0.25); background: #f0f5ff; }
+    .card.highlight .card-value { color: var(--blue); }
+
+    /* Sections */
+    .section { background: #fff; border: 1px solid var(--white-border); border-radius: 14px; padding: 24px 28px; margin-bottom: 24px; }
+    .section-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+
+    /* Funil */
+    .funil { display: flex; flex-direction: column; gap: 12px; }
+    .funil-row { display: flex; align-items: center; gap: 14px; }
+    .funil-label { width: 110px; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+    .funil-bar-wrap { flex: 1; background: #f0f4ff; border-radius: 6px; height: 32px; overflow: hidden; }
+    .funil-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 12px; font-size: 12px; font-weight: 600; color: #fff; transition: width 0.6s ease; min-width: 32px; }
+    .funil-count { width: 52px; text-align: right; font-size: 13px; font-weight: 600; color: #1a2744; flex-shrink: 0; }
+    .funil-pct { width: 44px; text-align: right; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+
+    .bar-pendente   { background: #94a3b8; }
+    .bar-analise    { background: #60a5fa; }
+    .bar-entrevista { background: #f59e0b; }
+    .bar-aprovado   { background: #22c55e; }
+    .bar-reprovado  { background: #f87171; }
+
+    /* Gráfico mensal */
+    .grafico { display: flex; align-items: flex-end; gap: 12px; height: 140px; padding-bottom: 0; }
+    .grafico-col { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; height: 100%; justify-content: flex-end; }
+    .grafico-bar { width: 100%; background: linear-gradient(180deg, #1e74df, #1558c0); border-radius: 5px 5px 0 0; transition: height 0.5s ease; min-height: 4px; }
+    .grafico-val { font-size: 12px; font-weight: 600; color: #1a2744; }
+    .grafico-mes { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    .grafico-empty { font-size: 13px; color: var(--text-muted); text-align: center; width: 100%; padding: 32px 0; }
+
+    .skeleton { background: linear-gradient(90deg,#eef0f5 25%,#e2e5ed 50%,#eef0f5 75%); background-size: 400% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; height: 32px; }
+    @keyframes shimmer { 0%{background-position:100% 50%} 100%{background-position:0 50%} }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
+    <div style="display:flex;gap:10px">
+      <a href="rh-dashboard.html" class="btn-ghost">← Painel</a>
+      <a href="login.html" class="btn-ghost">Sair</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-header">
+      <div class="page-label">Recursos Humanos</div>
+      <h1>Métricas</h1>
+      <p>Desempenho do seu processo seletivo</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards" id="cards">
+      <div class="card"><div class="skeleton"></div></div>
+      <div class="card"><div class="skeleton"></div></div>
+      <div class="card"><div class="skeleton"></div></div>
+      <div class="card"><div class="skeleton"></div></div>
+    </div>
+
+    <!-- Funil -->
+    <div class="section">
+      <div class="section-title">Funil de inscrições</div>
+      <div class="funil" id="funil"><div class="skeleton" style="height:24px"></div></div>
+    </div>
+
+    <!-- Gráfico mensal -->
+    <div class="section">
+      <div class="section-title">Inscrições por mês</div>
+      <div class="grafico" id="grafico"><p class="grafico-empty">Carregando...</p></div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'login.html';
+
+    function fmt(n) { return Number(n) || 0; }
+
+    async function carregar() {
+      try {
+        const r = await fetch(API_URL + '/relatorio/metricas', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        renderCards(d);
+        renderFunil(d);
+        renderGrafico(d.porMes || []);
+      } catch(e) {
+        document.getElementById('cards').innerHTML = '<p style="color:#f87171;font-size:13px;grid-column:1/-1">Não foi possível carregar as métricas.</p>';
+      }
+    }
+
+    function renderCards(d) {
+      const vagas = d.vagas || {};
+      document.getElementById('cards').innerHTML = `
+        <div class="card">
+          <div class="card-label">Total de inscrições</div>
+          <div class="card-value">${fmt(d.total_inscricoes)}</div>
+          <div class="card-sub">desde o início</div>
+        </div>
+        <div class="card highlight">
+          <div class="card-label">Taxa de conversão</div>
+          <div class="card-value">${fmt(d.taxa_conversao)}%</div>
+          <div class="card-sub">${fmt(d.aprovados)} aprovado(s)</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Tempo médio</div>
+          <div class="card-value">${fmt(d.tempo_medio_dias)}<span style="font-size:16px;font-weight:500"> dias</span></div>
+          <div class="card-sub">até aprovação</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Vagas abertas</div>
+          <div class="card-value">${fmt(vagas.abertas)}</div>
+          <div class="card-sub">${fmt(vagas.encerradas)} encerrada(s)</div>
+        </div>
+      `;
+    }
+
+    function renderFunil(d) {
+      const total = fmt(d.total_inscricoes) || 1;
+      const etapas = [
+        { label: 'Pendente',    val: fmt(d.pendentes),   cls: 'bar-pendente' },
+        { label: 'Em análise',  val: fmt(d.em_analise),  cls: 'bar-analise' },
+        { label: 'Entrevista',  val: fmt(d.entrevistas), cls: 'bar-entrevista' },
+        { label: 'Aprovado',    val: fmt(d.aprovados),   cls: 'bar-aprovado' },
+        { label: 'Reprovado',   val: fmt(d.reprovados),  cls: 'bar-reprovado' },
+      ];
+      document.getElementById('funil').innerHTML = etapas.map(e => {
+        const pct = Math.round(e.val / total * 100);
+        return `
+          <div class="funil-row">
+            <span class="funil-label">${e.label}</span>
+            <div class="funil-bar-wrap">
+              <div class="funil-bar ${e.cls}" style="width:${Math.max(pct, e.val > 0 ? 4 : 0)}%">${e.val > 0 ? e.val : ''}</div>
+            </div>
+            <span class="funil-count">${e.val}</span>
+            <span class="funil-pct">${pct}%</span>
+          </div>`;
+      }).join('');
+    }
+
+    function renderGrafico(meses) {
+      const el = document.getElementById('grafico');
+      if (!meses.length) {
+        el.innerHTML = '<p class="grafico-empty">Sem dados nos últimos 6 meses.</p>';
+        return;
+      }
+      const max = Math.max(...meses.map(m => Number(m.total)), 1);
+      el.innerHTML = meses.map(m => `
+        <div class="grafico-col">
+          <span class="grafico-val">${m.total}</span>
+          <div class="grafico-bar" style="height:${Math.round(Number(m.total) / max * 100)}px"></div>
+          <span class="grafico-mes">${m.mes}</span>
+        </div>
+      `).join('');
+    }
+
+    carregar();
+  </script>
+</body>
+</html>

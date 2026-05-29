@@ -44,6 +44,56 @@ class RelatorioRepository {
     `, [empresaId]);
     return rows;
   }
+  async metricas(empresaId) {
+    const { rows: [resumo] } = await db.query(`
+      SELECT
+        COUNT(i.id) AS total_inscricoes,
+        COUNT(i.id) FILTER (WHERE i.status = 'Pendente')    AS pendentes,
+        COUNT(i.id) FILTER (WHERE i.status = 'Em análise')  AS em_analise,
+        COUNT(i.id) FILTER (WHERE i.status = 'Entrevista')  AS entrevistas,
+        COUNT(i.id) FILTER (WHERE i.status = 'Aprovado')    AS aprovados,
+        COUNT(i.id) FILTER (WHERE i.status = 'Reprovado')   AS reprovados,
+        ROUND(
+          CASE WHEN COUNT(i.id) > 0
+            THEN COUNT(i.id) FILTER (WHERE i.status = 'Aprovado')::NUMERIC / COUNT(i.id) * 100
+            ELSE 0 END, 1
+        ) AS taxa_conversao,
+        ROUND(
+          COALESCE(
+            AVG(
+              EXTRACT(EPOCH FROM (i.data_atualizacao_status - i.data_inscricao)) / 86400.0
+            ) FILTER (WHERE i.status = 'Aprovado'),
+            0
+          )::NUMERIC, 1
+        ) AS tempo_medio_dias
+      FROM inscricoes i
+      JOIN vagas v ON i.vaga_id = v.id
+      WHERE v.empresa_id = $1
+    `, [empresaId]);
+
+    const { rows: porMes } = await db.query(`
+      SELECT
+        TO_CHAR(DATE_TRUNC('month', i.data_inscricao), 'Mon/YY') AS mes,
+        DATE_TRUNC('month', i.data_inscricao) AS mes_data,
+        COUNT(*) AS total
+      FROM inscricoes i
+      JOIN vagas v ON i.vaga_id = v.id
+      WHERE v.empresa_id = $1
+        AND i.data_inscricao >= NOW() - INTERVAL '6 months'
+      GROUP BY DATE_TRUNC('month', i.data_inscricao)
+      ORDER BY mes_data ASC
+    `, [empresaId]);
+
+    const { rows: [vagas] } = await db.query(`
+      SELECT
+        COUNT(*) FILTER (WHERE status = 'Aberta')    AS abertas,
+        COUNT(*) FILTER (WHERE status = 'Encerrada') AS encerradas
+      FROM vagas WHERE empresa_id = $1
+    `, [empresaId]);
+
+    return { ...resumo, porMes, vagas };
+  }
+
   async buscarCandidatos({ busca, deficiencia, page = 1, limit = 20 }) {
     const offset = (Math.max(1, parseInt(page)) - 1) * parseInt(limit);
     let conditions = ['1=1'];

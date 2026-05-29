@@ -65,14 +65,14 @@ class InscricaoRepository {
 
   async atualizarStatus(id, novoStatus) {
     const query = `
-      UPDATE inscricoes 
-      SET status = $1 
-      WHERE id = $2 
+      UPDATE inscricoes
+      SET status = $1, data_atualizacao_status = NOW()
+      WHERE id = $2
       RETURNING *
     `;
     const { rows } = await db.query(query, [novoStatus, id]);
     return rows[0];
-}
+  }
 }
 
 module.exports = new InscricaoRepository();
