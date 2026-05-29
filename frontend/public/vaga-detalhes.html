@@ -31,8 +31,9 @@
     .vaga-meta span { display: flex; align-items: center; gap: 5px; }
 
     .panel { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
-    .panel-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
-    .panel p { font-size: 14px; line-height: 1.8; color: #6b7a99; white-space: pre-wrap; }
+    .panel-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid rgba(26,39,68,0.08); display: flex; align-items: center; gap: 8px; }
+    .panel-title::before { content: ''; width: 3px; height: 13px; background: var(--orange); border-radius: 2px; flex-shrink: 0; }
+    .panel p { font-size: 14px; line-height: 1.8; color: #1a2744; white-space: pre-wrap; }
 
     .salario-box { background: rgba(244,124,32,0.1); border: 1px solid rgba(244,124,32,0.25); border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .salario-box span { font-size: 12px; color: var(--text-muted); }
