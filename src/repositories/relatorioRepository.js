@@ -44,18 +44,31 @@ class RelatorioRepository {
     `, [empresaId]);
     return rows;
   }
-  async buscarCandidatos({ busca, deficiencia }) {
+  async buscarCandidatos({ busca, deficiencia, page = 1, limit = 20 }) {
+    const offset = (Math.max(1, parseInt(page)) - 1) * parseInt(limit);
     let conditions = ['1=1'];
     const params = [];
     if (busca) { params.push(`%${busca}%`); conditions.push(`(c.nome_completo ILIKE $${params.length} OR u.email ILIKE $${params.length})`); }
     if (deficiencia) { params.push(deficiencia); conditions.push(`c.tipo_deficiencia = $${params.length}`); }
+
+    const whereClause = conditions.join(' AND ');
+
+    const { rows: countRows } = await db.query(
+      `SELECT COUNT(*) AS total FROM candidatos c JOIN usuarios u ON c.usuario_id = u.id WHERE ${whereClause}`,
+      params
+    );
+    const total = parseInt(countRows[0].total);
+
+    params.push(parseInt(limit), offset);
     const { rows } = await db.query(`
       SELECT c.id, c.usuario_id, c.nome_completo, c.tipo_deficiencia, c.sobre, c.habilidades, c.foto_url, c.curriculo_url, c.laudo_medico_url, u.email
       FROM candidatos c JOIN usuarios u ON c.usuario_id = u.id
-      WHERE ${conditions.join(' AND ')}
-      ORDER BY c.nome_completo ASC LIMIT 50
+      WHERE ${whereClause}
+      ORDER BY c.nome_completo ASC
+      LIMIT $${params.length - 1} OFFSET $${params.length}
     `, params);
-    return rows;
+
+    return { dados: rows, total, page: parseInt(page), limit: parseInt(limit) };
   }
 }
 

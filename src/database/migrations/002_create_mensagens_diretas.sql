@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS mensagens_diretas (
+  id SERIAL PRIMARY KEY,
+  remetente_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+  destinatario_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+  candidato_usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+  conteudo TEXT NOT NULL,
+  lida BOOLEAN DEFAULT FALSE,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

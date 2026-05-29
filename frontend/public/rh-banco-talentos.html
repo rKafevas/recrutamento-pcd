@@ -55,6 +55,13 @@
     .back:hover { color: #1a2744; }
     .empty { text-align: center; padding: 48px; color: var(--text-muted); font-size: 14px; }
 
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 24px; flex-wrap: wrap; }
+    .page-btn { padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--white-border); background: #fff; color: #1a2744; transition: 0.2s; }
+    .page-btn:hover:not(:disabled) { background: var(--white-hover); }
+    .page-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); cursor: default; }
+    .page-btn:disabled { opacity: 0.4; cursor: default; }
+    .page-info { font-size: 13px; color: var(--text-muted); padding: 0 4px; }
+
     @media(max-width: 600px) {
       .cand-card { flex-direction: column; }
       .cand-actions { flex-direction: row; }
@@ -83,6 +90,7 @@
 
     <div class="stats-bar" id="stats-bar"></div>
     <div class="cand-grid" id="lista-candidatos"><p class="empty">Carregando...</p></div>
+    <div class="pagination" id="paginacao"></div>
 
     <a href="rh-dashboard.html" class="back">← Voltar ao Painel</a>
   </div>
@@ -97,29 +105,53 @@
     const token = localStorage.getItem('token');
     if (!token || localStorage.getItem('tipo') !== 'RH') window.location.href = 'login.html';
 
+    const LIMIT = 20;
+    let paginaAtual = 1;
     let timer = null;
-    function debounce() { clearTimeout(timer); timer = setTimeout(buscar, 400); }
+
+    function debounce() { clearTimeout(timer); paginaAtual = 1; timer = setTimeout(buscar, 400); }
+
+    function irParaPagina(p) { paginaAtual = p; buscar(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+    function renderPaginacao(total, page, limit) {
+      const totalPaginas = Math.ceil(total / limit);
+      const el = document.getElementById('paginacao');
+      if (totalPaginas <= 1) { el.innerHTML = ''; return; }
+
+      let html = `<button class="page-btn" onclick="irParaPagina(${page - 1})" ${page <= 1 ? 'disabled' : ''}>‹ Anterior</button>`;
+      for (let i = 1; i <= totalPaginas; i++) {
+        if (totalPaginas > 7 && Math.abs(i - page) > 2 && i !== 1 && i !== totalPaginas) {
+          if (i === page - 3 || i === page + 3) html += `<span class="page-info">…</span>`;
+          continue;
+        }
+        html += `<button class="page-btn ${i === page ? 'active' : ''}" onclick="irParaPagina(${i})">${i}</button>`;
+      }
+      html += `<button class="page-btn" onclick="irParaPagina(${page + 1})" ${page >= totalPaginas ? 'disabled' : ''}>Próxima ›</button>`;
+      el.innerHTML = html;
+    }
 
     async function buscar() {
       const busca = document.getElementById('input-busca').value.trim();
       const deficiencia = document.getElementById('sel-deficiencia').value;
       const grid = document.getElementById('lista-candidatos');
       grid.innerHTML = '<p class="empty">Buscando...</p>';
+      document.getElementById('paginacao').innerHTML = '';
       try {
         const params = new URLSearchParams();
         if (busca) params.set('busca', busca);
         if (deficiencia) params.set('deficiencia', deficiencia);
+        params.set('page', paginaAtual);
+        params.set('limit', LIMIT);
         const r = await fetch(`${API_URL}/candidatos/busca?${params}`, {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         if (!r.ok) { grid.innerHTML = '<p class="empty">Erro ao buscar candidatos.</p>'; return; }
-        const d = await r.json();
+        const { dados: d, total } = await r.json();
 
-        const n = d.length;
         document.getElementById('stats-bar').innerHTML =
-          `<strong>${n}</strong> candidato${n !== 1 ? 's' : ''} encontrado${n !== 1 ? 's' : ''}`;
+          `<strong>${total}</strong> candidato${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}`;
 
-        if (!n) { grid.innerHTML = '<p class="empty">Nenhum candidato encontrado.</p>'; return; }
+        if (!d.length) { grid.innerHTML = '<p class="empty">Nenhum candidato encontrado.</p>'; return; }
 
         grid.innerHTML = d.map(c => `
           <div class="cand-card">
@@ -159,6 +191,8 @@
               </button>
             </div>
           </div>`).join('');
+
+        renderPaginacao(total, paginaAtual, LIMIT);
       } catch(e) {
         grid.innerHTML = '<p class="empty">Não foi possível conectar ao servidor.</p>';
       }

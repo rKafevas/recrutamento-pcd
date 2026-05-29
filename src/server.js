@@ -1,69 +1,19 @@
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 const db = require('./database');
-const routes = require('./routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
-const rateLimit = require('express-rate-limit');
 const MensagemRepository = require('./repositories/mensagemRepository');
+const { runMigrations } = require('./database/migrator');
+const app = require('./app');
 
-const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    const allowed = [
-      process.env.CORS_ORIGIN,
-      'https://project-2o4gv.vercel.app',
-    ].filter(Boolean);
-    if (!origin || allowed.includes(origin) || /\.vercel\.app$/.test(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Authorization', 'Content-Type'],
-  optionsSuccessStatus: 200,
-};
-
-app.options(/.*/, cors(corsOptions));
-app.use(cors(corsOptions));
-app.use(express.json());
-app.set('trust proxy', 1);
-
-// Rate limiting — máximo 10 tentativas de login por IP a cada 15 minutos
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: { erro: 'Muitas tentativas de login. Tente novamente em 15 minutos.' },
-  standardHeaders: true,
-  legacyHeaders: false
-});
-
-app.use('/login', loginLimiter);
-
-// Uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// FRONTEND
-app.use(express.static(path.join(__dirname, '../frontend/public')));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
-});
-
 // Swagger
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Rotas API
-app.use(routes);
 
 // SOCKET.IO — Chat em tempo real
 io.use((socket, next) => {
@@ -232,42 +182,6 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
-// Migration: amplia colunas de URL de VARCHAR(255) para TEXT
-async function runMigrations() {
-  try {
-    await db.query(`
-      DO $$
-      BEGIN
-        IF (SELECT data_type FROM information_schema.columns
-            WHERE table_name = 'candidatos' AND column_name = 'laudo_medico_url') = 'character varying' THEN
-          ALTER TABLE candidatos
-            ALTER COLUMN laudo_medico_url TYPE TEXT,
-            ALTER COLUMN curriculo_url    TYPE TEXT,
-            ALTER COLUMN foto_url         TYPE TEXT;
-        END IF;
-      END $$;
-    `);
-  } catch (e) {
-    console.error('Erro na migration de colunas URL:', e.message);
-  }
-
-  try {
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS mensagens_diretas (
-        id SERIAL PRIMARY KEY,
-        remetente_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
-        destinatario_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
-        candidato_usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
-        conteudo TEXT NOT NULL,
-        lida BOOLEAN DEFAULT FALSE,
-        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-  } catch (e) {
-    console.error('Erro na migration de mensagens_diretas:', e.message);
-  }
-}
 
 runMigrations().then(() => {
   server.listen(PORT, () => {

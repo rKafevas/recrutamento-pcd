@@ -1,9 +1,15 @@
 const { Resend } = require('resend');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.EMAIL_FROM || 'Inclui+ <onboarding@resend.dev>';
 
+function getResend() {
+  if (!process.env.RESEND_API_KEY) return null;
+  return new Resend(process.env.RESEND_API_KEY);
+}
+
 async function enviarConfirmacaoCadastro(destinatario, nome, token) {
+  const resend = getResend();
+  if (!resend) return;
   await resend.emails.send({
     from: FROM,
     to: destinatario,
@@ -30,6 +36,8 @@ async function enviarConfirmacaoCadastro(destinatario, nome, token) {
 }
 
 async function enviarRecuperacaoSenha(destinatario, nome, token) {
+  const resend = getResend();
+  if (!resend) return;
   await resend.emails.send({
     from: FROM,
     to: destinatario,

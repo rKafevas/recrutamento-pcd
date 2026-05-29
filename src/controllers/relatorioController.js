@@ -76,9 +76,9 @@ class RelatorioController {
 
   async buscarCandidatos(req, res, next) {
     try {
-      const { busca, deficiencia } = req.query;
-      const dados = await RelatorioRepository.buscarCandidatos({ busca, deficiencia });
-      return res.json(dados);
+      const { busca, deficiencia, page, limit } = req.query;
+      const resultado = await RelatorioRepository.buscarCandidatos({ busca, deficiencia, page, limit });
+      return res.json(resultado);
     } catch(err) { next(err); }
   }
 }
