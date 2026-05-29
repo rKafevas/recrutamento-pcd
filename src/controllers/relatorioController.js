@@ -27,18 +27,26 @@ class RelatorioController {
       res.setHeader('Content-Disposition', `attachment; filename=relatorio-di-${Date.now()}.pdf`);
       doc.pipe(res);
 
-      const LEFT = 50, RIGHT = 545, W = RIGHT - LEFT;
+      const L = 50, R = 545, W = R - L;
       const orange = '#f47c20', gray = '#6b7a99', dark = '#1a2744';
 
+      // Render a single table cell at explicit coordinates — avoids continued:true bugs
+      function cell(text, x, y, w, opts = {}) {
+        doc.fontSize(opts.size || 10)
+           .font(opts.bold ? 'Helvetica-Bold' : 'Helvetica')
+           .fillColor(opts.color || dark)
+           .text(String(text), x, y, { width: w, align: opts.align || 'left', lineBreak: false });
+      }
+
       // ── Cabeçalho ──────────────────────────────────────────────────────────
-      doc.rect(LEFT, 40, W, 56).fill('#f5f7fc');
+      doc.rect(L, 40, W, 56).fill('#f5f7fc');
       doc.fontSize(18).font('Helvetica-Bold').fillColor(dark)
-         .text('Inclui+', LEFT + 12, 50, { continued: true })
+         .text('Inclui+', L + 12, 50, { continued: true })
          .fillColor(orange).text('  ·  Relatório de D&I', { continued: false });
       doc.fontSize(10).font('Helvetica').fillColor(gray)
          .text(`Lei nº 8.213/91  |  Empresa: ${empresa.nome_fantasia}  |  Gerado em: ${new Date().toLocaleDateString('pt-BR')}`,
-               LEFT + 12, 72);
-      doc.fillColor(dark).moveDown(2.5);
+               L + 12, 70, { lineBreak: false });
+      doc.y = 110;
 
       // ── Resumo em grid 2×3 ─────────────────────────────────────────────────
       const r = resumo;
@@ -54,117 +62,133 @@ class RelatorioController {
       const boxW = Math.floor(W / 3) - 6, boxH = 48;
       const startY = doc.y;
       statBoxes.forEach((b, i) => {
-        const col = i % 3, row = Math.floor(i / 3);
-        const x = LEFT + col * (boxW + 9), y = startY + row * (boxH + 8);
+        const col = i % 3, rowIdx = Math.floor(i / 3);
+        const x = L + col * (boxW + 9), y = startY + rowIdx * (boxH + 8);
         doc.rect(x, y, boxW, boxH).lineWidth(1).strokeColor('rgba(26,39,68,0.1)').fillAndStroke('#fff', 'rgba(26,39,68,0.1)');
         doc.fontSize(20).font('Helvetica-Bold').fillColor(b.color || dark)
-           .text(String(b.value), x + 10, y + 7, { width: boxW - 20 });
+           .text(String(b.value), x + 10, y + 7, { width: boxW - 20, lineBreak: false });
         doc.fontSize(9).font('Helvetica').fillColor(gray)
-           .text(b.label, x + 10, y + 30, { width: boxW - 20 });
+           .text(b.label, x + 10, y + 30, { width: boxW - 20, lineBreak: false });
       });
-      doc.y = startY + 2 * (boxH + 8) + 16;
+      doc.y = startY + 2 * (boxH + 8) + 14;
 
       // ── Lei 8.213/91 ────────────────────────────────────────────────────────
-      doc.rect(LEFT, doc.y, W, 36).fill('#fff7ed');
+      const leiY = doc.y;
+      doc.rect(L, leiY, W, 30).fill('#fff7ed');
       doc.fontSize(9).font('Helvetica-Bold').fillColor(orange)
-         .text('Lei de Cotas (Art. 93):', LEFT + 10, doc.y + 4, { continued: true })
+         .text('Lei de Cotas (Art. 93):', L + 10, leiY + 9, { continued: true })
          .font('Helvetica').fillColor(dark)
-         .text('  100–200 func.: 2% | 201–500: 3% | 501–1.000: 4% | Acima de 1.001: 5%');
-      doc.moveDown(2.2);
+         .text('  100–200 func.: 2% | 201–500: 3% | 501–1.000: 4% | Acima de 1.001: 5%', { lineBreak: false });
+      doc.y = leiY + 42;
 
       // ── Inscrições por tipo de deficiência ─────────────────────────────────
-      doc.fontSize(13).font('Helvetica-Bold').fillColor(dark).text('Inscrições por tipo de deficiência');
-      doc.moveDown(0.4);
+      doc.fontSize(13).font('Helvetica-Bold').fillColor(dark).text('Inscrições por tipo de deficiência', L, doc.y);
+      doc.y += 6;
 
-      const maxIns = Math.max(...porDeficiencia.map(p => Number(p.total_inscricoes) || 0), 1);
-      const barAreaW = W - 180;
+      // Column layout — all coords stay within L=50 … R=545
+      // tipo:50–170  bar:175–285  con:290–374  ent:379–453  ana:458–545
+      const DC = {
+        tipo: { x: L,       w: 120 },
+        bar:  { x: L + 125, w: 110 },
+        con:  { x: L + 240, w: 84,  align: 'right' },
+        ent:  { x: L + 329, w: 74,  align: 'right' },
+        ana:  { x: L + 408, w: 87,  align: 'right' },
+      };
+
+      let curY = doc.y;
+      doc.rect(L, curY - 2, W, 16).fill('rgba(26,39,68,0.03)');
+      cell('Tipo',        DC.tipo.x, curY, DC.tipo.w, { bold: true, color: gray, size: 9 });
+      cell('Inscrições',  DC.bar.x,  curY, DC.bar.w,  { bold: true, color: gray, size: 9 });
+      cell('Contratados', DC.con.x,  curY, DC.con.w,  { bold: true, color: gray, size: 9, align: 'right' });
+      cell('Entrevista',  DC.ent.x,  curY, DC.ent.w,  { bold: true, color: gray, size: 9, align: 'right' });
+      cell('Em análise',  DC.ana.x,  curY, DC.ana.w,  { bold: true, color: gray, size: 9, align: 'right' });
+      curY += 14;
+      doc.moveTo(L, curY).lineTo(R, curY).lineWidth(0.5).strokeColor('rgba(26,39,68,0.15)').stroke();
+      curY += 4;
 
       if (porDeficiencia.length) {
-        // Cabeçalho da tabela
-        doc.fontSize(9).font('Helvetica-Bold').fillColor(gray);
-        doc.text('Tipo', LEFT, doc.y, { width: 100, continued: true });
-        doc.text('Inscrições', LEFT + 100, doc.y - doc.currentLineHeight(), { width: 60, align: 'right', continued: true });
-        doc.text('Contratados', LEFT + 165, doc.y - doc.currentLineHeight(), { width: 70, align: 'right', continued: true });
-        doc.text('Entrevista', LEFT + 240, doc.y - doc.currentLineHeight(), { width: 60, align: 'right', continued: false });
-        doc.moveDown(0.3);
-        doc.moveTo(LEFT, doc.y).lineTo(RIGHT, doc.y).lineWidth(0.5).strokeColor('rgba(26,39,68,0.15)').stroke();
-        doc.moveDown(0.3);
+        const maxIns = Math.max(...porDeficiencia.map(p => Number(p.total_inscricoes) || 0), 1);
 
         porDeficiencia.forEach(p => {
           const ins = Number(p.total_inscricoes) || 0;
           const con = Number(p.contratados) || 0;
           const ent = Number(p.em_entrevista) || 0;
-          const rowY = doc.y;
+          const ana = Number(p.em_analise) || 0;
 
-          // Barra de fundo
-          doc.rect(LEFT + 300, rowY + 2, barAreaW - 100, 10).fill('#f0f4ff');
-          // Barra de inscrições (azul claro)
-          const bIns = Math.round((ins / maxIns) * (barAreaW - 100));
-          doc.rect(LEFT + 300, rowY + 2, bIns, 10).fill('#93c5fd');
-          // Barra de contratados (verde)
-          if (con > 0) {
-            const bCon = Math.round((con / maxIns) * (barAreaW - 100));
-            doc.rect(LEFT + 300, rowY + 2, bCon, 10).fill('#4ade80');
-          }
+          // Bars (within bar column)
+          doc.rect(DC.bar.x, curY + 3, DC.bar.w, 8).fill('#f0f4ff');
+          const bIns = Math.round((ins / maxIns) * DC.bar.w);
+          if (bIns > 0) doc.rect(DC.bar.x, curY + 3, bIns, 8).fill('#93c5fd');
+          const bCon = Math.round((con / maxIns) * DC.bar.w);
+          if (bCon > 0) doc.rect(DC.bar.x, curY + 3, bCon, 8).fill('#4ade80');
 
-          doc.fontSize(10).font('Helvetica').fillColor(dark)
-             .text(p.tipo_deficiencia, LEFT, rowY, { width: 100, continued: true });
-          doc.text(String(ins), LEFT + 100, rowY, { width: 60, align: 'right', continued: true });
-          doc.text(String(con), LEFT + 165, rowY, { width: 70, align: 'right', continued: true });
-          doc.text(String(ent), LEFT + 240, rowY, { width: 60, align: 'right', continued: false });
-          doc.moveDown(0.15);
-          doc.moveTo(LEFT, doc.y).lineTo(RIGHT, doc.y).lineWidth(0.3).strokeColor('rgba(26,39,68,0.08)').stroke();
-          doc.moveDown(0.4);
+          cell(p.tipo_deficiencia, DC.tipo.x, curY, DC.tipo.w);
+          cell(con, DC.con.x, curY, DC.con.w, { bold: true, color: '#16a34a', align: 'right' });
+          cell(ent, DC.ent.x, curY, DC.ent.w, { color: gray, align: 'right' });
+          cell(ana, DC.ana.x, curY, DC.ana.w, { color: gray, align: 'right' });
+
+          curY += 19;
+          doc.moveTo(L, curY).lineTo(R, curY).lineWidth(0.3).strokeColor('rgba(26,39,68,0.08)').stroke();
+          curY += 3;
         });
 
         // Legenda
-        doc.moveDown(0.3);
-        doc.rect(LEFT, doc.y, 12, 8).fill('#93c5fd');
-        doc.fontSize(8).font('Helvetica').fillColor(gray).text(' Inscrições totais', LEFT + 15, doc.y - 6, { continued: true });
-        doc.rect(LEFT + 100, doc.y - 2, 12, 8).fill('#4ade80');
-        doc.text('  Contratados', LEFT + 115, doc.y - 6, { continued: false });
-        doc.moveDown(1.2);
+        curY += 4;
+        doc.rect(L, curY + 1, 10, 8).fill('#93c5fd');
+        cell('Inscrições totais', L + 14, curY, 100, { color: gray, size: 8 });
+        doc.rect(L + 115, curY + 1, 10, 8).fill('#4ade80');
+        cell('Contratados', L + 129, curY, 80, { color: gray, size: 8 });
+        curY += 18;
       } else {
-        doc.fontSize(10).font('Helvetica').fillColor(gray).text('Nenhuma inscrição registrada.');
-        doc.moveDown();
+        cell('Nenhuma inscrição registrada.', L, curY, W, { color: gray });
+        curY += 18;
       }
 
-      // ── Vagas ───────────────────────────────────────────────────────────────
-      doc.fontSize(13).font('Helvetica-Bold').fillColor(dark).text('Vagas e inscrições');
-      doc.moveDown(0.4);
+      doc.y = curY + 14;
 
-      // Cabeçalho
-      doc.fontSize(9).font('Helvetica-Bold').fillColor(gray);
-      ['Título', 'Foco', 'Status', 'Inscritos', 'Aprovados'].forEach((h, i) => {
-        const xs = [LEFT, LEFT+200, LEFT+310, LEFT+380, LEFT+450];
-        doc.text(h, xs[i], doc.y, { width: i < 4 ? 100 : 60, continued: i < 4, align: i >= 3 ? 'right' : 'left' });
-      });
-      doc.moveDown(0.3);
-      doc.moveTo(LEFT, doc.y).lineTo(RIGHT, doc.y).lineWidth(0.5).strokeColor('rgba(26,39,68,0.15)').stroke();
-      doc.moveDown(0.3);
+      // ── Vagas ───────────────────────────────────────────────────────────────
+      doc.fontSize(13).font('Helvetica-Bold').fillColor(dark).text('Vagas e inscrições', L, doc.y);
+      doc.y += 6;
+
+      // titulo:50–204  foco:209–313  status:318–382  inscritos:387–456  aprovados:461–545
+      const VC = {
+        titulo:    { x: L,       w: 154 },
+        foco:      { x: L + 159, w: 104 },
+        status:    { x: L + 268, w: 64 },
+        inscritos: { x: L + 337, w: 69,  align: 'right' },
+        aprovados: { x: L + 411, w: 84,  align: 'right' },
+      };
+
+      curY = doc.y;
+      doc.rect(L, curY - 2, W, 16).fill('rgba(26,39,68,0.03)');
+      cell('Título',    VC.titulo.x,    curY, VC.titulo.w,    { bold: true, color: gray, size: 9 });
+      cell('Foco',      VC.foco.x,      curY, VC.foco.w,      { bold: true, color: gray, size: 9 });
+      cell('Status',    VC.status.x,    curY, VC.status.w,    { bold: true, color: gray, size: 9 });
+      cell('Inscritos', VC.inscritos.x, curY, VC.inscritos.w, { bold: true, color: gray, size: 9, align: 'right' });
+      cell('Aprovados', VC.aprovados.x, curY, VC.aprovados.w, { bold: true, color: gray, size: 9, align: 'right' });
+      curY += 14;
+      doc.moveTo(L, curY).lineTo(R, curY).lineWidth(0.5).strokeColor('rgba(26,39,68,0.15)').stroke();
+      curY += 4;
 
       vagas.forEach(v => {
         const statusColor = v.status === 'Aberta' ? '#16a34a' : gray;
-        const rowY = doc.y;
-        doc.fontSize(10).font('Helvetica-Bold').fillColor(dark)
-           .text(v.titulo, LEFT, rowY, { width: 195, continued: true });
-        doc.font('Helvetica').fillColor(gray)
-           .text(v.tipo_deficiencia_foco || 'Qualquer', LEFT + 200, rowY, { width: 100, continued: true });
-        doc.fillColor(statusColor)
-           .text(v.status, LEFT + 310, rowY, { width: 65, continued: true });
-        doc.fillColor(dark)
-           .text(String(v.total_inscritos), LEFT + 380, rowY, { width: 65, align: 'right', continued: true })
-           .text(String(v.aprovados), LEFT + 450, rowY, { width: 60, align: 'right', continued: false });
-        doc.moveDown(0.15);
-        doc.moveTo(LEFT, doc.y).lineTo(RIGHT, doc.y).lineWidth(0.3).strokeColor('rgba(26,39,68,0.08)').stroke();
-        doc.moveDown(0.4);
+        cell(v.titulo,                             VC.titulo.x,    curY, VC.titulo.w,    { bold: true });
+        cell(v.tipo_deficiencia_foco || 'Qualquer',VC.foco.x,      curY, VC.foco.w,      { color: gray });
+        cell(v.status,                             VC.status.x,    curY, VC.status.w,    { color: statusColor });
+        cell(v.total_inscritos,                    VC.inscritos.x, curY, VC.inscritos.w, { align: 'right' });
+        cell(v.aprovados,                          VC.aprovados.x, curY, VC.aprovados.w, { align: 'right' });
+
+        curY += 19;
+        doc.moveTo(L, curY).lineTo(R, curY).lineWidth(0.3).strokeColor('rgba(26,39,68,0.08)').stroke();
+        curY += 3;
       });
 
+      doc.y = curY + 16;
+
       // ── Rodapé ──────────────────────────────────────────────────────────────
-      doc.moveDown();
       doc.fontSize(8).fillColor(gray).text(
         `Relatório gerado pela plataforma Inclui+ em ${new Date().toLocaleString('pt-BR')}`,
-        LEFT, doc.y, { align: 'center', width: W }
+        L, doc.y, { align: 'center', width: W }
       );
 
       doc.end();
