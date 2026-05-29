@@ -179,6 +179,7 @@
             <div class="vaga-actions">
               <button class="btn-sm btn-sm-ghost" onclick="window.location.href='rh-editar-vaga.html?vaga_id=${v.id}'">Editar</button>
               <button class="btn-sm btn-sm-ghost" onclick="window.location.href='rh-compatibilidade.html?vaga_id=${v.id}'">Compatibilidade</button>
+              <button class="btn-sm btn-sm-ghost" onclick="window.location.href='rh-kanban.html?vaga_id=${v.id}&titulo=${encodeURIComponent(v.titulo)}'">Kanban</button>
               <button class="btn-sm btn-sm-ghost" style="color:#f87171;border-color:rgba(248,113,113,0.4)" onclick="encerrarVaga(${v.id}, this)">Encerrar</button>
               <button class="btn-sm btn-sm-primary" onclick="window.location.href='rh-candidatos.html?vaga_id=${v.id}&titulo=${encodeURIComponent(v.titulo)}'">Ver candidatos</button>
             </div>

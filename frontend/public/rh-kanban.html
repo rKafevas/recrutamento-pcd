@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Kanban de Candidatos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --orange: #f47c20;
+      --dark: #1a2744;
+      --muted: #6b7a99;
+      --border: rgba(26,39,68,0.1);
+      --bg: #f5f7fc;
+      --white: #ffffff;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+
+    /* ── Sub-header (abaixo da topbar global injetada pelo topbar.js) ── */
+    .subheader {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 62px; /* altura da #topbar-global */
+      z-index: 9;
+    }
+    .subheader-left { display: flex; align-items: center; gap: 14px; }
+    .btn-back {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--dark);
+      padding: 6px 13px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-back:hover { background: rgba(26,39,68,0.05); }
+    .vaga-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--orange); }
+    .vaga-titulo {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--dark);
+      max-width: 380px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--dark);
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-ghost:hover { background: rgba(26,39,68,0.05); }
+
+    /* ── Board ── */
+    .board-wrap {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 20px 24px 40px;
+      align-items: flex-start;
+      min-height: calc(100vh - 62px - 52px);
+    }
+    .board-wrap::-webkit-scrollbar { height: 6px; }
+    .board-wrap::-webkit-scrollbar-track { background: transparent; }
+    .board-wrap::-webkit-scrollbar-thumb { background: rgba(26,39,68,0.18); border-radius: 10px; }
+
+    /* ── Colunas ── */
+    .column {
+      flex-shrink: 0;
+      width: 252px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .column-header {
+      padding: 13px 14px 11px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .col-title { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; }
+    .col-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 12px;
+      min-width: 24px;
+      text-align: center;
+    }
+    .column-cards {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 90px;
+      transition: background 0.12s;
+    }
+    .column-cards.drag-over { background: rgba(99,102,241,0.06); border-radius: 0 0 14px 14px; }
+
+    /* Accent por coluna */
+    .col-pendente   .column-header { border-top: 3px solid #94a3b8; }
+    .col-analise    .column-header { border-top: 3px solid #3b82f6; }
+    .col-entrevista .column-header { border-top: 3px solid #8b5cf6; }
+    .col-aprovado   .column-header { border-top: 3px solid #22c55e; }
+    .col-reprovado  .column-header { border-top: 3px solid #ef4444; }
+
+    .col-pendente   .col-title { color: #64748b; }
+    .col-analise    .col-title { color: #1d4ed8; }
+    .col-entrevista .col-title { color: #7c3aed; }
+    .col-aprovado   .col-title { color: #16a34a; }
+    .col-reprovado  .col-title { color: #dc2626; }
+
+    .col-pendente   .col-badge { background: #f1f5f9; color: #64748b; }
+    .col-analise    .col-badge { background: #dbeafe; color: #1d4ed8; }
+    .col-entrevista .col-badge { background: #ede9fe; color: #7c3aed; }
+    .col-aprovado   .col-badge { background: #dcfce7; color: #16a34a; }
+    .col-reprovado  .col-badge { background: #fee2e2; color: #dc2626; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      cursor: grab;
+      transition: box-shadow 0.15s, opacity 0.15s, transform 0.1s;
+      user-select: none;
+    }
+    .card:hover { box-shadow: 0 3px 10px rgba(26,39,68,0.1); transform: translateY(-1px); }
+    .card:active { cursor: grabbing; }
+    .card.dragging { opacity: 0.3; transform: scale(0.97); }
+
+    .card-top { display: flex; gap: 10px; align-items: flex-start; }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+      overflow: hidden;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .card-info { flex: 1; min-width: 0; }
+    .card-name {
+      font-size: 13px; font-weight: 600; color: var(--dark);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .card-def { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+    .tag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 8px; }
+    .tag-cur { background: #eff6ff; color: #1d4ed8; }
+    .tag-lau { background: #f0fdf4; color: #16a34a; }
+    .card-date { font-size: 10px; color: var(--muted); margin-top: 7px; }
+
+    .empty-col {
+      text-align: center;
+      padding: 20px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      pointer-events: none;
+    }
+
+    /* ── Skeleton ── */
+    .skeleton {
+      border-radius: 10px;
+      background: linear-gradient(90deg, #e8ecf4 25%, #f0f4f8 50%, #e8ecf4 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── Dark mode ── */
+    body.dark-mode {
+      --bg: #0f1623;
+      --white: #192236;
+      --dark: #e2e8f0;
+      --muted: #94a3b8;
+      --border: rgba(255,255,255,0.09);
+    }
+    body.dark-mode .card { background: #243050; }
+    body.dark-mode .skeleton { background: linear-gradient(90deg, #1e2d4a 25%, #243050 50%, #1e2d4a 75%); background-size: 200% 100%; }
+    body.dark-mode .tag-cur { background: #1e3a5f; color: #93c5fd; }
+    body.dark-mode .tag-lau { background: #14532d; color: #86efac; }
+    body.dark-mode .col-pendente   .col-badge { background: #334155; }
+    body.dark-mode .col-analise    .col-badge { background: #1e3a5f; }
+    body.dark-mode .col-entrevista .col-badge { background: #2d1b69; }
+    body.dark-mode .col-aprovado   .col-badge { background: #14532d; }
+    body.dark-mode .col-reprovado  .col-badge { background: #7f1d1d; }
+    body.dark-mode .subheader { background: #192236; }
+
+    /* ── Alto contraste ── */
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .column,
+    body.high-contrast .card,
+    body.high-contrast .subheader { background: #111 !important; border-color: #ff0 !important; color: #ff0 !important; }
+    body.high-contrast .card-name,
+    body.high-contrast .card-def,
+    body.high-contrast .card-date,
+    body.high-contrast .col-title,
+    body.high-contrast .vaga-titulo { color: #ff0 !important; }
+  </style>
+</head>
+<body>
+
+  <!-- subheader: injetado aqui, topbar.js injeta a navbar global acima -->
+  <div class="subheader">
+    <div class="subheader-left">
+      <button class="btn-back" onclick="history.back()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+        Voltar
+      </button>
+      <div>
+        <div class="vaga-label">Kanban · Candidatos</div>
+        <div class="vaga-titulo" id="vaga-titulo">Carregando...</div>
+      </div>
+    </div>
+    <button class="btn-ghost" id="btn-lista">Ver lista</button>
+  </div>
+
+  <div class="board-wrap" id="board"></div>
+
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
+  <script src="topbar.js"></script>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    if (window.VLibras) new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+    const params   = new URLSearchParams(location.search);
+    const vagaId   = params.get('vaga_id');
+    const tituloQS = params.get('titulo');
+
+    if (!vagaId) { alert('Vaga não informada.'); history.back(); }
+    if (tituloQS) document.getElementById('vaga-titulo').textContent = decodeURIComponent(tituloQS);
+
+    document.getElementById('btn-lista').onclick = () => {
+      window.location.href = `rh-candidatos.html?vaga_id=${vagaId}&titulo=${encodeURIComponent(tituloQS || '')}`;
+    };
+
+    // ── Configuração das colunas ────────────────────────────────────────────
+    const COLUNAS = [
+      { status: 'Pendente',   slug: 'pendente',   label: 'Pendente' },
+      { status: 'Em análise', slug: 'analise',    label: 'Em análise' },
+      { status: 'Entrevista', slug: 'entrevista', label: 'Entrevista' },
+      { status: 'Aprovado',   slug: 'aprovado',   label: 'Aprovado' },
+      { status: 'Reprovado',  slug: 'reprovado',  label: 'Reprovado' },
+    ];
+
+    // ── Cor de avatar por nome ──────────────────────────────────────────────
+    const CORES_AVATAR = ['#6366f1','#8b5cf6','#06b6d4','#f59e0b','#10b981','#3b82f6','#ec4899','#14b8a6'];
+    function corAvatar(nome) {
+      let h = 0;
+      for (const c of nome) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
+      return CORES_AVATAR[Math.abs(h) % CORES_AVATAR.length];
+    }
+
+    // ── Estado do drag ──────────────────────────────────────────────────────
+    let dragId = null, dragEl = null;
+
+    // ── Renderização de card ────────────────────────────────────────────────
+    function renderCard(c) {
+      const iniciais = c.nome_completo.trim().split(/\s+/).slice(0,2).map(w => w[0].toUpperCase()).join('');
+      const cor = corAvatar(c.nome_completo);
+      const avatarInner = c.foto_url
+        ? `<img src="${c.foto_url}" alt="${c.nome_completo}">`
+        : `<span>${iniciais}</span>`;
+      const data = new Date(c.data_inscricao).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+      const temTags = c.curriculo_url || c.laudo_medico_url;
+      return `
+        <div class="card"
+             draggable="true"
+             data-id="${c.inscricao_id}"
+             data-status="${c.status}"
+             title="${c.nome_completo}">
+          <div class="card-top">
+            <div class="avatar" style="background:${c.foto_url ? 'transparent' : cor}">${avatarInner}</div>
+            <div class="card-info">
+              <div class="card-name">${c.nome_completo}</div>
+              <div class="card-def">${c.tipo_deficiencia || 'Não informado'}</div>
+            </div>
+          </div>
+          ${temTags ? `
+          <div class="card-tags">
+            ${c.curriculo_url    ? '<span class="tag tag-cur">Currículo</span>' : ''}
+            ${c.laudo_medico_url ? '<span class="tag tag-lau">Laudo</span>'    : ''}
+          </div>` : ''}
+          <div class="card-date">Inscrito em ${data}</div>
+        </div>`;
+    }
+
+    // ── Skeleton durante carregamento ───────────────────────────────────────
+    function renderSkeleton() {
+      const board = document.getElementById('board');
+      board.innerHTML = COLUNAS.map(col => `
+        <div class="column col-${col.slug}">
+          <div class="column-header">
+            <span class="col-title">${col.label}</span>
+            <span class="col-badge">—</span>
+          </div>
+          <div class="column-cards" style="gap:8px">
+            <div class="skeleton" style="height:76px"></div>
+            <div class="skeleton" style="height:60px"></div>
+            <div class="skeleton" style="height:76px"></div>
+          </div>
+        </div>`).join('');
+    }
+
+    // ── Atualiza contadores e estado vazio das colunas ──────────────────────
+    function sincronizarColunas() {
+      document.querySelectorAll('.column-cards').forEach(col => {
+        const status = col.dataset.status;
+        const count  = col.querySelectorAll('.card').length;
+        const badge  = document.querySelector(`.col-${slugDeStatus(status)} .col-badge`);
+        if (badge) badge.textContent = count;
+
+        let emptyEl = col.querySelector('.empty-col');
+        if (count === 0 && !emptyEl) {
+          col.insertAdjacentHTML('beforeend', '<p class="empty-col">Nenhum candidato<br>nesta fase</p>');
+        } else if (count > 0 && emptyEl) {
+          emptyEl.remove();
+        }
+      });
+    }
+
+    function slugDeStatus(status) {
+      const mapa = { 'Pendente': 'pendente', 'Em análise': 'analise', 'Entrevista': 'entrevista', 'Aprovado': 'aprovado', 'Reprovado': 'reprovado' };
+      return mapa[status] || 'pendente';
+    }
+
+    // ── Mover card via API ──────────────────────────────────────────────────
+    async function moverCard(inscricaoId, novoStatus, colEl, cardEl) {
+      const token = localStorage.getItem('token');
+      try {
+        const r = await fetch(`${API_URL}/inscricoes/${inscricaoId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ status: novoStatus })
+        });
+        if (!r.ok) {
+          const d = await r.json().catch(() => ({}));
+          alert('Erro ao mover candidato: ' + (d.mensagem || r.status));
+          return;
+        }
+        cardEl.dataset.status = novoStatus;
+        const emptyDest = colEl.querySelector('.empty-col');
+        if (emptyDest) emptyDest.remove();
+        colEl.appendChild(cardEl);
+        sincronizarColunas();
+      } catch(e) {
+        alert('Erro de conexão ao atualizar status.');
+      }
+    }
+
+    // ── Renderização do board ───────────────────────────────────────────────
+    function renderBoard(inscritos) {
+      const grupos = {};
+      COLUNAS.forEach(c => grupos[c.status] = []);
+      inscritos.forEach(i => {
+        if (grupos[i.status] !== undefined) grupos[i.status].push(i);
+        else grupos['Pendente'].push(i);
+      });
+
+      const board = document.getElementById('board');
+      board.innerHTML = COLUNAS.map(col => {
+        const cards = grupos[col.status];
+        return `
+          <div class="column col-${col.slug}">
+            <div class="column-header">
+              <span class="col-title">${col.label}</span>
+              <span class="col-badge">${cards.length}</span>
+            </div>
+            <div class="column-cards" data-status="${col.status}">
+              ${cards.length
+                ? cards.map(renderCard).join('')
+                : '<p class="empty-col">Nenhum candidato<br>nesta fase</p>'}
+            </div>
+          </div>`;
+      }).join('');
+
+      // Drag — delegação no board para os cards (gerados por innerHTML)
+      board.addEventListener('dragstart', e => {
+        const card = e.target.closest('.card');
+        if (!card) return;
+        dragId = card.dataset.id;
+        dragEl = card;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => card.classList.add('dragging'), 0);
+      });
+      board.addEventListener('dragend', () => {
+        if (dragEl) dragEl.classList.remove('dragging');
+        dragId = null; dragEl = null;
+      });
+
+      // Drop — uma vez por coluna, elementos estão no DOM
+      board.querySelectorAll('.column-cards').forEach(col => {
+        col.addEventListener('dragover',  e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+        col.addEventListener('dragenter', e => { e.preventDefault(); col.classList.add('drag-over'); });
+        col.addEventListener('dragleave', e => { if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over'); });
+        col.addEventListener('drop', async e => {
+          e.preventDefault();
+          col.classList.remove('drag-over');
+          if (!dragId || !dragEl) return;
+          const novoStatus = col.dataset.status;
+          if (dragEl.dataset.status === novoStatus) return;
+          await moverCard(dragId, novoStatus, col, dragEl);
+        });
+      });
+    }
+
+    // ── Carga inicial ───────────────────────────────────────────────────────
+    async function carregarKanban() {
+      const token = localStorage.getItem('token');
+      if (!token) { window.location.href = 'login.html'; return; }
+
+      renderSkeleton();
+
+      try {
+        const r = await fetch(`${API_URL}/inscricoes/vaga/${vagaId}`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (r.status === 401) { window.location.href = 'login.html'; return; }
+        if (r.status === 403) {
+          document.getElementById('board').innerHTML =
+            '<div style="padding:40px;color:var(--muted);font-size:14px">Acesso negado a esta vaga.</div>';
+          return;
+        }
+
+        const inscritos = await r.json();
+        if (!Array.isArray(inscritos)) {
+          document.getElementById('board').innerHTML =
+            '<div style="padding:40px;color:var(--muted);font-size:14px">Não foi possível carregar os candidatos.</div>';
+          return;
+        }
+
+        renderBoard(inscritos);
+
+        // Busca título da vaga se não veio na query string
+        if (!tituloQS) {
+          try {
+            const rv = await fetch(`${API_URL}/vagas/${vagaId}`, {
+              headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (rv.ok) {
+              const vaga = await rv.json();
+              if (vaga.titulo) document.getElementById('vaga-titulo').textContent = vaga.titulo;
+            }
+          } catch(e) { /* silencioso */ }
+        }
+
+      } catch(e) {
+        document.getElementById('board').innerHTML =
+          '<div style="padding:40px;color:var(--muted);font-size:14px">Erro ao conectar ao servidor.</div>';
+      }
+    }
+
+    carregarKanban();
+  </script>
+</body>
+</html>
