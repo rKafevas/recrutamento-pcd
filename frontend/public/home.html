@@ -107,6 +107,9 @@
     if (window.VLibras) new window.VLibras.Widget('https://vlibras.gov.br/app');
     function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
 
+    const token = localStorage.getItem('token');
+    if (!token) { window.location.href = 'login.html'; }
+
     async function carregarMetricas() {
       const token = localStorage.getItem('token');
       const tipo = localStorage.getItem('tipo') || (token ? JSON.parse(atob(token.split('.')[1])).tipo : '');

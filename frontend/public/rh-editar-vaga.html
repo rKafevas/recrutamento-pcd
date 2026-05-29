@@ -116,6 +116,9 @@
     if (window.VLibras) new window.VLibras.Widget('https://vlibras.gov.br/app');
     function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
 
+    const token = localStorage.getItem('token');
+    if (!token || localStorage.getItem('tipo') !== 'RH') { window.location.href = 'login.html'; }
+
     const params = new URLSearchParams(window.location.search);
     const vagaId = params.get('vaga_id');
 
