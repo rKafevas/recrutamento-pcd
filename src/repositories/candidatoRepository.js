@@ -116,14 +116,26 @@ class CandidatoRepository {
 
   async removerFoto(usuarioId) {
     const { rows } = await db.query(
-      `UPDATE candidatos 
-       SET foto_url = NULL 
-       WHERE usuario_id = $1 
+      `UPDATE candidatos
+       SET foto_url = NULL
+       WHERE usuario_id = $1
        RETURNING *`,
       [usuarioId]
     );
 
     return rows[0];
+  }
+
+  async listarTodos() {
+    const { rows } = await db.query(`
+      SELECT c.id, c.usuario_id, c.nome_completo, c.tipo_deficiencia,
+             c.habilidades, c.sobre, c.formacao, c.experiencias,
+             c.foto_url, c.curriculo_url, c.laudo_medico_url, u.email
+      FROM candidatos c
+      JOIN usuarios u ON c.usuario_id = u.id
+      ORDER BY c.nome_completo ASC
+    `);
+    return rows;
   }
 }
 

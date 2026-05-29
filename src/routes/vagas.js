@@ -11,6 +11,7 @@ router.get('/vagas/minhas', authMiddleware, authorize(['RH']), VagaController.li
 router.get('/vagas/recomendadas', authMiddleware, authorize(['Candidato']), VagaController.listarRecomendadas);
 router.get('/vagas/filtro', VagaController.listarComFiltro);
 router.get('/vagas', VagaController.listar);
+router.get('/vagas/:id/compatibilidade', authMiddleware, authorize(['RH']), VagaController.compatibilidade);
 router.get('/vagas/:id', VagaController.buscarPorId);
 router.post('/vagas', authMiddleware, authorize(['RH']), validate(vagaSchema), VagaController.criar);
 router.patch('/vagas/:id', authMiddleware, authorize(['RH']), VagaController.editar);

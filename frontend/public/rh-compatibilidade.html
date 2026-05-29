@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Compatibilidade</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --orange: #f47c20; --orange-hover: #e06b10;
+      --blue: #1558c0; --blue-light: #1e74df;
+      --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99;
+      --bg: #f5f7fc;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: #1a2744; min-height: 100vh; padding-bottom: 48px; }
+
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: #fff; box-shadow: 0 1px 6px rgba(26,39,68,0.08); border-bottom: 1px solid var(--white-border); position: sticky; top: 0; z-index: 99; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+    .logo span { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+    .btn-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-ghost:hover { background: rgba(26,39,68,0.04); }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+    .page-label { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 700; }
+    .page-header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+    /* Vaga selector */
+    .selector-wrap { background: #fff; border: 1px solid var(--white-border); border-radius: 14px; padding: 20px 24px; margin-bottom: 24px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+    .selector-label { font-size: 13px; font-weight: 600; flex-shrink: 0; }
+    .vaga-select { flex: 1; min-width: 200px; background: #f8f9fd; border: 1px solid rgba(26,39,68,0.14); border-radius: 9px; padding: 10px 14px; font-size: 14px; color: #1a2744; font-family: 'Inter', sans-serif; cursor: pointer; }
+    .vaga-select:focus { outline: none; border-color: var(--blue-light); }
+
+    /* Filter chips */
+    .filter-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+    .filter-label { font-size: 13px; color: var(--text-muted); margin-right: 4px; }
+    .chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--white-border); background: #fff; color: #1a2744; transition: 0.2s; }
+    .chip:hover { background: rgba(26,39,68,0.04); }
+    .chip.active { background: #1a2744; color: #fff; border-color: #1a2744; }
+    .chip.chip-alto.active { background: #16a34a; border-color: #16a34a; }
+    .chip.chip-medio.active { background: #d97706; border-color: #d97706; }
+    .chip.chip-baixo.active { background: #94a3b8; border-color: #94a3b8; }
+    .stats-bar { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+    .stats-bar strong { color: #1a2744; }
+
+    /* Candidate cards */
+    .cand-list { display: flex; flex-direction: column; gap: 10px; }
+    .cand-card { background: #fff; border: 1px solid var(--white-border); border-radius: 14px; padding: 18px 22px; display: flex; gap: 16px; align-items: flex-start; transition: 0.2s; }
+    .cand-card:hover { background: rgba(26,39,68,0.02); }
+
+    .cand-avatar { width: 50px; height: 50px; border-radius: 50%; background: rgba(26,39,68,0.06); border: 1px solid rgba(26,39,68,0.12); overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; color: var(--text-muted); }
+    .cand-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .cand-body { flex: 1; min-width: 0; }
+    .cand-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; flex-wrap: wrap; }
+    .cand-name { font-size: 15px; font-weight: 600; }
+    .cand-email { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+
+    /* Score bar */
+    .score-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .score-bar-bg { flex: 1; height: 6px; background: rgba(26,39,68,0.08); border-radius: 3px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+    .score-pct { font-size: 12px; font-weight: 700; width: 36px; text-align: right; }
+
+    .cand-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+    .tag-defic { background: rgba(244,124,32,0.1); border: 1px solid rgba(244,124,32,0.2); color: var(--orange); }
+    .tag-cv { background: rgba(30,116,223,0.08); border: 1px solid rgba(30,116,223,0.2); color: #1e74df; }
+    .tag-laudo { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); color: #16a34a; }
+    .nivel-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+    .nivel-Alto { background: rgba(34,197,94,0.12); color: #16a34a; border: 1px solid rgba(34,197,94,0.25); }
+    .nivel-Medio { background: rgba(245,158,11,0.12); color: #d97706; border: 1px solid rgba(245,158,11,0.25); }
+    .nivel-Baixo { background: rgba(148,163,184,0.15); color: #64748b; border: 1px solid rgba(148,163,184,0.3); }
+
+    .cand-skills { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 440px; }
+
+    .cand-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .btn-sm { padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; white-space: nowrap; text-align: center; }
+    .btn-sm-primary { background: var(--orange); color: #fff; }
+    .btn-sm-primary:hover { background: var(--orange-hover); }
+    .btn-sm-ghost { background: transparent; border: 1px solid var(--white-border); color: #1a2744; }
+    .btn-sm-ghost:hover { background: rgba(26,39,68,0.04); }
+
+    .empty { text-align: center; padding: 56px; color: var(--text-muted); font-size: 14px; }
+    .hint { background: rgba(21,88,192,0.06); border: 1px solid rgba(21,88,192,0.15); border-radius: 12px; padding: 20px 24px; font-size: 13px; color: #1558c0; text-align: center; margin-bottom: 20px; }
+    .hint strong { display: block; font-size: 14px; margin-bottom: 4px; }
+    .skeleton { background: linear-gradient(90deg,#eef0f5 25%,#e2e5ed 50%,#eef0f5 75%); background-size: 400% 100%; animation: shimmer 1.4s infinite; border-radius: 10px; height: 88px; }
+    @keyframes shimmer { 0%{background-position:100% 50%} 100%{background-position:0 50%} }
+
+    @media(max-width:600px) {
+      .cand-card { flex-direction: column; }
+      .cand-actions { flex-direction: row; }
+      .cand-skills { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="logo"><img src="logo.png.jpeg" alt="Inclui+"><span>Inclui+</span></div>
+    <div style="display:flex;gap:10px">
+      <a href="rh-dashboard.html" class="btn-ghost">← Painel</a>
+      <a href="login.html" class="btn-ghost">Sair</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-header">
+      <div class="page-label">Recrutamento Inteligente</div>
+      <h1>Compatibilidade com a Vaga</h1>
+      <p>Candidatos do banco de talentos ordenados por afinidade com a vaga selecionada</p>
+    </div>
+
+    <div class="selector-wrap">
+      <span class="selector-label">Selecione a vaga:</span>
+      <select class="vaga-select" id="select-vaga" onchange="onVagaChange()">
+        <option value="">Carregando vagas...</option>
+      </select>
+    </div>
+
+    <div id="content">
+      <div class="hint">
+        <strong>Como funciona?</strong>
+        Selecione uma vaga acima para ver os candidatos rankeados por afinidade. A pontuação considera o tipo de deficiência, palavras-chave das habilidades e completude do perfil.
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'login.html';
+
+    let todosCandidatos = [];
+    let filtroAtivo = 'Todos';
+
+    async function init() {
+      try {
+        const r = await fetch(API_URL + '/vagas/minhas', { headers: { 'Authorization': 'Bearer ' + token } });
+        const vagas = await r.json();
+        const sel = document.getElementById('select-vaga');
+        if (!vagas.length) {
+          sel.innerHTML = '<option value="">Nenhuma vaga encontrada</option>';
+          return;
+        }
+        sel.innerHTML = '<option value="">— Escolha uma vaga —</option>' +
+          vagas.map(v => `<option value="${v.id}">${v.titulo} · ${v.status || 'Aberta'}</option>`).join('');
+
+        const params = new URLSearchParams(window.location.search);
+        const vagaId = params.get('vaga_id');
+        if (vagaId) {
+          sel.value = vagaId;
+          carregarCompatibilidade(vagaId);
+        }
+      } catch(e) {
+        document.getElementById('select-vaga').innerHTML = '<option value="">Erro ao carregar vagas</option>';
+      }
+    }
+
+    function onVagaChange() {
+      const id = document.getElementById('select-vaga').value;
+      if (!id) {
+        document.getElementById('content').innerHTML = `
+          <div class="hint"><strong>Como funciona?</strong>
+          Selecione uma vaga acima para ver os candidatos rankeados por afinidade. A pontuação considera o tipo de deficiência, palavras-chave das habilidades e completude do perfil.</div>`;
+        return;
+      }
+      carregarCompatibilidade(id);
+    }
+
+    async function carregarCompatibilidade(vagaId) {
+      const content = document.getElementById('content');
+      content.innerHTML = '<div class="cand-list">' + Array(5).fill('<div class="skeleton" style="margin-bottom:10px"></div>').join('') + '</div>';
+      try {
+        const r = await fetch(`${API_URL}/vagas/${vagaId}/compatibilidade`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        todosCandidatos = d.candidatos || [];
+        filtroAtivo = 'Todos';
+        renderizar();
+      } catch(e) {
+        content.innerHTML = '<p class="empty">Não foi possível carregar os dados. Verifique sua conexão.</p>';
+      }
+    }
+
+    function setFiltro(nivel) {
+      filtroAtivo = nivel;
+      document.querySelectorAll('.chip[data-nivel]').forEach(c => {
+        c.classList.toggle('active', c.dataset.nivel === nivel);
+        if (nivel !== 'Todos') {
+          const cls = 'chip-' + c.dataset.nivel.toLowerCase().replace('é','e');
+          if (c.dataset.nivel === nivel) c.classList.add('active', cls);
+        }
+      });
+      renderizar();
+    }
+
+    function renderizar() {
+      const filtrados = filtroAtivo === 'Todos'
+        ? todosCandidatos
+        : todosCandidatos.filter(c => c.nivel === filtroAtivo);
+
+      const altos  = todosCandidatos.filter(c => c.nivel === 'Alto').length;
+      const medios = todosCandidatos.filter(c => c.nivel === 'Médio').length;
+      const baixos = todosCandidatos.filter(c => c.nivel === 'Baixo').length;
+
+      let html = `
+        <div class="filter-row">
+          <span class="filter-label">Filtrar:</span>
+          <button class="chip ${filtroAtivo==='Todos'?'active':''}" data-nivel="Todos" onclick="setFiltro('Todos')">Todos (${todosCandidatos.length})</button>
+          <button class="chip chip-alto ${filtroAtivo==='Alto'?'active':''}" data-nivel="Alto" onclick="setFiltro('Alto')">Alto (${altos})</button>
+          <button class="chip chip-medio ${filtroAtivo==='Médio'?'active':''}" data-nivel="Médio" onclick="setFiltro('Médio')">Médio (${medios})</button>
+          <button class="chip chip-baixo ${filtroAtivo==='Baixo'?'active':''}" data-nivel="Baixo" onclick="setFiltro('Baixo')">Baixo (${baixos})</button>
+        </div>
+        <p class="stats-bar">Exibindo <strong>${filtrados.length}</strong> candidato(s)</p>
+        <div class="cand-list">`;
+
+      if (!filtrados.length) {
+        html += '<p class="empty">Nenhum candidato neste nível.</p>';
+      } else {
+        filtrados.forEach(c => {
+          const iniciais = (c.nome_completo || '?').split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+          const cor = c.score >= 70 ? '#16a34a' : c.score >= 40 ? '#d97706' : '#94a3b8';
+          const nivelClass = c.nivel === 'Médio' ? 'nivel-Medio' : `nivel-${c.nivel}`;
+          const nivelLabel = c.nivel;
+
+          html += `
+          <div class="cand-card">
+            <div class="cand-avatar">
+              ${c.foto_url
+                ? `<img src="${c.foto_url}" alt="${c.nome_completo}" onerror="this.style.display='none'">`
+                : iniciais}
+            </div>
+            <div class="cand-body">
+              <div class="cand-top">
+                <span class="cand-name">${c.nome_completo || 'Sem nome'}</span>
+                <span class="nivel-badge ${nivelClass}">${nivelLabel}</span>
+              </div>
+              <div class="cand-email">${c.email}</div>
+              <div class="score-wrap">
+                <div class="score-bar-bg">
+                  <div class="score-bar-fill" style="width:${c.score}%;background:${cor}"></div>
+                </div>
+                <span class="score-pct" style="color:${cor}">${c.score}%</span>
+              </div>
+              <div class="cand-tags">
+                ${c.tipo_deficiencia ? `<span class="tag tag-defic">${c.tipo_deficiencia}</span>` : ''}
+                ${c.curriculo_url ? '<span class="tag tag-cv">Currículo</span>' : ''}
+                ${c.laudo_medico_url ? '<span class="tag tag-laudo">Laudo</span>' : ''}
+              </div>
+              ${c.habilidades ? `<div class="cand-skills">${c.habilidades}</div>` : ''}
+            </div>
+            <div class="cand-actions">
+              <button class="btn-sm btn-sm-ghost" onclick="verPerfil(${c.usuario_id})">Ver perfil</button>
+              <button class="btn-sm btn-sm-primary" onclick="mensagem(${c.usuario_id})">Mensagem</button>
+            </div>
+          </div>`;
+        });
+      }
+
+      html += '</div>';
+      document.getElementById('content').innerHTML = html;
+    }
+
+    function verPerfil(usuarioId) {
+      window.location.href = `rh-perfil-candidato.html?usuario_id=${usuarioId}`;
+    }
+
+    function mensagem(usuarioId) {
+      window.location.href = `rh-mensagens.html?para=${usuarioId}`;
+    }
+
+    init();
+  </script>
+</body>
+</html>

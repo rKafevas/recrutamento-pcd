@@ -1,4 +1,7 @@
 const VagaService = require('../services/vagaService');
+const CandidatoRepository = require('../repositories/candidatoRepository');
+const VagaRepository = require('../repositories/vagaRepository');
+const { rankearCandidatos } = require('../services/compatibilidadeService');
 
 class VagaController {
   // Alterado de 'cadastrar' para 'criar' para bater com o padrão das suas rotas
@@ -77,6 +80,22 @@ class VagaController {
       const rh_id = req.usuarioId;
       const vaga = await VagaService.encerrarVaga(id, rh_id);
       return res.json({ mensagem: 'Vaga encerrada com sucesso!', vaga });
+    } catch(err) { next(err); }
+  }
+
+  async compatibilidade(req, res, next) {
+    try {
+      const vaga = await VagaRepository.buscarPorId(req.params.id);
+      if (!vaga) { const e = new Error('Vaga não encontrada.'); e.status = 404; throw e; }
+
+      const empresa = await VagaRepository.buscarEmpresaPorUsuarioId(req.usuarioId);
+      if (!empresa || empresa.id !== vaga.empresa_id) {
+        const e = new Error('Acesso negado.'); e.status = 403; throw e;
+      }
+
+      const candidatos = await CandidatoRepository.listarTodos();
+      const ranking = rankearCandidatos(candidatos, vaga);
+      return res.json({ vaga: { id: vaga.id, titulo: vaga.titulo }, total: ranking.length, candidatos: ranking });
     } catch(err) { next(err); }
   }
 }
