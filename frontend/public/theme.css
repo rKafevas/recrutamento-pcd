@@ -320,3 +320,43 @@ body.dark-mode .btn-outline {
 }
 body.dark-mode .btn-limpar:hover,
 body.dark-mode .btn-outline:hover { background: rgba(255,255,255,0.07) !important; }
+
+/* ── index.html: navbar, perfil-cards, feature-cards, info-boxes ────────── */
+body.dark-mode .navbar {
+  background: #141928 !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.4) !important;
+}
+
+body.dark-mode .perfil-card,
+body.dark-mode .feature-card,
+body.dark-mode .info-box {
+  background: #1a2035 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+body.dark-mode .perfil-card:hover,
+body.dark-mode .feature-card:hover,
+body.dark-mode .info-box:hover { background: #222b42 !important; }
+
+body.dark-mode .feature-card h4,
+body.dark-mode .info-box h4,
+body.dark-mode .card-body h4 { color: #e2e8f4 !important; }
+
+body.dark-mode .hero p,
+body.dark-mode .perfil-card p,
+body.dark-mode .feature-card p,
+body.dark-mode .info-box p,
+body.dark-mode .card-body p { color: #8896b3 !important; }
+
+body.dark-mode .perfil-tag.rh {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #c8d4e8 !important;
+}
+
+body.dark-mode .divider { border-top-color: rgba(255,255,255,0.06) !important; }
+
+/* ── login.html: label "Lembrar-me" e textos do card ────────────────────── */
+body.dark-mode .row label { color: #c8d4e8 !important; }
+body.dark-mode .brand p,
+body.dark-mode .register { color: #8896b3 !important; }
