@@ -58,10 +58,10 @@ class InscricaoController {
   // Atualizar o status (Aprovado, Reprovado, etc)
   async atualizarStatus(req, res, next) {
     try {
-      const { id } = req.params; 
-      const { status, motivo_reprovacao } = req.body;
+      const { id } = req.params;
+      const { status, motivo_reprovacao, data_entrevista, link_entrevista } = req.body;
 
-      const inscricaoAtualizada = await InscricaoService.alterarStatus(id, status, motivo_reprovacao || null);
+      const inscricaoAtualizada = await InscricaoService.alterarStatus(id, status, motivo_reprovacao || null, data_entrevista || null, link_entrevista || null);
 
       return res.json({
         mensagem: "Status atualizado com sucesso!",

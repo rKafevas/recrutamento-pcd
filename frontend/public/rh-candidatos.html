@@ -72,6 +72,10 @@
 
     .motivo-textarea { display: none; margin-top: 8px; width: 100%; min-height: 64px; border: 1px solid rgba(239,68,68,0.35); border-radius: 7px; padding: 8px 10px; font-size: 13px; font-family: 'Inter', sans-serif; color: #1a2744; resize: vertical; background: rgba(239,68,68,0.04); }
     .motivo-textarea:focus { outline: none; border-color: rgba(239,68,68,0.6); }
+    .entrevista-fields { display: none; margin-top: 8px; }
+    .entrevista-input { display: block; width: 100%; border: 1px solid rgba(59,130,246,0.35); border-radius: 7px; padding: 8px 10px; font-size: 13px; font-family: 'Inter', sans-serif; color: #1a2744; background: rgba(59,130,246,0.04); margin-bottom: 6px; }
+    .entrevista-input:last-child { margin-bottom: 0; }
+    .entrevista-input:focus { outline: none; border-color: rgba(59,130,246,0.6); }
     @media(max-width: 600px) { .pipeline { grid-template-columns: repeat(2,1fr); } .cand-card { flex-direction: column; align-items: flex-start; } }
   </style>
 </head>
@@ -144,15 +148,26 @@
     function onStatusChange(inscricaoId, select) {
       const motivoEl = document.getElementById(`motivo-${inscricaoId}`);
       if (motivoEl) motivoEl.style.display = select.value === 'Reprovado' ? 'block' : 'none';
+      const entrevistaEl = document.getElementById(`entrevista-${inscricaoId}`);
+      if (entrevistaEl) entrevistaEl.style.display = select.value === 'Entrevista' ? 'block' : 'none';
     }
 
     async function atualizarStatus(inscricaoId, novoStatus, btn) {
       const token = localStorage.getItem('token');
       let motivo_reprovacao = null;
+      let data_entrevista = null;
+      let link_entrevista = null;
       if (novoStatus === 'Reprovado') {
         const motivoEl = document.getElementById(`motivo-${inscricaoId}`);
         motivo_reprovacao = motivoEl ? motivoEl.value.trim() : '';
         if (!motivo_reprovacao) { alert('Informe o motivo da reprovação antes de salvar.'); return; }
+      }
+      if (novoStatus === 'Entrevista') {
+        const dataEl = document.getElementById(`data-entrevista-${inscricaoId}`);
+        const linkEl = document.getElementById(`link-entrevista-${inscricaoId}`);
+        data_entrevista = dataEl ? dataEl.value || null : null;
+        link_entrevista = linkEl ? linkEl.value.trim() || null : null;
+        if (!data_entrevista) { alert('Informe a data e horário da entrevista antes de salvar.'); return; }
       }
       btn.textContent = '...';
       btn.disabled = true;
@@ -160,7 +175,7 @@
         const r = await fetch(`${API_URL}/inscricoes/${inscricaoId}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify({ status: novoStatus, motivo_reprovacao })
+          body: JSON.stringify({ status: novoStatus, motivo_reprovacao, data_entrevista, link_entrevista })
         });
         const d = await r.json();
         if (r.ok) { carregarCandidatos(); }
@@ -210,6 +225,10 @@
                 <button class="btn-secondary" onclick="window.location.href='chat.html?inscricao=${c.inscricao_id}'">Chat</button>
               </div>
               <textarea id="motivo-${c.inscricao_id}" class="motivo-textarea" placeholder="Informe o motivo da reprovação..." style="${c.status === 'Reprovado' ? 'display:block' : ''}">${c.motivo_reprovacao || ''}</textarea>
+              <div id="entrevista-${c.inscricao_id}" class="entrevista-fields" style="${c.status === 'Entrevista' ? 'display:block' : 'display:none'}">
+                <input type="datetime-local" id="data-entrevista-${c.inscricao_id}" class="entrevista-input" value="${c.data_entrevista ? new Date(c.data_entrevista).toISOString().slice(0,16) : ''}">
+                <input type="url" id="link-entrevista-${c.inscricao_id}" class="entrevista-input" placeholder="Link da entrevista (Meet, Zoom, Teams...)" value="${c.link_entrevista || ''}">
+              </div>
             </div>
           </div>`).join('');
       } catch(e) { lista.innerHTML = '<p class="empty">Não foi possível conectar ao servidor.</p>'; }

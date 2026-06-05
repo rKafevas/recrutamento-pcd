@@ -1,0 +1,2 @@
+ALTER TABLE inscricoes ADD COLUMN IF NOT EXISTS data_entrevista TIMESTAMP WITH TIME ZONE;
+ALTER TABLE inscricoes ADD COLUMN IF NOT EXISTS link_entrevista TEXT;

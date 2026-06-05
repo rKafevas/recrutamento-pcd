@@ -27,6 +27,8 @@ class InscricaoRepository {
         i.id AS inscricao_id,
         i.status,
         i.motivo_reprovacao,
+        i.data_entrevista,
+        i.link_entrevista,
         i.data_inscricao,
         v.titulo AS vaga_titulo,
         v.status AS vaga_status,
@@ -47,6 +49,9 @@ class InscricaoRepository {
         i.id AS inscricao_id,
         i.data_inscricao,
         i.status,
+        i.motivo_reprovacao,
+        i.data_entrevista,
+        i.link_entrevista,
         c.nome_completo,
         c.tipo_deficiencia,
         c.necessidades_acessibilidade,
@@ -75,14 +80,18 @@ class InscricaoRepository {
     return rows[0];
   }
 
-  async atualizarStatus(id, novoStatus, motivoReprovacao = null) {
+  async atualizarStatus(id, novoStatus, motivoReprovacao = null, dataEntrevista = null, linkEntrevista = null) {
     const query = `
       UPDATE inscricoes
-      SET status = $1, data_atualizacao_status = NOW(), motivo_reprovacao = $3
+      SET status = $1,
+          data_atualizacao_status = NOW(),
+          motivo_reprovacao = $3,
+          data_entrevista = $4,
+          link_entrevista = $5
       WHERE id = $2
       RETURNING *
     `;
-    const { rows } = await db.query(query, [novoStatus, id, motivoReprovacao]);
+    const { rows } = await db.query(query, [novoStatus, id, motivoReprovacao, dataEntrevista, linkEntrevista]);
     return rows[0];
   }
 }

@@ -56,7 +56,7 @@ class InscricaoService {
     return removida;
   }
 
-  async alterarStatus(id, novoStatus, motivoReprovacao = null) {
+  async alterarStatus(id, novoStatus, motivoReprovacao = null, dataEntrevista = null, linkEntrevista = null) {
     const statusPermitidos = ['Pendente', 'Em análise', 'Aprovado', 'Reprovado', 'Entrevista'];
     if (!statusPermitidos.includes(novoStatus)) {
       const error = new Error(`Status inválido. Escolha entre: ${statusPermitidos.join(', ')}`);
@@ -69,7 +69,9 @@ class InscricaoService {
       throw error;
     }
     const motivo = novoStatus === 'Reprovado' ? motivoReprovacao : null;
-    const atualizada = await InscricaoRepository.atualizarStatus(id, novoStatus, motivo);
+    const dataEntrev = novoStatus === 'Entrevista' ? dataEntrevista : null;
+    const linkEntrev = novoStatus === 'Entrevista' ? linkEntrevista : null;
+    const atualizada = await InscricaoRepository.atualizarStatus(id, novoStatus, motivo, dataEntrev, linkEntrev);
     if (!atualizada) { const e = new Error('Inscrição não encontrada.'); e.status = 404; throw e; }
     await LogRepository.registrar(null, `Status da inscrição ID ${id} alterado para "${novoStatus}"`);
 
@@ -81,10 +83,15 @@ class InscricaoService {
         JOIN vagas v ON i.vaga_id = v.id
         WHERE i.id = $1`, [id]);
       if (rows[0]) {
+        let entrevistaInfo = ' — aguarde contato da empresa';
+        if (dataEntrevista) {
+          const dt = new Date(dataEntrevista);
+          entrevistaInfo = ` — ${dt.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} às ${dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+        }
         const msgs = {
           'Aprovado':   '🎉 Parabéns! Você foi aprovado(a)',
           'Reprovado':  '❌ Sua candidatura foi reprovada',
-          'Entrevista': '📅 Entrevista agendada — aguarde contato da empresa',
+          'Entrevista': `📅 Entrevista agendada${entrevistaInfo}`,
           'Em análise': '🔍 Sua candidatura está sendo analisada',
           'Pendente':   '📩 Candidatura recebida com sucesso'
         };
