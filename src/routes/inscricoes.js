@@ -11,5 +11,6 @@ router.post('/inscricoes', authMiddleware, authorize(['Candidato']), validate(in
 router.get('/inscricoes/minhas', authMiddleware, authorize(['Candidato']), InscricaoController.listarMinhasInscricoes);
 router.get('/inscricoes/vaga/:vaga_id', authMiddleware, authorize(['RH']), InscricaoController.listarPorVaga);
 router.patch('/inscricoes/:id/status', authMiddleware, authorize(['RH']), InscricaoController.atualizarStatus);
+router.delete('/inscricoes/:id', authMiddleware, authorize(['Candidato']), InscricaoController.cancelar);
 
 module.exports = router;

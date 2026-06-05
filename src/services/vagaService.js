@@ -1,5 +1,6 @@
 const VagaRepository = require('../repositories/vagaRepository');
 const CandidatoRepository = require('../repositories/candidatoRepository');
+const NotificacaoRepository = require('../repositories/notificacaoRepository');
 
 class VagaService {
   async anunciarVaga(rh_id, dados) {
@@ -9,7 +10,23 @@ class VagaService {
         const e = new Error('Perfil de empresa não encontrado para este usuário.');
         e.status = 404; throw e;
       }
-      return await VagaRepository.criarVaga(empresa.id, dados);
+      const vaga = await VagaRepository.criarVaga(empresa.id, dados);
+
+      // Notifica candidatos elegíveis em background (não bloqueia a resposta)
+      try {
+        const candidatos = await CandidatoRepository.buscarParaAlertaDeVaga(vaga.tipo_deficiencia_foco || 'Qualquer');
+        await Promise.all(candidatos.map(c =>
+          NotificacaoRepository.criar(
+            c.usuario_id,
+            `Nova vaga disponível: "${vaga.titulo}"`,
+            `vagas.html`
+          )
+        ));
+      } catch (e) {
+        console.error('Erro ao enviar alertas de vaga:', e.message);
+      }
+
+      return vaga;
     } catch (err) {
       if (err.status) throw err;
       console.error("Erro ao criar vaga:", err);

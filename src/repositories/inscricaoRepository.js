@@ -23,10 +23,11 @@ class InscricaoRepository {
 
   async listarPorCandidato(candidatoId) {
     const query = `
-      SELECT 
-        i.id AS inscricao_id, 
-        i.status, 
-        i.data_inscricao, 
+      SELECT
+        i.id AS inscricao_id,
+        i.status,
+        i.motivo_reprovacao,
+        i.data_inscricao,
         v.titulo AS vaga_titulo,
         v.status AS vaga_status,
         e.nome_fantasia AS empresa_nome
@@ -64,14 +65,24 @@ class InscricaoRepository {
     return rows;
 }
 
-  async atualizarStatus(id, novoStatus) {
+  async cancelar(inscricaoId, candidatoId) {
+    const query = `
+      DELETE FROM inscricoes
+      WHERE id = $1 AND candidato_id = $2 AND status = 'Pendente'
+      RETURNING *
+    `;
+    const { rows } = await db.query(query, [inscricaoId, candidatoId]);
+    return rows[0];
+  }
+
+  async atualizarStatus(id, novoStatus, motivoReprovacao = null) {
     const query = `
       UPDATE inscricoes
-      SET status = $1, data_atualizacao_status = NOW()
+      SET status = $1, data_atualizacao_status = NOW(), motivo_reprovacao = $3
       WHERE id = $2
       RETURNING *
     `;
-    const { rows } = await db.query(query, [novoStatus, id]);
+    const { rows } = await db.query(query, [novoStatus, id, motivoReprovacao]);
     return rows[0];
   }
 }

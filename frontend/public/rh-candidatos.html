@@ -70,6 +70,8 @@
 
     .empty { text-align: center; padding: 48px; color: var(--text-muted); font-size: 14px; }
 
+    .motivo-textarea { display: none; margin-top: 8px; width: 100%; min-height: 64px; border: 1px solid rgba(239,68,68,0.35); border-radius: 7px; padding: 8px 10px; font-size: 13px; font-family: 'Inter', sans-serif; color: #1a2744; resize: vertical; background: rgba(239,68,68,0.04); }
+    .motivo-textarea:focus { outline: none; border-color: rgba(239,68,68,0.6); }
     @media(max-width: 600px) { .pipeline { grid-template-columns: repeat(2,1fr); } .cand-card { flex-direction: column; align-items: flex-start; } }
   </style>
 </head>
@@ -139,15 +141,26 @@
       document.getElementById('count-aprovado').textContent = candidatos.filter(c => c.status === 'Aprovado').length;
     }
 
+    function onStatusChange(inscricaoId, select) {
+      const motivoEl = document.getElementById(`motivo-${inscricaoId}`);
+      if (motivoEl) motivoEl.style.display = select.value === 'Reprovado' ? 'block' : 'none';
+    }
+
     async function atualizarStatus(inscricaoId, novoStatus, btn) {
       const token = localStorage.getItem('token');
+      let motivo_reprovacao = null;
+      if (novoStatus === 'Reprovado') {
+        const motivoEl = document.getElementById(`motivo-${inscricaoId}`);
+        motivo_reprovacao = motivoEl ? motivoEl.value.trim() : '';
+        if (!motivo_reprovacao) { alert('Informe o motivo da reprovação antes de salvar.'); return; }
+      }
       btn.textContent = '...';
       btn.disabled = true;
       try {
         const r = await fetch(`${API_URL}/inscricoes/${inscricaoId}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify({ status: novoStatus })
+          body: JSON.stringify({ status: novoStatus, motivo_reprovacao })
         });
         const d = await r.json();
         if (r.ok) { carregarCandidatos(); }
@@ -187,13 +200,16 @@
                   Ver laudo</a>` : '<p style="margin-top:4px;font-size:12px;color:#6b7a99">Laudo não enviado</p>'}
               </div>
             </div>
-            <div class="cand-right">
-              <select class="status-select" id="sel-${c.inscricao_id}">
-                ${STATUS.map(s => `<option value="${s}" ${c.status === s ? 'selected' : ''}>${s}</option>`).join('')}
-              </select>
-              <button class="btn-save" onclick="atualizarStatus(${c.inscricao_id}, document.getElementById('sel-${c.inscricao_id}').value, this)">Salvar</button>
-              <button class="btn-secondary" onclick="window.location.href='rh-perfil-candidato.html?inscricao=${c.inscricao_id}&vaga=${vagaId}'">Perfil</button>
-              <button class="btn-secondary" onclick="window.location.href='chat.html?inscricao=${c.inscricao_id}'">Chat</button>
+            <div class="cand-right" style="flex-direction:column;align-items:stretch">
+              <div style="display:flex;align-items:center;gap:12px">
+                <select class="status-select" id="sel-${c.inscricao_id}" onchange="onStatusChange(${c.inscricao_id}, this)">
+                  ${STATUS.map(s => `<option value="${s}" ${c.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                </select>
+                <button class="btn-save" onclick="atualizarStatus(${c.inscricao_id}, document.getElementById('sel-${c.inscricao_id}').value, this)">Salvar</button>
+                <button class="btn-secondary" onclick="window.location.href='rh-perfil-candidato.html?inscricao=${c.inscricao_id}&vaga=${vagaId}'">Perfil</button>
+                <button class="btn-secondary" onclick="window.location.href='chat.html?inscricao=${c.inscricao_id}'">Chat</button>
+              </div>
+              <textarea id="motivo-${c.inscricao_id}" class="motivo-textarea" placeholder="Informe o motivo da reprovação..." style="${c.status === 'Reprovado' ? 'display:block' : ''}">${c.motivo_reprovacao || ''}</textarea>
             </div>
           </div>`).join('');
       } catch(e) { lista.innerHTML = '<p class="empty">Não foi possível conectar ao servidor.</p>'; }

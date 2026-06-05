@@ -47,6 +47,8 @@
     .vaga-status-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
     .vaga-aberta { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
     .vaga-encerrada { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
+    .btn-cancelar { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 5px 12px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-cancelar:hover { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.5); }
   </style>
 </head>
 <body>
@@ -84,8 +86,12 @@
         const STEPS = ['Pendente','Em análise','Entrevista','Aprovado'];
         const statusCores = { 'Aprovado':'#4ade80','Reprovado':'#f87171','Entrevista':'#60a5fa','Em análise':'#f59e0b','Pendente':'#94a3b8' };
 
-        function buildProgress(status) {
-          if (status === 'Reprovado') return `<p style="font-size:11px;color:#f87171;margin-top:10px">❌ Candidatura reprovada</p>`;
+        function buildProgress(status, motivo) {
+          if (status === 'Reprovado') return `
+            <div style="margin-top:10px;padding:10px 14px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:8px">
+              <p style="font-size:12px;font-weight:600;color:#f87171;margin-bottom:${motivo ? '6px' : '0'}">Candidatura reprovada</p>
+              ${motivo ? `<p style="font-size:12px;color:#6b7a99;line-height:1.5"><strong style="color:#1a2744">Motivo:</strong> ${motivo}</p>` : ''}
+            </div>`;
           return `<div class="progress">${STEPS.map((s,i) => {
             const idx = STEPS.indexOf(status);
             const cls = i < idx ? 'done' : i === idx ? 'current' : '';
@@ -94,7 +100,7 @@
         }
 
         lista.innerHTML = d.map(i => `
-          <div class="cand-card" style="flex-direction:column;align-items:stretch">
+          <div class="cand-card" style="flex-direction:column;align-items:stretch" id="card-${i.inscricao_id}">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
               <div class="cand-info">
                 <h2>${i.vaga_titulo || 'Vaga'}</h2>
@@ -104,12 +110,40 @@
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
                 <span class="status-badge" style="background:${statusCores[i.status]||'rgba(244,124,32,0.18)'}22;color:${statusCores[i.status]||'#f47c20'};border-color:${statusCores[i.status]||'rgba(244,124,32,0.3)'}44">${i.status||'Pendente'}</span>
                 ${i.vaga_status ? `<span class="vaga-status-badge ${i.vaga_status==='Aberta'?'vaga-aberta':'vaga-encerrada'}">${i.vaga_status}</span>` : ''}
+                ${i.status === 'Pendente' ? `<button class="btn-cancelar" onclick="cancelarCandidatura(${i.inscricao_id}, this)">Cancelar inscrição</button>` : ''}
               </div>
             </div>
-            ${buildProgress(i.status)}
+            ${buildProgress(i.status, i.motivo_reprovacao)}
           </div>`).join('');
       } catch(e) { lista.innerHTML = '<p style="color:#6b7a99;font-size:14px">Não foi possível conectar ao servidor.</p>'; }
     }
+    async function cancelarCandidatura(inscricaoId, btn) {
+      if (!confirm('Tem certeza que deseja cancelar esta candidatura? Esta ação não pode ser desfeita.')) return;
+      const token = localStorage.getItem('token');
+      btn.textContent = '...';
+      btn.disabled = true;
+      try {
+        const r = await fetch(`${API_URL}/inscricoes/${inscricaoId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const d = await r.json();
+        if (r.ok) {
+          document.getElementById(`card-${inscricaoId}`).remove();
+          const lista = document.getElementById('lista-candidaturas');
+          if (!lista.children.length) lista.innerHTML = '<p style="color:#6b7a99;font-size:14px">Você ainda não se candidatou a nenhuma vaga.</p>';
+        } else {
+          alert(d.mensagem || 'Não foi possível cancelar a candidatura.');
+          btn.textContent = 'Cancelar inscrição';
+          btn.disabled = false;
+        }
+      } catch(e) {
+        alert('Erro de conexão.');
+        btn.textContent = 'Cancelar inscrição';
+        btn.disabled = false;
+      }
+    }
+
     carregarCandidaturas();
   </script>
 </body>

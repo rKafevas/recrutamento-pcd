@@ -44,14 +44,24 @@ class InscricaoController {
     }
   }
 
+  async cancelar(req, res, next) {
+    try {
+      const { id } = req.params;
+      const usuario_id = req.usuarioId;
+      const removida = await InscricaoService.cancelarInscricao(usuario_id, id);
+      return res.json({ mensagem: 'Candidatura cancelada com sucesso.', dados: removida });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   // Atualizar o status (Aprovado, Reprovado, etc)
   async atualizarStatus(req, res, next) {
     try {
       const { id } = req.params; 
-      const { status } = req.body; 
+      const { status, motivo_reprovacao } = req.body;
 
-      // Chamamos o Service em vez do Repository diretamente
-      const inscricaoAtualizada = await InscricaoService.alterarStatus(id, status);
+      const inscricaoAtualizada = await InscricaoService.alterarStatus(id, status, motivo_reprovacao || null);
 
       return res.json({
         mensagem: "Status atualizado com sucesso!",

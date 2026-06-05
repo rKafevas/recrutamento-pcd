@@ -126,6 +126,15 @@ class CandidatoRepository {
     return rows[0];
   }
 
+  async buscarParaAlertaDeVaga(tipoDeficienciaFoco) {
+    const query = tipoDeficienciaFoco === 'Qualquer'
+      ? `SELECT u.id AS usuario_id FROM candidatos c JOIN usuarios u ON c.usuario_id = u.id WHERE c.tipo_deficiencia IS NOT NULL`
+      : `SELECT u.id AS usuario_id FROM candidatos c JOIN usuarios u ON c.usuario_id = u.id WHERE c.tipo_deficiencia = $1`;
+    const params = tipoDeficienciaFoco === 'Qualquer' ? [] : [tipoDeficienciaFoco];
+    const { rows } = await db.query(query, params);
+    return rows;
+  }
+
   async listarTodos() {
     const { rows } = await db.query(`
       SELECT c.id, c.usuario_id, c.nome_completo, c.tipo_deficiencia,

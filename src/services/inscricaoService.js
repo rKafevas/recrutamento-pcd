@@ -42,14 +42,34 @@ class InscricaoService {
     return inscritos;
   }
 
-  async alterarStatus(id, novoStatus) {
+  async cancelarInscricao(usuarioId, inscricaoId) {
+    const candidato = await CandidatoRepository.buscarPorUsuarioId(usuarioId);
+    if (!candidato) {
+      const e = new Error('Perfil de candidato não encontrado.'); e.status = 404; throw e;
+    }
+    const removida = await InscricaoRepository.cancelar(inscricaoId, candidato.id);
+    if (!removida) {
+      const e = new Error('Candidatura não encontrada ou não pode ser cancelada. Só é possível cancelar candidaturas com status "Pendente".');
+      e.status = 400; throw e;
+    }
+    await LogRepository.registrar(usuarioId, `Candidatura ID ${inscricaoId} cancelada pelo candidato`);
+    return removida;
+  }
+
+  async alterarStatus(id, novoStatus, motivoReprovacao = null) {
     const statusPermitidos = ['Pendente', 'Em análise', 'Aprovado', 'Reprovado', 'Entrevista'];
     if (!statusPermitidos.includes(novoStatus)) {
       const error = new Error(`Status inválido. Escolha entre: ${statusPermitidos.join(', ')}`);
       error.status = 400;
       throw error;
     }
-    const atualizada = await InscricaoRepository.atualizarStatus(id, novoStatus);
+    if (novoStatus === 'Reprovado' && !motivoReprovacao) {
+      const error = new Error('Informe o motivo da reprovação.');
+      error.status = 400;
+      throw error;
+    }
+    const motivo = novoStatus === 'Reprovado' ? motivoReprovacao : null;
+    const atualizada = await InscricaoRepository.atualizarStatus(id, novoStatus, motivo);
     if (!atualizada) { const e = new Error('Inscrição não encontrada.'); e.status = 404; throw e; }
     await LogRepository.registrar(null, `Status da inscrição ID ${id} alterado para "${novoStatus}"`);
 
