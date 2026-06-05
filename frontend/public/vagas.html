@@ -42,8 +42,9 @@
 
     .vaga-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
     .vaga-card h2 { font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 700; }
-    .vaga-empresa { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
-    .vaga-desc { font-size: 14px; line-height: 1.6; color: #6b7a99; margin-bottom: 14px; }
+    .vaga-empresa { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    .vaga-salario-valor { font-size: 13px; color: #16a34a; font-weight: 500; }
+    .vaga-desc { font-size: 13px; line-height: 1.6; color: #6b7a99; margin-bottom: 14px; }
 
     .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
     .tag { font-size: 12px; font-weight: 500; background: rgba(26,39,68,0.04); border: 1px solid rgba(26,39,68,0.1); padding: 4px 12px; border-radius: 20px; }
@@ -53,8 +54,7 @@
 
     .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-top: 28px; transition: 0.2s; }
     .back:hover { color: #1a2744; }
-    .vaga-salario { font-size: 13px; font-weight: 600; color: #1a2744; margin-bottom: 8px; }
-    .btn-limpar { background: transparent; border: 1px solid rgba(26,39,68,0.14); color: #1a2744; padding: 9px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+.btn-limpar { background: transparent; border: 1px solid rgba(26,39,68,0.14); color: #1a2744; padding: 9px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; }
     .btn-limpar:hover { background: rgba(26,39,68,0.06); }
     .btn-outline { background: transparent; border: 1px solid rgba(26,39,68,0.14); color: #1a2744; padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .btn-outline:hover { background: rgba(26,39,68,0.06); }
@@ -164,8 +164,9 @@
               ${v.tipo_deficiencia_foco ? `<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(244,124,32,0.12);color:#f47c20;border:1px solid rgba(244,124,32,0.3)">${v.tipo_deficiencia_foco}</span>` : ''}
             </div>
           </div>
-          <p class="vaga-empresa">${v.localizacao || ''} ${v.nome_empresa ? '· ' + v.nome_empresa : ''}</p>
-          ${v.salario ? `<p class="vaga-salario">Salário: ${v.salario}</p>` : ''}
+          <p class="vaga-empresa">
+            ${[v.localizacao, v.nome_empresa].filter(Boolean).join(' · ')}${v.salario ? ` · <span class="vaga-salario-valor">${v.salario}</span>` : ''}
+          </p>
           <p class="vaga-desc">${v.descricao || ''}</p>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
             <button class="btn-apply" onclick="verDetalhes(${v.id})">Ver detalhes</button>
