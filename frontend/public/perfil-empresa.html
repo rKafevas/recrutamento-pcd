@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclui+ | Perfil da Empresa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --orange: #f47c20; --white-med: #ffffff; --white-border: rgba(26,39,68,0.1); --text-muted: #6b7a99; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1a2744; min-height: 100vh; padding-bottom: 60px; }
+    body.high-contrast { background: #000 !important; color: #ff0 !important; }
+    body.high-contrast .panel, body.high-contrast .vaga-card { background: #111 !important; border: 2px solid #ff0 !important; }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 40px 24px; }
+    .back { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; margin-bottom: 28px; }
+    .back:hover { color: #1a2744; }
+
+    .empresa-header { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 16px; padding: 28px; margin-bottom: 24px; display: flex; align-items: center; gap: 20px; }
+    .empresa-avatar { width: 64px; height: 64px; border-radius: 14px; background: rgba(244,124,32,0.12); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+    .empresa-nome { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .empresa-sub { font-size: 13px; color: var(--text-muted); }
+
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .section-label::before { content: ''; width: 3px; height: 13px; background: var(--orange); border-radius: 2px; }
+
+    .vaga-card { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 12px; padding: 18px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; text-decoration: none; color: inherit; transition: 0.18s; }
+    .vaga-card:hover { background: rgba(26,39,68,0.03); border-color: rgba(26,39,68,0.15); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,39,68,0.07); }
+    .vaga-titulo { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+    .vaga-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 12px; flex-wrap: wrap; }
+    .badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+    .badge-modelo { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+    .badge-def { background: rgba(244,124,32,0.12); color: #f47c20; border: 1px solid rgba(244,124,32,0.25); }
+    .salario { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: #f47c20; white-space: nowrap; flex-shrink: 0; }
+
+    .empty { background: var(--white-med); border: 1px solid var(--white-border); border-radius: 12px; padding: 32px; text-align: center; color: var(--text-muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a id="back-link" href="vagas.html" class="back">← Voltar às vagas</a>
+
+    <div id="conteudo"><p style="color:#6b7a99;font-size:14px">Carregando...</p></div>
+  </div>
+
+  <div vw class="enabled"><div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div></div>
+  <script src="config.js"></script>
+  <script src="topbar.js"></script>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    if (window.VLibras) new window.VLibras.Widget('https://vlibras.gov.br/app');
+    function toggleContrast(){ document.body.classList.toggle('high-contrast'); }
+
+    const params = new URLSearchParams(window.location.search);
+    const empresaId = params.get('id');
+    const origem = document.referrer && document.referrer.includes('vaga-detalhes') ? 'vaga-detalhes' : null;
+
+    async function carregarEmpresa() {
+      if (!empresaId) { document.getElementById('conteudo').innerHTML = '<p style="color:#f87171">Empresa não especificada.</p>'; return; }
+      try {
+        const r = await fetch(`${API_URL}/empresas/${empresaId}`);
+        if (!r.ok) { document.getElementById('conteudo').innerHTML = '<p style="color:#6b7a99;font-size:14px">Empresa não encontrada.</p>'; return; }
+        const empresa = await r.json();
+
+        document.title = `Inclui+ | ${empresa.nome_fantasia}`;
+
+        const vagasHtml = empresa.vagas.length
+          ? empresa.vagas.map(v => `
+              <a href="vaga-detalhes.html?id=${v.id}" class="vaga-card">
+                <div style="flex:1;min-width:0">
+                  <div class="vaga-titulo">${v.titulo}</div>
+                  <div class="vaga-meta">
+                    ${v.localizacao ? `<span>📍 ${v.localizacao}</span>` : ''}
+                    ${v.modelo_trabalho ? `<span>${v.modelo_trabalho}</span>` : ''}
+                  </div>
+                  <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+                    ${v.modelo_trabalho ? `<span class="badge badge-modelo">${v.modelo_trabalho}</span>` : ''}
+                    ${v.tipo_deficiencia_foco ? `<span class="badge badge-def">${v.tipo_deficiencia_foco}</span>` : ''}
+                  </div>
+                </div>
+                ${v.salario ? `<div class="salario">${v.salario}</div>` : ''}
+              </a>`).join('')
+          : '<div class="empty">Esta empresa não possui vagas abertas no momento.</div>';
+
+        document.getElementById('conteudo').innerHTML = `
+          <div class="empresa-header">
+            <div class="empresa-avatar">🏢</div>
+            <div>
+              <div class="empresa-nome">${empresa.nome_fantasia}</div>
+              <div class="empresa-sub">${empresa.vagas.length} vaga${empresa.vagas.length !== 1 ? 's' : ''} aberta${empresa.vagas.length !== 1 ? 's' : ''}</div>
+            </div>
+          </div>
+          <div class="section-label">Vagas abertas</div>
+          ${vagasHtml}`;
+      } catch(e) {
+        document.getElementById('conteudo').innerHTML = '<p style="color:#6b7a99;font-size:14px">Não foi possível conectar ao servidor.</p>';
+      }
+    }
+
+    carregarEmpresa();
+  </script>
+</body>
+</html>

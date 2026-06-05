@@ -7,6 +7,7 @@ const validate = require('../middlewares/validateMiddleware');
 const { vagaSchema } = require('../validators/vagaValidator');
 const VagaController = require('../controllers/vagaController');
 
+router.get('/empresas/:id', VagaController.perfilEmpresa);
 router.get('/vagas/minhas', authMiddleware, authorize(['RH']), VagaController.listarMinhas);
 router.get('/vagas/recomendadas', authMiddleware, authorize(['Candidato']), VagaController.listarRecomendadas);
 router.get('/vagas/filtro', VagaController.listarComFiltro);

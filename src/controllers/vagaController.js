@@ -83,6 +83,14 @@ class VagaController {
     } catch(err) { next(err); }
   }
 
+  async perfilEmpresa(req, res, next) {
+    try {
+      const empresa = await VagaRepository.buscarEmpresaComVagas(req.params.id);
+      if (!empresa) { const e = new Error('Empresa não encontrada.'); e.status = 404; throw e; }
+      return res.json(empresa);
+    } catch(err) { next(err); }
+  }
+
   async compatibilidade(req, res, next) {
     try {
       const vaga = await VagaRepository.buscarPorId(req.params.id);

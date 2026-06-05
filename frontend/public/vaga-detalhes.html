@@ -79,7 +79,7 @@
             <h1 class="vaga-titulo">${vaga.titulo}</h1>
             <div class="vaga-meta">
               ${vaga.localizacao ? `<span>📍 ${vaga.localizacao}</span>` : ''}
-              ${vaga.nome_empresa ? `<span>🏢 ${vaga.nome_empresa}</span>` : ''}
+              ${vaga.nome_empresa ? `<span>🏢 <a href="perfil-empresa.html?id=${vaga.empresa_id_pub}" style="color:inherit;text-decoration:none;font-weight:600;border-bottom:1px solid rgba(26,39,68,0.25)">${vaga.nome_empresa}</a></span>` : ''}
             </div>
           </div>
 

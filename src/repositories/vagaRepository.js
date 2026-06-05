@@ -87,8 +87,24 @@ class VagaRepository {
     return rows;
   }
   async buscarPorId(id) {
-    const { rows } = await db.query('SELECT * FROM vagas WHERE id = $1', [id]);
+    const { rows } = await db.query(`
+      SELECT v.*, e.nome_fantasia as nome_empresa, e.id as empresa_id_pub
+      FROM vagas v
+      LEFT JOIN empresas e ON v.empresa_id = e.id
+      WHERE v.id = $1
+    `, [id]);
     return rows[0];
+  }
+
+  async buscarEmpresaComVagas(empresaId) {
+    const { rows: emp } = await db.query('SELECT id, nome_fantasia FROM empresas WHERE id = $1', [empresaId]);
+    if (!emp[0]) return null;
+    const { rows: vagas } = await db.query(`
+      SELECT id, titulo, modelo_trabalho, localizacao, salario, tipo_deficiencia_foco, status, data_criacao
+      FROM vagas WHERE empresa_id = $1 AND status = 'Aberta'
+      ORDER BY data_criacao DESC
+    `, [empresaId]);
+    return { ...emp[0], vagas };
   }
 
   async atualizarVaga(id, dados) {
