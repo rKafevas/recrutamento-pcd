@@ -360,3 +360,12 @@ body.dark-mode .divider { border-top-color: rgba(255,255,255,0.06) !important; }
 body.dark-mode .row label { color: #c8d4e8 !important; }
 body.dark-mode .brand p,
 body.dark-mode .register { color: #8896b3 !important; }
+
+/* ── perfil-empresa.html ─────────────────────────────────────────────────── */
+body.dark-mode .empresa-header {
+  background: #1a2035 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+body.dark-mode .empresa-nome { color: #e2e8f4 !important; }
+body.dark-mode .empresa-sub  { color: #8896b3 !important; }
+body.dark-mode .empresa-avatar { background: rgba(244,124,32,0.12) !important; }
