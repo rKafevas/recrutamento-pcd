@@ -42,7 +42,7 @@ class InscricaoRepository {
 
   async listarPorVaga(vaga_id) {
     const query = `
-      SELECT 
+      SELECT
         i.id AS inscricao_id,
         i.data_inscricao,
         i.status,
@@ -52,6 +52,7 @@ class InscricaoRepository {
         c.curriculo_url,
         c.laudo_medico_url,
         c.foto_url,
+        u.id AS usuario_id,
         u.email
       FROM inscricoes i
       JOIN candidatos c ON i.candidato_id = c.id
